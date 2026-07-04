@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -12,7 +13,8 @@ export const metadata: Metadata = {
   description:
     "Plateforme de formation premium pour la certification Oracle Database SQL 1Z0-071. Cours interactifs, simulateur d'examen, flashcards, sandbox SQL et plus.",
   icons: {
-    icon: "/oracle-icon.svg",
+    icon: "/favicon.png",
+    apple: "/favicon.png",
   },
 };
 

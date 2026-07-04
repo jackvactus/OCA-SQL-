@@ -153,11 +153,11 @@ export default function DashboardPage() {
           <div className="flex items-center justify-center lg:justify-end">
             <div className="rounded-2xl border border-primary/20 bg-background/70 p-3 shadow-sm backdrop-blur">
               <Image
-                src="/oracle-database.svg"
-                alt="Illustration Oracle Database"
-                width={200}
-                height={100}
-                className="h-auto w-auto max-w-xs object-contain lg:max-w-sm"
+                src="/favicon.png"
+                alt="OracleMaster illustration"
+                width={140}
+                height={140}
+                className="h-32 w-32 object-contain lg:h-36 lg:w-36"
               />
             </div>
           </div>
