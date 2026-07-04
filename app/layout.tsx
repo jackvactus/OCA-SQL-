@@ -11,6 +11,11 @@ export const metadata: Metadata = {
   title: "OracleMaster — Certification 1Z0-071 Training Platform",
   description:
     "Plateforme de formation premium pour la certification Oracle Database SQL 1Z0-071. Cours interactifs, simulateur d'examen, flashcards, sandbox SQL et plus.",
+  icons: {
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
