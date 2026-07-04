@@ -1,0 +1,24 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Red circle background -->
+  <circle cx="128" cy="128" r="128" fill="#ED1C24"/>
+  
+  <!-- Database icon -->
+  <g transform="translate(80, 80)">
+    <!-- Top ellipse -->
+    <ellipse cx="48" cy="24" rx="36" ry="14" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="2"/>
+    <path d="M12 24 Q12 38 48 46 Q84 38 84 24" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"/>
+    
+    <!-- Middle cylinder -->
+    <rect x="12" y="24" width="72" height="40" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="2"/>
+    
+    <!-- Bottom ellipse -->
+    <ellipse cx="48" cy="64" rx="36" ry="14" fill="#ED1C24" stroke="#FFFFFF" stroke-width="2"/>
+    
+    <!-- Highlight lines -->
+    <line x1="20" y1="35" x2="76" y2="35" stroke="#FFFFFF" stroke-width="2" opacity="0.6"/>
+    <line x1="20" y1="50" x2="76" y2="50" stroke="#FFFFFF" stroke-width="2" opacity="0.4"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="128" y="210" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#FFFFFF">ORACLE</text>
+</svg>

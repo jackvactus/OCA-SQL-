@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   BookOpen,
@@ -119,7 +120,8 @@ export default function DashboardPage() {
       {/* Hero section */}
       <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-card to-card p-6 lg:p-8">
         <div className="absolute inset-0 bg-grid opacity-5" />
-        <div className="relative">
+        <div className="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="max-w-2xl">
           <div className="mb-2 flex items-center gap-2">
             <Badge variant="secondary" className="gap-1">
               <Flame className="h-3 w-3 text-warning" />
@@ -146,6 +148,18 @@ export default function DashboardPage() {
                 Simulateur d'examen
               </Button>
             </Link>
+          </div>
+          </div>
+          <div className="flex items-center justify-center lg:justify-end">
+            <div className="rounded-2xl border border-primary/20 bg-background/70 p-3 shadow-sm backdrop-blur">
+              <Image
+                src="/oracle-database.svg"
+                alt="Illustration Oracle Database"
+                width={200}
+                height={100}
+                className="h-auto w-auto max-w-xs object-contain lg:max-w-sm"
+              />
+            </div>
           </div>
         </div>
       </div>
