@@ -63,11 +63,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           <div className="flex h-16 items-center gap-3 border-b border-border px-6">
             <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl border border-border/70 bg-card shadow-sm">
               <Image
-                src="/logo-image.png"
+                src="/oracle-db-icon.svg"
                 alt="Application logo"
                 width={40}
                 height={40}
-                className="h-10 w-10 object-cover object-center"
+                className="h-10 w-10 object-contain"
               />
             </div>
             <div>

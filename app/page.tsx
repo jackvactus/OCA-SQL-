@@ -151,13 +151,13 @@ export default function DashboardPage() {
           </div>
           </div>
           <div className="flex items-center justify-center lg:justify-end">
-            <div className="rounded-2xl border border-primary/20 bg-background/70 p-4 shadow-sm backdrop-blur">
+            <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-red-500/10 to-red-600/10 p-6 shadow-sm backdrop-blur">
               <Image
-                src="/logo-image.png"
+                src="/oracle-db-icon.svg"
                 alt="Application illustration"
-                width={180}
-                height={100}
-                className="h-auto w-44 object-contain"
+                width={120}
+                height={120}
+                className="h-32 w-32 object-contain"
                 priority
               />
             </div>
