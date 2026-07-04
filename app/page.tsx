@@ -153,8 +153,8 @@ export default function DashboardPage() {
           <div className="flex items-center justify-center lg:justify-end">
             <div className="rounded-2xl border border-primary/20 bg-background/70 p-3 shadow-sm backdrop-blur">
               <Image
-                src="/favicon.png"
-                alt="OracleMaster illustration"
+                src="/logo-image.png"
+                alt="Application illustration"
                 width={140}
                 height={140}
                 className="h-32 w-32 object-contain lg:h-36 lg:w-36"
