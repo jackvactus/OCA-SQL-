@@ -130,6 +130,7 @@ CREATE TABLE departments (
           "Distinguer DDL, DML, DCL et TCL",
           "Comprendre le rôle de chaque catégorie de commandes",
           "Identifier les commandes auto-validantes vs transactionnelles",
+          "Connaître l'environnement Oracle XE / SQL Developer / SQL*Plus",
         ],
         content: [
           {
@@ -168,12 +169,22 @@ ROLLBACK;  -- Trop tard ! La table est déjà vidée`,
             type: "tip",
             body: "TRUNCATE est une commande DDL (ultra-rapide, non annulable, réinitialise les segments). DELETE est une commande DML (lente sur gros volumes, annulable, ne réinitialise pas les segments).",
           },
+          {
+            type: "note",
+            title: "Environnement de formation (Oracle XE)",
+            body: "Pour cette formation : **Oracle Database XE** (Express Edition, gratuite) comme moteur ; **SQL Developer** (IDE graphique Oracle) pour écrire/exécuter et explorer le schéma ; **SQL*Plus** (ligne de commande) pour scripts, SPOOL et automatisation. Les trois parlent le même SQL — seul l'outil d'interface change.",
+          },
+          {
+            type: "tip",
+            body: "Workflow recommandé : créer/tester dans SQL Developer, puis rejouer les scripts critiques en SQL*Plus (`@script.sql`) pour valider le comportement batch. Sur XE, connectez-vous souvent en utilisateur HR (schéma démo) ou un schéma perso créé pour les exercices.",
+          },
         ],
         keyPoints: [
           "DDL = structure (auto-commit), DML = données (transactionnel)",
           "TRUNCATE est DDL, DELETE est DML",
           "Les commandes DDL valident implicitement les transactions en cours",
           "SELECT appartient techniquement au DML mais est parfois classé en DQL",
+          "Formation : Oracle XE + SQL Developer + SQL*Plus",
         ],
         flashcards: [
           {
@@ -197,6 +208,91 @@ ROLLBACK;  -- Trop tard ! La table est déjà vidée`,
             solution: `INSERT INTO employees VALUES (10, 'Test', 3000);
 ROLLBACK;`,
             hint: "Utilisez ROLLBACK après l'INSERT",
+            difficulty: "beginner",
+          },
+        ],
+      },
+      {
+        id: "m1l3",
+        title: "Types de données Oracle",
+        duration: 20,
+        objectives: [
+          "Choisir entre NUMBER, VARCHAR2, CHAR, DATE et TIMESTAMP",
+          "Comprendre précision / échelle et padding CHAR",
+          "Relier les types SQL aux catégories DML/DDL",
+        ],
+        content: [
+          {
+            type: "text",
+            title: "Pourquoi le type compte",
+            body: "Le type de données conditionne le stockage, les conversions implicites et les performances. À l'examen 1Z0-071, on teste surtout VARCHAR2 vs CHAR, NUMBER(p,s), et DATE vs TIMESTAMP.",
+          },
+          {
+            type: "table",
+            title: "Types Oracle essentiels (Partie 1 formateur)",
+            headers: ["Catégorie", "Type", "Exemple", "À retenir"],
+            rows: [
+              ["Numérique", "NUMBER(7,2)", "12345.67", "p = chiffres totaux, s = décimales"],
+              ["Numérique", "INTEGER", "12345", "Alias de NUMBER(38,0)"],
+              ["Caractère", "VARCHAR2(50)", "'Dupont'", "Longueur variable — préférez-le"],
+              ["Caractère", "CHAR(10)", "'Dupont    '", "Longueur fixe, espaces de padding"],
+              ["Date", "DATE", "25/12/2024 14:30:00", "Jour + heure (pas de fractions)"],
+              ["Date", "TIMESTAMP", "…14:30:00.123456", "Fractions de seconde (jusqu'à 9)"],
+            ],
+          },
+          {
+            type: "code",
+            title: "Déclaration typique",
+            code: `CREATE TABLE employes (
+    id          NUMBER(6) PRIMARY KEY,
+    nom         VARCHAR2(50) NOT NULL,
+    code_pays   CHAR(2),              -- fixe : 'FR'
+    salaire     NUMBER(8,2),
+    embauche    DATE DEFAULT SYSDATE,
+    derniere_maj TIMESTAMP(6)
+);`,
+          },
+          {
+            type: "warning",
+            body: "CHAR(10) stocke toujours 10 caractères (espaces à droite). Comparer 'Dupont' (VARCHAR2) et 'Dupont    ' (CHAR) peut surprendre. En pratique, utilisez VARCHAR2 sauf pour des codes de longueur fixe.",
+          },
+          {
+            type: "tip",
+            body: "Rappel des 4 familles SQL : DML (données), DDL (structure), DCL (droits), TCL (transactions). SELECT est souvent classé DML/DQL ; TRUNCATE est DDL (COMMIT implicite).",
+          },
+        ],
+        keyPoints: [
+          "VARCHAR2 variable ; CHAR fixe avec padding",
+          "NUMBER(p,s) : p précision totale, s échelle",
+          "DATE = jour+heure ; TIMESTAMP = + fractions de seconde",
+          "INTEGER = NUMBER(38,0)",
+        ],
+        flashcards: [
+          {
+            id: "fc-m1-6",
+            front: "Différence pratique entre VARCHAR2(10) et CHAR(10) ?",
+            back: "VARCHAR2 stocke uniquement les caractères utiles. CHAR complète toujours jusqu'à 10 avec des espaces.",
+            category: "Types",
+          },
+          {
+            id: "fc-m1-7",
+            front: "Que signifie NUMBER(7,2) ?",
+            back: "7 chiffres au total dont 2 après la virgule → max 99999.99.",
+            category: "Types",
+          },
+        ],
+        exercises: [
+          {
+            id: "ex-m1-3",
+            prompt: "Créez une table 'clients' avec id NUMBER PK, code_pays CHAR(2), email VARCHAR2(100), cree_le TIMESTAMP.",
+            starterCode: "CREATE TABLE clients (\n\n);\n",
+            solution: `CREATE TABLE clients (
+    id        NUMBER PRIMARY KEY,
+    code_pays CHAR(2),
+    email     VARCHAR2(100),
+    cree_le   TIMESTAMP
+);`,
+            hint: "Mélangez NUMBER, CHAR, VARCHAR2 et TIMESTAMP",
             difficulty: "beginner",
           },
         ],
@@ -271,7 +367,22 @@ SELECT DISTINCT department_id FROM employees;
 SELECT first_name || ' ' || last_name AS full_name FROM employees;
 
 -- Valeurs littérales
-SELECT first_name, 'travaille en' AS phrase, department_id FROM employees;`,
+SELECT first_name, 'travaille en' AS phrase, department_id FROM employees;
+
+-- Calculs dans le SELECT (salaire annuel)
+SELECT last_name, salary, salary * 12 AS salaire_annuel
+FROM employees;`,
+          },
+          {
+            type: "code",
+            title: "La table DUAL",
+            code: `-- Table système Oracle : 1 ligne, 1 colonne (DUMMY='X')
+-- Sert à évaluer une expression hors table métier
+SELECT 2 + 3 FROM dual;           -- 5
+SELECT SYSDATE FROM dual;         -- date serveur
+SELECT USER FROM dual;            -- utilisateur courant
+SELECT ROUND(45.926, 2) FROM dual;`,
+            caption: "DUAL est indispensable pour tester fonctions et calculs.",
           },
           {
             type: "tip",
@@ -304,6 +415,7 @@ SELECT first_name, 'travaille en' AS phrase, department_id FROM employees;`,
           "SELECT = projection (colonnes), WHERE = sélection (lignes)",
           "DISTINCT élimine les doublons sur toutes les colonnes listées",
           "Les alias avec guillemets préservent la casse",
+          "DUAL sert à évaluer expressions / fonctions hors table métier",
           "L'ordre d'exécution : FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY",
           "Les alias du SELECT ne sont pas utilisables dans WHERE",
         ],
@@ -324,6 +436,12 @@ SELECT first_name, 'travaille en' AS phrase, department_id FROM employees;`,
             id: "fc-m2-3",
             front: "Peut-on utiliser un alias de colonne défini dans SELECT dans la clause WHERE ?",
             back: "Non. WHERE s'exécute avant SELECT. L'alias n'existe pas encore au moment de l'évaluation de WHERE. Il est utilisable dans ORDER BY.",
+            category: "SELECT",
+          },
+          {
+            id: "fc-m2-7",
+            front: "À quoi sert la table DUAL ?",
+            back: "Table système Oracle à une ligne, pour évaluer des expressions ou fonctions (SYSDATE, calculs) sans table métier.",
             category: "SELECT",
           },
         ],
@@ -476,6 +594,24 @@ WHERE salary BETWEEN 4000 AND 8000
             hint: "Utilisez BETWEEN et IN",
             difficulty: "intermediate",
           },
+          {
+            id: "ex-m2-4",
+            prompt: "Affichez nom, prénom et salaire annuel (salaire × 12) des employés du département 'IT' gagnant plus de 3000, triés du salaire mensuel le plus élevé au plus bas. (Exercice récap Partie 1)",
+            starterCode: "SELECT \nFROM employees\nWHERE \nORDER BY ;\n",
+            solution: `SELECT last_name, first_name, salary * 12 AS salaire_annuel
+FROM employees
+WHERE department_id = (
+    SELECT department_id FROM departments WHERE department_name = 'IT'
+)
+  AND salary > 3000
+ORDER BY salary DESC;
+
+-- Variante si colonne departement texte :
+-- WHERE department = 'IT' AND salary > 3000
+-- ORDER BY salary DESC;`,
+            hint: "Projection + calcul, WHERE (département ET salaire), ORDER BY DESC",
+            difficulty: "intermediate",
+          },
         ],
       },
     ],
@@ -545,9 +681,15 @@ ORDER BY annual_salary DESC;`,
             type: "tip",
             body: "ORDER BY est la SEULE clause qui peut utiliser les alias définis dans SELECT. C'est parce qu'elle s'exécute en dernier. C'est un point testé systématiquement à l'examen.",
           },
+          {
+            type: "note",
+            title: "Mnémotechnique d'exécution (FWGHSO)",
+            body: "Ordre logique : **F**rom → **W**here → **G**roup → **H**aving → **S**elect → **O**rder. « From Where Group Having Select Order ». ORDER BY est donc toujours le dernier traité (avant FETCH).",
+          },
         ],
         keyPoints: [
           "ORDER BY est la dernière clause exécutée",
+          "Mnémotechnique FWGHSO : From Where Group Having Select Order",
           "Sans ORDER BY, l'ordre n'est pas garanti",
           "ASC = ascendant (défaut), DESC = descendant",
           "Oracle place les NULL en dernier avec ASC, en premier avec DESC",
@@ -627,6 +769,11 @@ OFFSET 10 ROWS FETCH NEXT 10 ROWS ONLY;`,
           {
             type: "warning",
             body: "ROWNUM est assigné AVANT le tri ORDER BY. Pour 'top N' avec ROWNUM, il faut une sous-requête. FETCH FIRST gère cela correctement. L'examen teste cette différence.",
+          },
+          {
+            type: "tip",
+            title: "Top-N Analysis",
+            body: "Top-N = « les N meilleures lignes » après tri. Méthode moderne : ORDER BY … FETCH FIRST N ROWS ONLY. Ancienne : sous-requête triée puis WHERE ROWNUM <= N. Jamais WHERE ROWNUM puis ORDER BY.",
           },
           {
             type: "code",
@@ -848,8 +995,22 @@ FROM dual;`,
               ["LAST_DAY(d)", "Dernier jour du mois", "LAST_DAY(SYSDATE)", "2026-07-31"],
               ["NEXT_DAY(d, day)", "Prochain jour de la semaine", "NEXT_DAY(SYSDATE, 'FRIDAY')", "2026-07-10"],
               ["EXTRACT(part FROM d)", "Extrait une partie", "EXTRACT(YEAR FROM SYSDATE)", "2026"],
+              ["CURRENT_DATE", "Date/heure de la session", "SELECT CURRENT_DATE FROM dual", "fuseau session"],
               ["TRUNC(d, fmt)", "Tronque une date", "TRUNC(SYSDATE, 'MM')", "2026-07-01"],
             ],
+          },
+          {
+            type: "code",
+            title: "LAST_DAY, NEXT_DAY, EXTRACT, CURRENT_DATE",
+            code: `SELECT
+    CURRENT_DATE AS date_session,
+    LAST_DAY(SYSDATE) AS fin_du_mois,
+    NEXT_DAY(SYSDATE, 'MONDAY') AS prochain_lundi,
+    EXTRACT(YEAR FROM SYSDATE) AS annee,
+    EXTRACT(MONTH FROM hire_date) AS mois_embauche,
+    EXTRACT(DAY FROM hire_date) AS jour_embauche
+FROM employees
+WHERE ROWNUM <= 5;`,
           },
           {
             type: "text",
@@ -927,6 +1088,7 @@ FROM employees;`,
         objectives: [
           "Convertir entre types avec TO_CHAR, TO_NUMBER, TO_DATE",
           "Gérer les NULL avec NVL, NVL2, COALESCE, NULLIF",
+          "Utiliser CASE (simple et recherché) et le comparer à DECODE",
           "Comprendre les masques de format",
         ],
         content: [
@@ -1007,11 +1169,34 @@ FROM employees;
           },
           {
             type: "warning",
-            body: "NVL accepte exactement 2 arguments. COALESCE accepte un nombre illaire et est standard SQL. Préférez COALESCE pour la portabilité. L'examen teste la différence : NVL évalue TOUS les arguments, COALESCE utilise short-circuit evaluation.",
+            body: "NVL accepte exactement 2 arguments. COALESCE accepte un nombre illimité et est standard SQL. Préférez COALESCE pour la portabilité. L'examen teste la différence : NVL évalue TOUS les arguments, COALESCE utilise short-circuit evaluation.",
+          },
+          {
+            type: "code",
+            title: "Expression CASE — simple et recherché (searched)",
+            code: `-- CASE simple : égalité sur une expression
+SELECT last_name, job_id,
+  CASE job_id
+    WHEN 'IT_PROG'  THEN 'Développeur'
+    WHEN 'SA_REP'   THEN 'Commercial'
+    WHEN 'ST_CLERK' THEN 'Magasinier'
+    ELSE 'Autre'
+  END AS metier
+FROM employees;
+
+-- CASE recherché (searched) : conditions libres (>, <, BETWEEN, LIKE…)
+SELECT last_name, salary,
+  CASE
+    WHEN salary < 5000  THEN 'Junior'
+    WHEN salary < 10000 THEN 'Confirmé'
+    WHEN salary < 15000 THEN 'Senior'
+    ELSE 'Expert'
+  END AS tranche
+FROM employees;`,
           },
           {
             type: "tip",
-            body: "CASE est plus puissant et lisible que DECODE. CASE est standard SQL, DECODE est spécifique Oracle. CASE supporte des conditions complexes (> , <, LIKE), DECODE ne fait que l'égalité. Préférez CASE en production.",
+            body: "DECODE vs CASE : DECODE(job_id, 'IT_PROG', 'Dev', 'Autre') = égalité uniquement, spécifique Oracle. CASE est standard SQL, gère des prédicats complexes et lit mieux. À l'examen les deux apparaissent — en production, préférez CASE.",
           },
         ],
         keyPoints: [
@@ -1019,6 +1204,7 @@ FROM employees;
           "NVL = 2 args, COALESCE = N args (standard SQL)",
           "NVL2 : 3 args (non-NULL → val1, NULL → val2)",
           "NULLIF : NULL si égalité, sinon la première valeur",
+          "CASE simple (WHEN valeur) vs CASE recherché (WHEN condition)",
           "CASE > DECODE (standard, lisible, conditions complexes)",
         ],
         flashcards: [
@@ -1050,6 +1236,108 @@ FROM employees;
 FROM employees;`,
             hint: "NVL a besoin du même type pour les deux arguments",
             difficulty: "intermediate",
+          },
+          {
+            id: "ex-m4-5",
+            prompt: "Classez chaque employé selon son salaire avec CASE : < 5000 → 'Junior', < 10000 → 'Confirmé', sinon → 'Senior'. Affichez last_name, salary et la tranche.",
+            starterCode: "SELECT last_name, salary,\n  CASE\n\n  END AS tranche\nFROM employees;\n",
+            solution: `SELECT last_name, salary,
+  CASE
+    WHEN salary < 5000 THEN 'Junior'
+    WHEN salary < 10000 THEN 'Confirmé'
+    ELSE 'Senior'
+  END AS tranche
+FROM employees;`,
+            hint: "CASE recherché : WHEN salary < … THEN …",
+            difficulty: "intermediate",
+          },
+        ],
+      },
+      {
+        id: "m4l4",
+        title: "Fuseaux horaires et intervalles",
+        duration: 20,
+        objectives: [
+          "Distinguer SYSDATE / CURRENT_DATE et SYSTIMESTAMP / CURRENT_TIMESTAMP",
+          "Utiliser INTERVAL YEAR TO MONTH et DAY TO SECOND",
+          "Convertir avec NUMTODSINTERVAL / NUMTOYMINTERVAL",
+        ],
+        content: [
+          {
+            type: "text",
+            title: "Time zones (Session 6.5 formateur)",
+            body: "SYSDATE et SYSTIMESTAMP suivent le fuseau du **serveur**. CURRENT_DATE et CURRENT_TIMESTAMP suivent le fuseau de la **session** client. TIMESTAMP WITH TIME ZONE stocke aussi le décalage.",
+          },
+          {
+            type: "code",
+            title: "Dates, timestamps et fuseaux",
+            code: `SELECT
+    CURRENT_DATE AS date_session,
+    SYSDATE AS date_serveur,
+    SYSTIMESTAMP AS ts_serveur,
+    CURRENT_TIMESTAMP AS ts_session,
+    SESSIONTIMEZONE AS tz_session,
+    DBTIMEZONE AS tz_base
+FROM dual;
+
+SELECT
+    FROM_TZ(CAST(SYSDATE AS TIMESTAMP), 'Europe/Paris') AS ts_paris,
+    TIMESTAMP '2024-12-25 10:30:45.123456' AS ts_precis,
+    TO_TIMESTAMP('2024-12-25 10:30:45.123', 'YYYY-MM-DD HH24:MI:SS.FF3') AS conv
+FROM dual;`,
+          },
+          {
+            type: "code",
+            title: "INTERVAL — durées",
+            code: `SELECT
+    INTERVAL '5' YEAR AS cinq_ans,
+    INTERVAL '3-6' YEAR TO MONTH AS trois_ans_six_mois,
+    INTERVAL '10 12:30:45' DAY TO SECOND AS dix_j_12h,
+    INTERVAL '125' MINUTE AS cent_vingt_cinq_min,
+    NUMTODSINTERVAL(150, 'MINUTE') AS cent_cinquante_min,
+    NUMTOYMINTERVAL(30, 'MONTH') AS trente_mois
+FROM dual;
+
+-- Arithmétique
+SELECT SYSDATE + INTERVAL '7' DAY AS dans_une_semaine FROM dual;`,
+          },
+          {
+            type: "tip",
+            body: "INTERVAL YEAR TO MONTH pour années/mois ; DAY TO SECOND pour jours/heures/minutes/secondes. FF3 dans un masque = 3 chiffres de fraction de seconde.",
+          },
+          {
+            type: "warning",
+            body: "Ne confondez pas SYSDATE (serveur) et CURRENT_DATE (session). En multi-fuseau, le résultat peut différer — point parfois testé à l'examen.",
+          },
+        ],
+        keyPoints: [
+          "SYSDATE/SYSTIMESTAMP = serveur ; CURRENT_* = session",
+          "INTERVAL YEAR TO MONTH vs DAY TO SECOND",
+          "NUMTODSINTERVAL / NUMTOYMINTERVAL pour convertir un nombre",
+          "TIMESTAMP stocke des fractions de seconde (FF)",
+        ],
+        flashcards: [
+          {
+            id: "fc-m4-10",
+            front: "Différence entre SYSDATE et CURRENT_DATE ?",
+            back: "SYSDATE = fuseau du serveur. CURRENT_DATE = fuseau de la session client.",
+            category: "Dates avancées",
+          },
+          {
+            id: "fc-m4-11",
+            front: "À quoi sert INTERVAL '3-6' YEAR TO MONTH ?",
+            back: "Représente une durée de 3 ans et 6 mois, utilisable en arithmétique de dates.",
+            category: "Dates avancées",
+          },
+        ],
+        exercises: [
+          {
+            id: "ex-m4-4",
+            prompt: "Affichez la date dans 90 jours avec un INTERVAL, depuis DUAL.",
+            starterCode: "SELECT  FROM dual;\n",
+            solution: `SELECT SYSDATE + INTERVAL '90' DAY AS dans_90_jours FROM dual;`,
+            hint: "SYSDATE + INTERVAL '90' DAY",
+            difficulty: "beginner",
           },
         ],
       },
@@ -1153,6 +1441,42 @@ ORDER BY moy DESC;`,
             type: "warning",
             body: "Règle d'or : toute colonne non-agrégée dans le SELECT doit apparaître dans le GROUP BY. Sinon, Oracle lève ORA-00979. Exception : les colonnes dans les fonctions d'agrégation.",
           },
+          {
+            type: "code",
+            title: "Piège examen — GROUP BY strict + HAVING",
+            code: `-- ❌ ERREUR ORA-00979 : nom non agrégé hors GROUP BY
+-- SELECT department_id, last_name, AVG(salary) FROM employees;
+
+-- ❌ Agrégat interdit dans WHERE
+-- SELECT department_id, COUNT(*) FROM employees
+-- WHERE COUNT(*) > 5 GROUP BY department_id;
+
+-- ✅ Filtrer les groupes avec HAVING
+SELECT department_id, COUNT(*) AS nb
+FROM employees
+GROUP BY department_id
+HAVING COUNT(*) > 5;`,
+          },
+          {
+            type: "tip",
+            body: "COUNT(*) compte les lignes (NULL inclus). COUNT(commission) ignore les NULL de commission. WHERE filtre les lignes avant regroupement ; HAVING filtre les groupes après.",
+          },
+          {
+            type: "table",
+            title: "DISTINCT vs GROUP BY",
+            headers: ["Aspect", "DISTINCT", "GROUP BY"],
+            rows: [
+              ["Rôle principal", "Éliminer les doublons du résultat", "Regrouper pour agrégats (SUM, AVG…)"],
+              ["Agrégats", "Non (sauf COUNT DISTINCT)", "Oui — c'est le cas d'usage"],
+              ["HAVING", "Non applicable", "Oui, filtre les groupes"],
+              ["Résultat typique", "Liste unique de valeurs", "Une ligne par groupe + stats"],
+              ["Exemple", "SELECT DISTINCT dept_id …", "SELECT dept_id, AVG(sal) … GROUP BY"],
+            ],
+          },
+          {
+            type: "tip",
+            body: "DISTINCT et GROUP BY peuvent parfois produire le même ensemble de valeurs distinctes, mais ce n'est pas interchangeable : dès qu'il faut compter, sommer ou moyenner, utilisez GROUP BY (+ HAVING si besoin).",
+          },
         ],
         keyPoints: [
           "COUNT(*) compte tout, COUNT(col) ignore les NULL",
@@ -1160,6 +1484,7 @@ ORDER BY moy DESC;`,
           "WHERE filtre avant GROUP BY, HAVING filtre après",
           "Toute colonne non-agrégée du SELECT doit être dans GROUP BY",
           "HAVING peut utiliser les fonctions d'agrégation, WHERE non",
+          "DISTINCT = dédoublonnage ; GROUP BY = agrégation par groupe",
         ],
         flashcards: [
           {
@@ -1369,8 +1694,33 @@ WHERE e.department_id(+) = d.department_id;
 -- (+) sur employees = RIGHT JOIN (garde tous les départements)`,
           },
           {
+            type: "code",
+            title: "Piège (+) — ❌ vs ✅ (examen)",
+            code: `-- ❌ FAUX : (+) des deux côtés → pas de FULL OUTER JOIN
+-- WHERE e.department_id(+) = d.department_id(+);
+
+-- ❌ FAUX : croire que (+) va « du côté qu'on garde »
+-- WHERE e.department_id(+) = d.department_id;
+-- → ceci est un RIGHT JOIN (garde departments), pas un LEFT
+
+-- ✅ LEFT JOIN : (+) sur la table qui peut manquer (NULL possibles)
+SELECT e.last_name, d.department_name
+FROM employees e, departments d
+WHERE e.department_id = d.department_id(+);
+
+-- ✅ Équivalent ANSI (préféré en production)
+SELECT e.last_name, d.department_name
+FROM employees e
+LEFT JOIN departments d ON e.department_id = d.department_id;
+
+-- ✅ FULL OUTER JOIN : uniquement en syntaxe ANSI
+SELECT e.last_name, d.department_name
+FROM employees e
+FULL OUTER JOIN departments d ON e.department_id = d.department_id;`,
+          },
+          {
             type: "warning",
-            body: "Le (+) va du côté de la table qui peut manquer (qui recevra des NULL). L'ancienne syntaxe ne supporte pas le FULL OUTER JOIN. Le (+) ne peut pas être des deux côtés. L'examen teste cette syntaxe.",
+            body: "Règle d'or (+) : le (+) marque le côté « optionnel » (celui qui recevra des NULL). Il ne peut pas être des deux côtés. L'ancienne syntaxe ne fait pas de FULL OUTER JOIN. L'examen 1Z0-071 teste encore cette syntaxe.",
           },
           {
             type: "tip",
@@ -1783,6 +2133,137 @@ WHERE NOT EXISTS (
           },
         ],
       },
+      {
+        id: "m7l3",
+        title: "Clause WITH (CTE)",
+        duration: 30,
+        objectives: [
+          "Écrire une CTE simple avec WITH",
+          "Chaîner plusieurs CTE",
+          "Comprendre une CTE récursive (hiérarchie)",
+        ],
+        content: [
+          {
+            type: "text",
+            title: "Common Table Expression",
+            body: "Une CTE (WITH … AS) nomme une sous-requête réutilisable dans la requête principale. Elle clarifie les requêtes complexes et remplace souvent les tables dérivées dans le FROM.",
+          },
+          {
+            type: "code",
+            title: "CTE simple",
+            code: `WITH employes_well_paid AS (
+    SELECT first_name, salary, department_id
+    FROM employees
+    WHERE salary > 5000
+)
+SELECT * FROM employes_well_paid
+WHERE department_id = 10
+ORDER BY salary DESC;`,
+          },
+          {
+            type: "code",
+            title: "CTE multiples (enchaînées)",
+            code: `WITH
+dept_actifs AS (
+    SELECT department_id, department_name
+    FROM departments
+),
+emp_dept AS (
+    SELECT e.first_name, e.salary, d.department_name
+    FROM employees e
+    JOIN dept_actifs d ON e.department_id = d.department_id
+),
+stats AS (
+    SELECT department_name, COUNT(*) AS effectif, AVG(salary) AS moy
+    FROM emp_dept
+    GROUP BY department_name
+)
+SELECT * FROM stats
+WHERE effectif > 5
+ORDER BY moy DESC;`,
+          },
+          {
+            type: "code",
+            title: "CTE récursive (organigramme)",
+            code: `WITH hierarchie (lvl, employee_id, first_name, manager_id, chemin) AS (
+    -- Ancrage : top management
+    SELECT 0, employee_id, first_name, manager_id,
+           CAST(first_name AS VARCHAR2(1000))
+    FROM employees
+    WHERE manager_id IS NULL
+    UNION ALL
+    -- Récursion : subordonnés
+    SELECT h.lvl + 1, e.employee_id, e.first_name, e.manager_id,
+           h.chemin || ' -> ' || e.first_name
+    FROM employees e
+    JOIN hierarchie h ON e.manager_id = h.employee_id
+)
+SELECT LPAD(' ', lvl * 3) || first_name AS organigramme, lvl, chemin
+FROM hierarchie
+ORDER BY chemin;`,
+          },
+          {
+            type: "tip",
+            body: "Une CTE récursive = ancrage + UNION ALL + auto-référence. Idéale pour les hiérarchies. Attention aux boucles (cycles) dans les données.",
+          },
+          {
+            type: "warning",
+            body: "CONNECT BY (syntaxe Oracle historique) existe encore, mais WITH récursif est plus standard et lisible. L'examen peut montrer les deux ; comprenez la logique hiérarchique.",
+          },
+        ],
+        keyPoints: [
+          "WITH nom AS (requête) définit une table temporaire nommée",
+          "Plusieurs CTE peuvent s'enchaîner",
+          "CTE récursive = ancrage + UNION ALL + self-join",
+          "Utile pour Top-N / pagination avec ROW_NUMBER dans une CTE",
+        ],
+        flashcards: [
+          {
+            id: "fc-m7-6",
+            front: "À quoi sert la clause WITH ?",
+            back: "Définir une CTE : sous-requête nommée réutilisable, plus lisible qu'une sous-requête anonyme dans le FROM.",
+            category: "CTE",
+          },
+          {
+            id: "fc-m7-7",
+            front: "Structure d'une CTE récursive ?",
+            back: "Partie d'ancrage (point de départ) UNION ALL partie récursive qui joint la CTE à elle-même.",
+            category: "CTE",
+          },
+        ],
+        exercises: [
+          {
+            id: "ex-m7-3",
+            prompt: "Avec une CTE, listez les employés dont le salaire dépasse 4000, puis ne gardez que le département 20.",
+            starterCode: "WITH high_sal AS (\n\n)\nSELECT * FROM high_sal;\n",
+            solution: `WITH high_sal AS (
+    SELECT first_name, salary, department_id
+    FROM employees
+    WHERE salary > 4000
+)
+SELECT * FROM high_sal
+WHERE department_id = 20;`,
+            hint: "WITH … AS puis SELECT sur la CTE",
+            difficulty: "beginner",
+          },
+          {
+            id: "ex-m7-4",
+            prompt: "Avec une CTE, calculez le salaire moyen par département, puis listez les employés dont le salaire dépasse la moyenne de leur département (jointure CTE ↔ employees).",
+            starterCode: "WITH moy_dept AS (\n\n)\nSELECT e.last_name, e.salary, m.moy\nFROM employees e\nJOIN moy_dept m ON \n",
+            solution: `WITH moy_dept AS (
+  SELECT department_id, AVG(salary) AS moy
+  FROM employees
+  GROUP BY department_id
+)
+SELECT e.last_name, e.salary, m.moy
+FROM employees e
+JOIN moy_dept m ON e.department_id = m.department_id
+WHERE e.salary > m.moy;`,
+            hint: "CTE = GROUP BY department_id + AVG ; puis JOIN et filtre salary > moy",
+            difficulty: "advanced",
+          },
+        ],
+      },
     ],
   },
   {
@@ -2004,23 +2485,28 @@ ROLLBACK; -- Annule la suppression`,
           },
           {
             type: "table",
-            title: "DELETE vs TRUNCATE",
-            headers: ["Critère", "DELETE", "TRUNCATE"],
+            title: "DELETE vs TRUNCATE vs DROP",
+            headers: ["Critère", "DELETE", "TRUNCATE", "DROP"],
             rows: [
-              ["Catégorie", "DML", "DDL"],
-              ["Transactionnel", "Oui (annulable)", "Non (auto-commit)"],
-              ["Vitesse", "Lent (ligne par ligne)", "Ultra-rapide"],
-              ["WHERE", "Supporté", "Non supporté"],
-              ["Triggers", "Déclenchés", "Non déclenchés"],
-              ["Reset storage", "Non", "Oui (HIGH WATER MARK)"],
+              ["Catégorie", "DML", "DDL", "DDL"],
+              ["Effet", "Supprime des lignes", "Vide la table", "Supprime la table"],
+              ["Transactionnel", "Oui (annulable)", "Non (auto-commit)", "Non (auto-commit)"],
+              ["WHERE", "Oui", "Non", "N/A"],
+              ["Triggers", "Oui", "Non", "N/A"],
+              ["Structure", "Conservée", "Conservée", "Détruite"],
+              ["Vitesse", "Lente", "Très rapide", "Rapide"],
             ],
+          },
+          {
+            type: "note",
+            body: "MERGE (upsert) combine INSERT et UPDATE selon qu'une ligne source matche ou non — vu dans la leçon suivante. Utile pour synchroniser deux tables.",
           },
         ],
         keyPoints: [
           "INSERT : une ou plusieurs lignes, avec ou sans liste de colonnes",
           "UPDATE : SET colonne = valeur, toujours avec WHERE",
           "DELETE : toujours avec WHERE, transactionnel (annulable)",
-          "TRUNCATE est DDL (non annulable), DELETE est DML (annulable)",
+          "TRUNCATE vide (DDL) ; DROP détruit la table (DDL) ; DELETE retire des lignes (DML)",
           "INSERT ALL pour l'insertion multi-table (Oracle)",
         ],
         flashcards: [
@@ -2185,9 +2671,25 @@ WHEN NOT MATCHED THEN
     hire_date     DATE          DEFAULT SYSDATE,
     department_id NUMBER,
     CONSTRAINT fk_dept FOREIGN KEY (department_id)
-        REFERENCES departments(department_id),
+        REFERENCES departments(department_id)
+        ON DELETE CASCADE,
     CONSTRAINT chk_salary CHECK (salary >= 0)
 );`,
+          },
+          {
+            type: "code",
+            title: "ON DELETE CASCADE / SET NULL",
+            code: `-- CASCADE : supprimer le parent → supprime les enfants
+CONSTRAINT fk_dept FOREIGN KEY (department_id)
+    REFERENCES departments(department_id)
+    ON DELETE CASCADE
+
+-- SET NULL : supprimer le parent → NULL sur la FK enfant
+CONSTRAINT fk_mgr FOREIGN KEY (manager_id)
+    REFERENCES employees(employee_id)
+    ON DELETE SET NULL
+
+-- Sans option : DELETE parent bloqué si des enfants existent (NO ACTION)`,
           },
           {
             type: "table",
@@ -2240,6 +2742,7 @@ ALTER TABLE employees ENABLE CONSTRAINT fk_dept;`,
           "VARCHAR2 (variable) > CHAR (fixe, complété par espaces)",
           "NUMBER(p, s) : p = précision (chiffres totaux), s = échelle (décimales)",
           "PRIMARY KEY = UNIQUE + NOT NULL",
+          "ON DELETE CASCADE / SET NULL contrôle la suppression parent→enfant",
           "NOT NULL est la seule contrainte niveau colonne uniquement",
           "ALTER TABLE pour ajouter, modifier, supprimer colonnes et contraintes",
         ],
@@ -2353,6 +2856,10 @@ CYCLE; -- Recommence à 1 après MAXVALUE`,
             body: "NEXTVAL doit être appelé avant CURRVAL dans la session. Sinon, Oracle lève ORA-08002. Les séquences avec CACHE peuvent avoir des trous en cas de crash (les valeurs en cache sont perdues).",
           },
           {
+            type: "tip",
+            body: "CACHE 20 pré-alloue des valeurs (perf). NOCYCLE empêche de repartir à MINVALUE après MAXVALUE. ALTER SEQUENCE … INCREMENT BY n modifie le pas ; DROP SEQUENCE pour supprimer.",
+          },
+          {
             type: "code",
             title: "Index",
             code: `-- Index simple
@@ -2364,11 +2871,15 @@ CREATE INDEX idx_emp_dept_sal ON employees(department_id, salary);
 -- Index unique
 CREATE UNIQUE INDEX idx_emp_email ON employees(email);
 
--- Index basé sur fonction
+-- Index fonctionnel : accélère WHERE UPPER(last_name) = …
 CREATE INDEX idx_emp_upper_name ON employees(UPPER(last_name));
 
 -- Supprimer un index
 DROP INDEX idx_emp_name;`,
+          },
+          {
+            type: "tip",
+            body: "Index fonctionnel : sans `CREATE INDEX … ON emp(UPPER(nom))`, Oracle ne peut pas utiliser un index classique sur `nom` pour `WHERE UPPER(nom) = 'DUPONT'`. L'expression de l'index doit matcher celle du prédicat.",
           },
           {
             type: "tip",
@@ -2392,6 +2903,7 @@ SELECT * FROM emp; -- Au lieu de hr.employees`,
           "WITH CHECK OPTION empêche les modifications hors scope de la vue",
           "NEXTVAL avant CURRVAL, CACHE peut causer des trous",
           "Index = plus rapides en lecture, plus lents en écriture",
+          "Index fonctionnel : expression (ex. UPPER) doit matcher le WHERE",
           "Synonymes = alias pour simplifier l'accès aux objets",
         ],
         flashcards: [
@@ -2555,11 +3067,32 @@ CURRENT ROW         = ligne courante`,
             type: "tip",
             body: "Les fonctions analytiques s'exécutent APRÈS WHERE, GROUP BY et HAVING, mais AVANT ORDER BY. Pour filtrer sur le résultat d'une fonction analytique, utilisez une sous-requête (CTE recommandée).",
           },
+          {
+            type: "code",
+            title: "NTILE et FIRST_VALUE",
+            code: `-- NTILE(4) : répartit en 4 groupes d'effectifs proches (quartiles)
+SELECT first_name, salary,
+    NTILE(4) OVER (ORDER BY salary DESC) AS quartile
+FROM employees;
+
+-- FIRST_VALUE : première valeur de la fenêtre
+SELECT first_name, department_id, salary,
+    FIRST_VALUE(salary) OVER (
+        PARTITION BY department_id
+        ORDER BY salary DESC
+    ) AS max_sal_dept
+FROM employees;`,
+          },
+          {
+            type: "tip",
+            body: "NTILE(n) découpe le résultat ordonné en n seaux. FIRST_VALUE (et LAST_VALUE) lit une valeur en bord de fenêtre — souvent avec ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING pour LAST_VALUE.",
+          },
         ],
         keyPoints: [
           "OVER() définit la fenêtre d'analyse",
           "PARTITION BY = groupe, ORDER BY = ordre dans le groupe",
           "ROW_NUMBER = unique, RANK = saute, DENSE_RANK = ne saute pas",
+          "NTILE(n) découpe en n groupes ; FIRST_VALUE lit le bord de fenêtre",
           "LAG = précédent, LEAD = suivant",
           "ROWS BETWEEN pour les fenêtres glissantes",
           "Les fonctions analytiques s'exécutent après HAVING, avant ORDER BY",
@@ -2581,6 +3114,18 @@ CURRENT ROW         = ligne courante`,
             id: "fc-m11-3",
             front: "Quand s'exécutent les fonctions analytiques ?",
             back: "Après WHERE, GROUP BY et HAVING, mais avant ORDER BY. Pour filtrer sur leur résultat, il faut une sous-requête (CTE).",
+            category: "Analytic Functions",
+          },
+          {
+            id: "fc-m11-4",
+            front: "Que fait NTILE(4) OVER (ORDER BY salary DESC) ?",
+            back: "Répartit les lignes en 4 groupes d'effectifs proches (quartiles) selon le salaire décroissant.",
+            category: "Analytic Functions",
+          },
+          {
+            id: "fc-m11-5",
+            front: "À quoi sert FIRST_VALUE(salary) OVER (PARTITION BY dept ORDER BY salary DESC) ?",
+            back: "Pour chaque ligne, retourne le salaire le plus élevé du département (première valeur de la fenêtre ordonnée).",
             category: "Analytic Functions",
           },
         ],
@@ -2784,7 +3329,19 @@ SELECT sequence_name, last_number FROM user_sequences;
 
 -- Index
 SELECT index_name, table_name, uniqueness
-FROM user_indexes;`,
+FROM user_indexes;
+
+-- Privilèges objet reçus
+SELECT privilege, table_name FROM user_tab_privs;
+
+-- Types de contraintes : P=PK, R=FK, U=UNIQUE, C=CHECK/NOT NULL
+SELECT constraint_name, constraint_type, search_condition
+FROM user_constraints
+WHERE table_name = 'EMPLOYEES';`,
+          },
+          {
+            type: "note",
+            body: "USER_ = objets possédés ; ALL_ = accessibles ; DBA_ = toute la base (privilège DBA). Même famille de vues : USER_TABLES / ALL_TABLES / DBA_TABLES.",
           },
           {
             type: "table",
@@ -2889,22 +3446,69 @@ WHERE table_name = 'EMPLOYEES';`,
           },
           {
             type: "table",
-            title: "Pièges les plus fréquents",
-            headers: ["Piège", "Solution"],
+            title: "Pièges fréquents à l'examen — récapitulatif formateur",
+            headers: ["Piège", "Explication"],
             rows: [
-              ["NULL = NULL retourne FALSE", "Utiliser IS NULL"],
-              ["COUNT(*) vs COUNT(col)", "Comprendre la différence NULL"],
-              ["ROWNUM avant ORDER BY", "Utiliser FETCH FIRST ou sous-requête"],
-              ["ORDER BY et alias du SELECT", "Seul ORDER BY peut les utiliser"],
-              ["DDL auto-commit", "TRUNCATE non annulable"],
-              ["NOT IN avec NULL", "Utiliser NOT EXISTS"],
-              ["NVL vs COALESCE", "2 args vs N args"],
-              ["(+) pour OUTER JOIN", "Côté de la table qui peut manquer"],
+              ["WHERE salaire = NULL", "Ne retourne rien → utiliser IS NULL"],
+              ["WHERE ROWNUM <= 5 ORDER BY …", "ROWNUM avant tri → faux top-N"],
+              ["WHERE COUNT(*) > 5", "Agrégat interdit dans WHERE → HAVING"],
+              ["Colonne non agrégée sans GROUP BY", "ORA-00979"],
+              ["Alias de colonne dans WHERE", "Pas encore défini → nom réel"],
+              ["NOT IN + sous-requête avec NULL", "Retourne 0 ligne"],
+              ["(+) jointure externe", "Ancienne syntaxe Oracle, testée"],
+              ["COUNT(col) vs COUNT(*)", "NULL ignoré vs compté"],
+              ["TRUNCATE vs DELETE", "TRUNCATE = DDL, pas de rollback"],
+              ["UNION vs UNION ALL", "UNION trie et dédoublonne"],
             ],
           },
           {
+            type: "table",
+            title: "Pack formateur — 15 explications en une ligne",
+            headers: ["Thème", "En une ligne"],
+            rows: [
+              ["NULL logique 3 états", "TRUE / FALSE / UNKNOWN — toute comparaison avec NULL → UNKNOWN"],
+              ["Ancienne syntaxe JOIN", "(+) marque le côté optionnel (NULL possibles) ; pas de FULL"],
+              ["Ordre d'exécution", "FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → FETCH"],
+              ["GROUP BY strict", "Toute colonne du SELECT non agrégée doit être dans GROUP BY"],
+              ["DISTINCT vs GROUP BY", "DISTINCT dédoublonne ; GROUP BY permet les agrégats"],
+              ["Sous-requêtes", "Scalaire / multi-lignes / corrélée ; EXISTS s'arrête au 1er match"],
+              ["ROWNUM", "Assigné avant ORDER BY → top-N = sous-requête triée ou FETCH"],
+              ["COUNT(*)", "Compte les lignes ; COUNT(col) ignore les NULL de col"],
+              ["NVL / COALESCE", "NVL = 2 args ; COALESCE = N args, short-circuit, standard"],
+              ["CASE", "Simple = égalité ; searched = conditions libres ; > DECODE"],
+              ["HAVING vs WHERE", "WHERE avant groupes ; HAVING après, agrégats OK"],
+              ["ANY / ALL", "> ANY = > MIN ; > ALL = > MAX (sous-requête)"],
+              ["IN vs EXISTS", "IN liste de valeurs ; EXISTS test d'existence (souvent + rapide)"],
+              ["LIKE", "% = 0-N car. ; _ = 1 car. ; ESCAPE pour littéral %/_"],
+              ["Pièges exam", "NULL, ROWNUM, alias WHERE, GROUP BY, NOT IN+NULL, (+)"],
+            ],
+          },
+          {
+            type: "table",
+            title: "Priorités de révision (synthèse)",
+            headers: ["Thème", "Priorité"],
+            rows: [
+              ["Jointures (ANSI + syntaxe Oracle)", "★★★★★"],
+              ["WHERE vs HAVING", "★★★★★"],
+              ["NULL (IS NULL, NVL, COALESCE)", "★★★★★"],
+              ["Règle GROUP BY strict Oracle", "★★★★★"],
+              ["ROWNUM vs ROW_NUMBER / FETCH", "★★★★"],
+              ["Sous-requêtes corrélées et EXISTS", "★★★★"],
+              ["TO_CHAR / TO_DATE", "★★★★"],
+              ["Contraintes PK/FK/CHECK", "★★★"],
+              ["Analytiques OVER / RANK", "★★★"],
+              ["MERGE et CTE", "★★"],
+            ],
+          },
+          {
+            type: "note",
+            title: "Mnémotechnique d'exécution",
+            body: "**F**rom **W**here **G**roup **H**aving **S**elect **O**rder — « From Where Group Having Select Order ». Les alias du SELECT n'existent qu'après SELECT → utilisables dans ORDER BY uniquement.",
+          },
+          {
             type: "tip",
-            body: "Lisez chaque question DEUX FOIS. Oracle aime inclure des détails subtils : 'Which two...' (choisir 2 réponses), 'Choose the best...' (une seule). Les distracteurs sont conçus pour paraître corrects. Éliminez d'abord les réponses clairement fausses.",
+            title: "Stratégie de révision (formateur)",
+            body: "1) Pratiquer chaque exemple dans SQL Developer. 2) Mémoriser ordre d'exécution + WHERE/HAVING + IN/EXISTS. 3) Comprendre jointures et NULL (pas seulement réciter). 4) Tests blancs chronométrés (QCM). Lisez chaque question DEUX FOIS ; 'Which two…' = multi-réponses.",
           },
           {
             type: "warning",
@@ -2915,8 +3519,8 @@ WHERE table_name = 'EMPLOYEES';`,
           "63 questions, 120 minutes, 63% pour réussir",
           "Environ 1m54s par question",
           "Pas de pénalité pour mauvaise réponse → répondre à tout",
-          "Lire chaque question deux fois",
-          "Éliminer les distracteurs clairement faux d'abord",
+          "Mnémotechnique FWGHSO + table des pièges à revoir la veille",
+          "Priorité max : jointures, NULL, WHERE/HAVING, GROUP BY",
         ],
         flashcards: [
           {
@@ -2930,6 +3534,54 @@ WHERE table_name = 'EMPLOYEES';`,
             front: "Y a-t-il une pénalité pour les mauvaises réponses ?",
             back: "Non. Pas de pénalité pour les mauvaises réponses. Il faut répondre à toutes les questions, même en devinant.",
             category: "Examen",
+          },
+          {
+            id: "fc-m14-q1",
+            front: "Auto-éval Q1 — Différence COUNT(*) vs COUNT(commission) ?",
+            back: "COUNT(*) compte toutes les lignes. COUNT(commission) ignore les lignes où commission IS NULL.",
+            category: "Auto-éval",
+          },
+          {
+            id: "fc-m14-q2",
+            front: "Auto-éval Q2 — SELECT * FROM emp WHERE salaire = NULL ; résultat ?",
+            back: "Aucune ligne. Il faut IS NULL. La comparaison = NULL est toujours UNKNOWN.",
+            category: "Auto-éval",
+          },
+          {
+            id: "fc-m14-q3",
+            front: "Auto-éval Q3 — salaire > ALL (sous-requête IT) : que fait-elle ?",
+            back: "Retourne les employés dont le salaire est supérieur à TOUS les salaires du département IT (= > MAX des salaires IT).",
+            category: "Auto-éval",
+          },
+          {
+            id: "fc-m14-q4",
+            front: "Auto-éval Q4 — WHERE ROWNUM <= 5 ORDER BY salaire DESC : correct ?",
+            back: "Faux pour un top-5 salaires. ROWNUM filtre avant le tri. Il faut sous-requête triée ou FETCH FIRST.",
+            category: "Auto-éval",
+          },
+          {
+            id: "fc-m14-q5",
+            front: "Auto-éval Q5 — WHERE COUNT(*) > 5 … GROUP BY : erreur ?",
+            back: "Oui. Les agrégats n'ont pas le droit dans WHERE. Utiliser HAVING COUNT(*) > 5.",
+            category: "Auto-éval",
+          },
+          {
+            id: "fc-m14-q6",
+            front: "Auto-éval Q6 — Que signifie e.dept_id = d.id(+) ?",
+            back: "Ancienne syntaxe Oracle : LEFT OUTER JOIN (la table marquée (+) peut ne pas matcher — ici departments).",
+            category: "Auto-éval",
+          },
+          {
+            id: "fc-m14-q7",
+            front: "Auto-éval Q7 — Quelle clause filtre après GROUP BY ?",
+            back: "HAVING.",
+            category: "Auto-éval",
+          },
+          {
+            id: "fc-m14-q8",
+            front: "Auto-éval Q8 — SELECT dept, nom, AVG(salaire) FROM emp ; erreur ?",
+            back: "ORA-00979 : nom (et dept si non groupé) doit être dans GROUP BY ou dans une fonction d'agrégation.",
+            category: "Auto-éval",
           },
         ],
         exercises: [],
@@ -3080,24 +3732,35 @@ DESC employees
           },
           {
             type: "code",
-            title: "Cycle complet de sécurité",
-            code: `-- Création utilisateur
+            title: "Cycle complet de sécurité (Session 6.4)",
+            code: `-- Utilisateur + quota
 CREATE USER alice IDENTIFIED BY "Mot2Passe_123";
+ALTER USER alice QUOTA 100M ON users;
+-- DROP USER alice CASCADE;  -- supprime aussi ses objets
 
--- Privilèges système minimaux
+-- Privilèges système
 GRANT CREATE SESSION TO alice;
-GRANT CREATE TABLE TO alice;
+GRANT CREATE TABLE, CREATE VIEW, CREATE SEQUENCE TO alice;
 
--- Privilège objet
-GRANT SELECT, INSERT ON hr.employees TO alice;
+-- Privilèges objet
+GRANT SELECT ON hr.employees TO alice;
+GRANT INSERT, UPDATE, DELETE ON hr.clients TO alice;
+GRANT SELECT ON hr.employees TO alice WITH GRANT OPTION;
 
--- Retrait d'un droit
-REVOKE INSERT ON hr.employees FROM alice;
+REVOKE DELETE ON hr.clients FROM alice;
 
--- Création de rôle
-CREATE ROLE reporting_role;
-GRANT SELECT ON hr.employees TO reporting_role;
-GRANT reporting_role TO alice;`,
+-- Rôles
+CREATE ROLE lecteur;
+CREATE ROLE editeur;
+GRANT SELECT ANY TABLE TO lecteur;  -- large : à manier avec soin
+GRANT SELECT, INSERT, UPDATE ON hr.clients TO editeur;
+GRANT lecteur TO alice;
+GRANT editeur TO bob;
+REVOKE editeur FROM bob;`,
+          },
+          {
+            type: "note",
+            body: "Privilège système = action globale (CREATE SESSION, CREATE TABLE). Privilège objet = droit sur une table/vue. Un rôle regroupe des privilèges pour les attribuer en bloc.",
           },
           {
             type: "warning",
@@ -3167,6 +3830,18 @@ GRANT lecture_only TO bob;`,
             type: "text",
             title: "Pourquoi cette partie est importante",
             body: "Les transactions garantissent la cohérence des données. Savoir exactement quand les données sont validées, annulables, ou implicitement commitées est indispensable pour éviter les incidents en production et répondre correctement aux questions pièges du 1Z0-071.",
+          },
+          {
+            type: "table",
+            title: "Commandes TCL",
+            headers: ["Commande", "Rôle"],
+            rows: [
+              ["COMMIT", "Valide définitivement la transaction"],
+              ["ROLLBACK", "Annule toute la transaction non commitée"],
+              ["ROLLBACK TO savepoint", "Annule partiellement jusqu'au SAVEPOINT"],
+              ["SAVEPOINT nom", "Pose un point de restauration nommé"],
+              ["SET TRANSACTION", "Configure READ ONLY / isolation, etc."],
+            ],
           },
           {
             type: "code",
@@ -3311,6 +3986,43 @@ COMMIT;`,
             ],
           },
           {
+            type: "table",
+            title: "Plan formateur — checklist formation 5 jours",
+            headers: ["Jour", "Focus", "Livrable"],
+            rows: [
+              ["J1", "SELECT / WHERE / ORDER BY + fonctions mono-ligne", "20 requêtes + flashcards NULL/LIKE"],
+              ["J2", "GROUP BY / HAVING + JOINs (ANSI + (+))", "Exercices agrégats + outer joins"],
+              ["J3", "Sous-requêtes + set operators + CTE", "IN/EXISTS + UNION/MINUS"],
+              ["J4", "DML / DDL / TCL + dictionnaire + index", "Scripts CREATE/ALTER + CASCADE"],
+              ["J5", "Pièges ❌/✅ + 2 examens blancs chronométrés", "Score ≥ 70 % blancs"],
+            ],
+          },
+          {
+            type: "code",
+            title: "Pièges formation — ❌ vs ✅ (alias, ROWNUM, GROUP BY)",
+            code: `-- ❌ Alias SELECT dans WHERE (pas encore défini)
+-- SELECT salary * 12 AS annuel FROM employees WHERE annuel > 60000;
+
+-- ✅ Filtrer sur l'expression ou encapsuler
+SELECT salary * 12 AS annuel FROM employees WHERE salary * 12 > 60000;
+-- ou : SELECT * FROM (SELECT salary * 12 AS annuel FROM employees) WHERE annuel > 60000;
+
+-- ❌ ROWNUM avant ORDER BY → faux « top 5 salaires »
+-- SELECT * FROM employees WHERE ROWNUM <= 5 ORDER BY salary DESC;
+
+-- ✅ Tri d'abord, puis limitation
+SELECT * FROM (
+  SELECT * FROM employees ORDER BY salary DESC
+) WHERE ROWNUM <= 5;
+-- ou (12c+) : … ORDER BY salary DESC FETCH FIRST 5 ROWS ONLY;
+
+-- ❌ Colonne non agrégée hors GROUP BY
+-- SELECT department_id, last_name, AVG(salary) FROM employees GROUP BY department_id;
+
+-- ✅ Regrouper toutes les colonnes non agrégées, ou n'agréger que
+SELECT department_id, AVG(salary) FROM employees GROUP BY department_id;`,
+          },
+          {
             type: "text",
             title: "Méthode de révision 5 jours",
             body: "Jour 1 : SELECT/WHERE/ORDER BY + fonctions mono-ligne.\nJour 2 : GROUP BY/HAVING + JOINs.\nJour 3 : Sous-requêtes + opérateurs ensemblistes.\nJour 4 : DML/DDL/TCL + dictionnaire.\nJour 5 : révision pièges + 2 examens blancs chronométrés.",
@@ -3326,8 +4038,8 @@ COMMIT;`,
         ],
         keyPoints: [
           "Vision exhaustive DDL/DML/DCL/TCL/DQL + SQL*Plus",
-          "Pièges majeurs : NULL, ROWNUM, GROUP BY, NOT IN",
-          "Révision structurée en 5 jours",
+          "Pièges majeurs : NULL, ROWNUM, GROUP BY, NOT IN, alias WHERE",
+          "Révision structurée en 5 jours (checklist formateur)",
           "Priorité à la compréhension logique, pas seulement la syntaxe",
         ],
         flashcards: [

@@ -1,7 +1,7 @@
 /**
  * Oracle 1Z0-071 — banque Q&R professionnelle
  * Sources : modules du site + documents OCA (1Z0-071 / SQL 2)
- * 214 questions — réponses vérifiées (Oracle SQL), multi-réponses type examen.
+ * 230 questions — réponses vérifiées (Oracle SQL), multi-réponses type examen.
  */
 import type { QuizQuestion } from "./types";
 
@@ -3382,6 +3382,236 @@ export const quizQuestions: QuizQuestion[] = [
     explanation: "1NF = atomique ; 2NF = 1NF + pas de dépendance partielle (clés composites).",
     topic: "Normalisation",
     difficulty: "medium",
+  },
+  {
+    id: "q215",
+    moduleId: "m1",
+    question: "Dans un environnement de formation Oracle typique, quel outil sert surtout d'IDE graphique pour écrire et exécuter du SQL ?",
+    options: [
+      "SQL*Plus uniquement",
+      "Oracle SQL Developer",
+      "EXPLAIN PLAN seul",
+      "RMAN"
+    ],
+    correctIndexes: [1],
+    explanation: "SQL Developer = IDE graphique. SQL*Plus = ligne de commande. Les deux parlent le même SQL ; RMAN est pour la sauvegarde/restauration.",
+    topic: "Environnement",
+    difficulty: "easy",
+  },
+  {
+    id: "q216",
+    moduleId: "m4",
+    question: "Quelle forme de CASE permet des conditions comme salary < 5000 ?",
+    options: [
+      "CASE simple uniquement (WHEN valeur)",
+      "CASE recherché (searched CASE)",
+      "DECODE uniquement",
+      "NVL2"
+    ],
+    correctIndexes: [1],
+    explanation: "Le CASE recherché utilise WHEN condition THEN … et accepte <, >, BETWEEN, LIKE. Le CASE simple ne fait que l'égalité sur une expression.",
+    topic: "CASE",
+    difficulty: "easy",
+  },
+  {
+    id: "q217",
+    moduleId: "m4",
+    question: "Quelle affirmation est vraie concernant CASE et DECODE ?",
+    options: [
+      "DECODE est standard SQL et gère les conditions complexes",
+      "CASE est standard SQL ; DECODE est spécifique Oracle et limité à l'égalité",
+      "CASE et DECODE sont strictement équivalents",
+      "DECODE remplace toujours NVL"
+    ],
+    correctIndexes: [1],
+    explanation: "CASE = standard, conditions libres. DECODE = Oracle, égalité. Préférez CASE en production.",
+    topic: "CASE",
+    difficulty: "medium",
+  },
+  {
+    id: "q218",
+    moduleId: "m4",
+    question: "Quelle fonction retourne la date/heure selon le fuseau de la session client ?",
+    options: ["SYSDATE", "CURRENT_DATE", "DBTIMEZONE", "TRUNC(SYSDATE)"],
+    correctIndexes: [1],
+    explanation: "CURRENT_DATE / CURRENT_TIMESTAMP = session. SYSDATE / SYSTIMESTAMP = serveur.",
+    topic: "Dates",
+    difficulty: "easy",
+  },
+  {
+    id: "q219",
+    moduleId: "m4",
+    question: "Que retourne LAST_DAY(DATE '2026-02-10') ?",
+    options: [
+      "10-FEB-26",
+      "01-MAR-26",
+      "28-FEB-26 (ou 29 si année bissextile)",
+      "Le prochain lundi"
+    ],
+    correctIndexes: [2],
+    explanation: "LAST_DAY retourne le dernier jour du mois de la date donnée. NEXT_DAY sert pour un jour de semaine nommé.",
+    topic: "Dates",
+    difficulty: "medium",
+  },
+  {
+    id: "q220",
+    moduleId: "m5",
+    question: "Quelle est la différence principale entre DISTINCT et GROUP BY ?",
+    options: [
+      "Ils sont toujours interchangeables",
+      "DISTINCT dédoublonne ; GROUP BY regroupe pour permettre les agrégats",
+      "GROUP BY ne peut pas être utilisé avec AVG",
+      "DISTINCT exige HAVING"
+    ],
+    correctIndexes: [1],
+    explanation: "DISTINCT élimine les doublons. GROUP BY crée des groupes et autorise SUM/AVG/COUNT par groupe (+ HAVING).",
+    topic: "GROUP BY",
+    difficulty: "easy",
+  },
+  {
+    id: "q221",
+    moduleId: "m6",
+    question: "Dans WHERE e.department_id = d.department_id(+), que signifie le (+) ?",
+    options: [
+      "RIGHT OUTER JOIN (garde departments)",
+      "LEFT OUTER JOIN (garde employees) : departments peut manquer",
+      "FULL OUTER JOIN",
+      "INNER JOIN obligatoire"
+    ],
+    correctIndexes: [1],
+    explanation: "Le (+) marque le côté optionnel (NULL possibles). Ici sur departments → équivalent LEFT JOIN depuis employees.",
+    topic: "JOIN",
+    difficulty: "medium",
+  },
+  {
+    id: "q222",
+    moduleId: "m6",
+    question: "Pourquoi e.col(+) = d.col(+) est incorrect pour un FULL OUTER JOIN ?",
+    options: [
+      "Parce que (+) accélère trop la jointure",
+      "Parce que Oracle interdit (+) des deux côtés ; FULL JOIN = syntaxe ANSI uniquement",
+      "Parce que FULL JOIN n'existe pas en SQL",
+      "Parce qu'il faut utiliser NATURAL JOIN"
+    ],
+    correctIndexes: [1],
+    explanation: "L'ancienne syntaxe (+) ne peut pas être des deux côtés. Pour un FULL OUTER JOIN, utiliser la syntaxe ANSI.",
+    topic: "JOIN",
+    difficulty: "medium",
+  },
+  {
+    id: "q223",
+    moduleId: "m10",
+    question: "À quoi sert CREATE INDEX idx ON emp(UPPER(last_name)) ?",
+    options: [
+      "À forcer UPPER dans tous les INSERT",
+      "À accélérer les recherches du type WHERE UPPER(last_name) = '…'",
+      "À remplacer une PRIMARY KEY",
+      "À supprimer les doublons automatiquement"
+    ],
+    correctIndexes: [1],
+    explanation: "Index fonctionnel : l'expression de l'index doit correspondre à celle du prédicat pour être utilisable.",
+    topic: "Index",
+    difficulty: "medium",
+  },
+  {
+    id: "q224",
+    moduleId: "m10",
+    question: "Avec ON DELETE CASCADE sur une FK, que se passe-t-il si on DELETE le parent ?",
+    options: [
+      "Erreur ORA toujours",
+      "Les lignes enfants sont aussi supprimées",
+      "Les FK enfants passent à NULL uniquement",
+      "Seul le parent est marqué DELETED"
+    ],
+    correctIndexes: [1],
+    explanation: "CASCADE propage la suppression aux enfants. SET NULL mettrait la FK à NULL. Sans option, le DELETE parent est souvent bloqué s'il reste des enfants.",
+    topic: "Contraintes",
+    difficulty: "easy",
+  },
+  {
+    id: "q225",
+    moduleId: "m10",
+    question: "Quelles opérations ALTER TABLE sur colonnes sont correctes ?",
+    options: [
+      "ADD, MODIFY, DROP COLUMN, RENAME COLUMN",
+      "Seulement ADD",
+      "RENAME COLUMN est interdit en Oracle",
+      "DROP COLUMN nécessite toujours CASCADE CONSTRAINTS"
+    ],
+    correctIndexes: [0],
+    explanation: "Oracle permet ADD, MODIFY, DROP COLUMN et RENAME COLUMN. CASCADE CONSTRAINTS n'est requis que si des contraintes dépendantes bloquent le DROP.",
+    topic: "DDL",
+    difficulty: "easy",
+  },
+  {
+    id: "q226",
+    moduleId: "m18",
+    question: "Pourquoi SELECT salary*12 AS annuel FROM emp WHERE annuel > 60000 échoue-t-il ?",
+    options: [
+      "Parce que * est interdit",
+      "Parce que l'alias SELECT n'est pas encore défini au moment du WHERE (ordre d'exécution)",
+      "Parce que 60000 est trop grand",
+      "Parce qu'il faut GROUP BY annuel"
+    ],
+    correctIndexes: [1],
+    explanation: "Ordre logique : WHERE avant SELECT. L'alias annuel n'existe qu'après SELECT ; utilisable dans ORDER BY (ou via sous-requête).",
+    topic: "Ordre d'exécution",
+    difficulty: "medium",
+  },
+  {
+    id: "q227",
+    moduleId: "m18",
+    question: "Quelle requête donne correctement les 5 plus hauts salaires ?",
+    options: [
+      "SELECT * FROM employees WHERE ROWNUM <= 5 ORDER BY salary DESC",
+      "SELECT * FROM employees ORDER BY salary DESC FETCH FIRST 5 ROWS ONLY",
+      "SELECT * FROM employees WHERE ROWNUM = 5",
+      "SELECT TOP 5 * FROM employees ORDER BY salary DESC"
+    ],
+    correctIndexes: [1],
+    explanation: "ROWNUM filtre avant ORDER BY → faux top-N. FETCH FIRST (12c+) ou sous-requête triée puis ROWNUM est correct. TOP n'existe pas en Oracle.",
+    topic: "ROWNUM",
+    difficulty: "medium",
+  },
+  {
+    id: "q228",
+    moduleId: "m5",
+    question: "SELECT department_id, last_name, AVG(salary) FROM employees GROUP BY department_id provoque ?",
+    options: [
+      "Un résultat correct",
+      "ORA-00979 (last_name non agrégé / hors GROUP BY)",
+      "ORA-01427",
+      "Un FULL OUTER JOIN implicite"
+    ],
+    correctIndexes: [1],
+    explanation: "Règle GROUP BY strict Oracle : toute colonne du SELECT non agrégée doit figurer dans le GROUP BY.",
+    topic: "GROUP BY",
+    difficulty: "medium",
+  },
+  {
+    id: "q229",
+    moduleId: "m4",
+    question: "Que fait NUMTODSINTERVAL(90, 'MINUTE') ?",
+    options: [
+      "Ajoute 90 minutes à SYSDATE automatiquement",
+      "Convertit 90 minutes en INTERVAL DAY TO SECOND",
+      "Retourne un NUMBER",
+      "Extrait les minutes d'une date"
+    ],
+    correctIndexes: [1],
+    explanation: "NUMTODSINTERVAL convertit un nombre en intervalle jour/heure/minute/seconde. L'arithmétique date + intervalle se fait ensuite explicitement.",
+    topic: "Intervalles",
+    difficulty: "medium",
+  },
+  {
+    id: "q230",
+    moduleId: "m14",
+    question: "Selon l'ordre d'exécution SQL, laquelle s'exécute en premier ?",
+    options: ["SELECT", "WHERE", "FROM", "ORDER BY"],
+    correctIndexes: [2],
+    explanation: "FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → FETCH. SELECT s'écrit en premier mais s'exécute après HAVING.",
+    topic: "Ordre d'exécution",
+    difficulty: "easy",
   },
 ];
 
