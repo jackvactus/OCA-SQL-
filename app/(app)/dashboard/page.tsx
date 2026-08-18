@@ -1,8 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { formatDistanceToNow } from "date-fns";
+import { fr } from "date-fns/locale";
 import {
   BookOpen,
   Brain,
@@ -19,6 +21,7 @@ import {
   Code2,
   Sparkles,
   CalendarDays,
+  History,
 } from "lucide-react";
 import {
   Card,
@@ -33,6 +36,7 @@ import { Badge } from "@/components/ui/badge";
 import { modules } from "@/lib/modules-data";
 import { quizQuestions } from "@/lib/quiz-data";
 import { useProgress } from "@/hooks/use-progress";
+import { ACTIVITY_ACTION_LABELS, type ActivityAction } from "@/lib/activity-types";
 import {
   PieChart,
   Pie,
@@ -46,8 +50,26 @@ import {
   CartesianGrid,
 } from "recharts";
 
+interface RecentActivityEntry {
+  id: string;
+  action: string;
+  created_at: string;
+}
+
 export default function DashboardPage() {
   const { progress, loaded } = useProgress();
+  const [recentActivity, setRecentActivity] = useState<RecentActivityEntry[]>([]);
+
+  useEffect(() => {
+    fetch("/api/activity?limit=5")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.entries) setRecentActivity(data.entries);
+      })
+      .catch(() => {
+        // ignore, widget just stays empty
+      });
+  }, []);
 
   const stats = useMemo(() => {
     const totalLessons = modules.reduce((sum, m) => sum + m.lessons.length, 0);
@@ -387,6 +409,42 @@ export default function DashboardPage() {
               </Link>
             );
           })}
+        </CardContent>
+      </Card>
+
+      {/* Recent activity */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <History className="h-4 w-4 text-primary" />
+            Activité récente
+          </CardTitle>
+          <Link href="/activity">
+            <Button variant="ghost" size="sm" className="gap-1 text-xs">
+              Voir tout
+              <ArrowRight className="h-3 w-3" />
+            </Button>
+          </Link>
+        </CardHeader>
+        <CardContent>
+          {recentActivity.length === 0 ? (
+            <p className="py-4 text-center text-sm text-muted-foreground">
+              Aucune activité enregistrée pour le moment.
+            </p>
+          ) : (
+            <ul className="divide-y divide-border">
+              {recentActivity.map((entry) => (
+                <li key={entry.id} className="flex items-center justify-between gap-3 py-2.5 text-sm">
+                  <span className="font-medium">
+                    {ACTIVITY_ACTION_LABELS[entry.action as ActivityAction] ?? entry.action}
+                  </span>
+                  <span className="whitespace-nowrap text-xs text-muted-foreground">
+                    {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale: fr })}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
         </CardContent>
       </Card>
 

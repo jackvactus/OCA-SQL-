@@ -921,6 +921,16 @@ export default function SandboxPage() {
       timestamp: Date.now(),
     };
     setHistory((h) => [entry, ...h].slice(0, 50));
+
+    if (query.trim()) {
+      fetch("/api/progress/sandbox-query", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: query.trim() }),
+      }).catch(() => {
+        // best-effort activity logging, ignore failures
+      });
+    }
   }, [query]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

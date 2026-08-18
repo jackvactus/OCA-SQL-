@@ -128,6 +128,13 @@ export default function ExamPage() {
     setTimeRemaining(minutes * 60);
     setStartTime(Date.now());
     setPhase("exam");
+    fetch("/api/progress/exam/start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ questionCount: count }),
+    }).catch(() => {
+      // best-effort activity logging, ignore failures
+    });
   }, [questionCount, customCount]);
 
   const selectAnswer = useCallback((qIndex: number, optionIndex: number) => {

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   BookOpen,
@@ -20,30 +20,54 @@ import {
   Flame,
   Trophy,
   Layers,
+  History,
+  LogOut,
+  UserCircle2,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useProgress } from "@/hooks/use-progress";
+import { resetProgressStore } from "@/lib/progress-store";
 
 const navItems = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/courses", label: "Cours", icon: BookOpen },
   { href: "/quiz", label: "Quiz", icon: Brain },
   { href: "/exam", label: "Examen", icon: GraduationCap },
   { href: "/flashcards", label: "Flashcards", icon: Layers },
   { href: "/sandbox", label: "SQL Sandbox", icon: Code2 },
   { href: "/reference", label: "Référence", icon: Library },
+  { href: "/activity", label: "Activité", icon: History },
 ];
 
-export function AppLayout({ children }: { children: React.ReactNode }) {
+export function AppLayout({
+  children,
+  user,
+}: {
+  children: React.ReactNode;
+  user: { id: string; email: string };
+}) {
   const pathname = usePathname();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   const { theme, setTheme } = useTheme();
   const { progress, loaded } = useProgress();
 
   useEffect(() => setMounted(true), []);
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } finally {
+      resetProgressStore();
+      router.push("/login");
+      router.refresh();
+    }
+  };
 
   const level = Math.floor(progress.xp / 500) + 1;
   const xpInLevel = progress.xp % 500;
@@ -172,6 +196,21 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </Button>
             )}
+            <div className="ml-1 hidden items-center gap-2 rounded-full border border-border/70 bg-card/70 py-1 pl-1 pr-3 sm:flex">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <UserCircle2 className="h-4 w-4" />
+              </div>
+              <span className="max-w-[10rem] truncate text-sm font-medium">{user.email}</span>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              title="Déconnexion"
+              onClick={handleLogout}
+              disabled={loggingOut}
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
           </div>
         </header>
 
