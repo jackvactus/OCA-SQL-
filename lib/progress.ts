@@ -1,4 +1,4 @@
-import { pool, query } from "@/lib/db";
+import { getPool, query } from "@/lib/db";
 import { defaultProgress, type ProgressData } from "@/lib/progress-types";
 
 export * from "@/lib/progress-types";
@@ -51,7 +51,7 @@ export async function updateProgress(
   userId: string,
   mutate: (prev: ProgressData) => ProgressData,
 ): Promise<ProgressData> {
-  const client = await pool.connect();
+  const client = await getPool().connect();
   try {
     await client.query("begin");
     await client.query(
