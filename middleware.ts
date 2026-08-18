@@ -20,6 +20,14 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
+  // Fast, edge-only redirect for non-admins. The actual admin pages and
+  // /api/admin/* routes re-verify role (and active status) against the
+  // database via requireAdmin() before doing anything — this check is just
+  // UX, not the security boundary.
+  if (session && pathname.startsWith("/admin") && session.role !== "admin") {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
   return NextResponse.next();
 }
 

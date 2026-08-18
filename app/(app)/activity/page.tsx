@@ -12,6 +12,9 @@ import {
   Layers,
   LogIn,
   LogOut,
+  ShieldAlert,
+  ShieldCheck,
+  ShieldX,
   UserPlus,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -34,6 +37,9 @@ const ACTION_ICONS: Record<ActivityAction, typeof History> = {
   bookmark_added: Bookmark,
   bookmark_removed: BookmarkX,
   sandbox_query_executed: Code2,
+  admin_role_changed: ShieldAlert,
+  admin_user_activated: ShieldCheck,
+  admin_user_deactivated: ShieldX,
 };
 
 function describeMetadata(action: ActivityAction, metadata: Record<string, unknown>): string | null {
@@ -52,6 +58,11 @@ function describeMetadata(action: ActivityAction, metadata: Record<string, unkno
       return typeof metadata.cardId === "string" ? `Carte : ${metadata.cardId}` : null;
     case "sandbox_query_executed":
       return typeof metadata.query === "string" ? metadata.query : null;
+    case "admin_role_changed":
+      return typeof metadata.newRole === "string" ? `Nouveau rôle : ${metadata.newRole}` : null;
+    case "admin_user_activated":
+    case "admin_user_deactivated":
+      return typeof metadata.changedBy === "string" ? `Par : ${metadata.changedBy}` : null;
     default:
       return null;
   }

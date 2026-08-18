@@ -22,6 +22,7 @@ import {
   Layers,
   History,
   LogOut,
+  ShieldCheck,
   UserCircle2,
 } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -29,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useProgress } from "@/hooks/use-progress";
 import { resetProgressStore } from "@/lib/progress-store";
+import type { UserRole } from "@/lib/auth/jwt";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -41,12 +43,14 @@ const navItems = [
   { href: "/activity", label: "Activité", icon: History },
 ];
 
+const adminNavItem = { href: "/admin", label: "Administration", icon: ShieldCheck };
+
 export function AppLayout({
   children,
   user,
 }: {
   children: React.ReactNode;
-  user: { id: string; email: string };
+  user: { id: string; email: string; role: UserRole };
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -72,6 +76,7 @@ export function AppLayout({
   const level = Math.floor(progress.xp / 500) + 1;
   const xpInLevel = progress.xp % 500;
   const xpPercent = (xpInLevel / 500) * 100;
+  const visibleNavItems = user.role === "admin" ? [...navItems, adminNavItem] : navItems;
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
@@ -102,7 +107,7 @@ export function AppLayout({
 
           {/* Navigation */}
           <nav className="flex-1 space-y-1 overflow-y-auto p-4 scrollbar-thin">
-            {navItems.map((item) => {
+            {visibleNavItems.map((item) => {
               const Icon = item.icon;
               const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
               return (

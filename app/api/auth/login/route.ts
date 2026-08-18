@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { query } from "@/lib/db";
 import { DUMMY_PASSWORD_HASH, verifyPassword } from "@/lib/auth/password";
 import { setSessionCookie } from "@/lib/auth/session";
+import type { UserRole } from "@/lib/auth/jwt";
 import { loginSchema } from "@/lib/validation/auth";
 import { logActivity } from "@/lib/activity";
 
@@ -15,11 +16,17 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { email, password } = parsed.data;
+  const { email, password, remember } = parsed.data;
   const normalizedEmail = email.toLowerCase();
 
-  const result = await query<{ id: string; email: string; password_hash: string }>(
-    "select id, email, password_hash from users where email = $1",
+  const result = await query<{
+    id: string;
+    email: string;
+    password_hash: string;
+    role: UserRole;
+    is_active: boolean;
+  }>(
+    "select id, email, password_hash, role, is_active from users where email = $1",
     [normalizedEmail],
   );
   const user = result.rows[0];
@@ -31,8 +38,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Email ou mot de passe incorrect" }, { status: 401 });
   }
 
-  await setSessionCookie({ id: user.id, email: user.email });
+  if (!user.is_active) {
+    return NextResponse.json({ error: "Ce compte a été désactivé." }, { status: 403 });
+  }
+
+  await setSessionCookie(
+    { id: user.id, email: user.email, role: user.role },
+    { remember },
+  );
   await logActivity(user.id, "login", { method: "password" }, request);
 
-  return NextResponse.json({ id: user.id, email: user.email });
+  return NextResponse.json({ id: user.id, email: user.email, role: user.role });
 }

@@ -9,7 +9,10 @@ export type ActivityAction =
   | "flashcard_reviewed"
   | "bookmark_added"
   | "bookmark_removed"
-  | "sandbox_query_executed";
+  | "sandbox_query_executed"
+  | "admin_role_changed"
+  | "admin_user_activated"
+  | "admin_user_deactivated";
 
 export const ACTIVITY_ACTION_LABELS: Record<ActivityAction, string> = {
   register: "Compte créé",
@@ -23,4 +26,7 @@ export const ACTIVITY_ACTION_LABELS: Record<ActivityAction, string> = {
   bookmark_added: "Signet ajouté",
   bookmark_removed: "Signet retiré",
   sandbox_query_executed: "Requête SQL exécutée",
+  admin_role_changed: "Rôle modifié par un administrateur",
+  admin_user_activated: "Compte réactivé par un administrateur",
+  admin_user_deactivated: "Compte désactivé par un administrateur",
 };

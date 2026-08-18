@@ -40,7 +40,10 @@ export async function POST(request: NextRequest) {
 
   await query("insert into user_progress (user_id) values ($1) on conflict do nothing", [user.id]);
 
-  await setSessionCookie(user);
+  // New accounts are always plain users — the "role" column defaults to
+  // 'user' in the DB; admins are only ever created via scripts/seed-admin.ts
+  // or promoted by an existing admin.
+  await setSessionCookie({ ...user, role: "user" });
   await logActivity(user.id, "register", { displayName }, request);
   await logActivity(user.id, "login", { method: "register" }, request);
 

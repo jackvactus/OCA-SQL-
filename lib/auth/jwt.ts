@@ -1,9 +1,12 @@
 import { SignJWT } from "jose/jwt/sign";
 import { jwtVerify } from "jose/jwt/verify";
 
+export type UserRole = "user" | "admin";
+
 export interface SessionPayload {
   sub: string;
   email: string;
+  role: UserRole;
 }
 
 export const SESSION_COOKIE = "session";
@@ -19,7 +22,7 @@ function getSecretKey() {
 }
 
 export async function signSession(payload: SessionPayload) {
-  return new SignJWT({ email: payload.email })
+  return new SignJWT({ email: payload.email, role: payload.role })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(payload.sub)
     .setIssuedAt()
@@ -33,7 +36,10 @@ export async function verifySession(token: string): Promise<SessionPayload | nul
     if (typeof payload.sub !== "string" || typeof payload.email !== "string") {
       return null;
     }
-    return { sub: payload.sub, email: payload.email };
+    // Cookies issued before the role claim existed won't have it — default
+    // to "user" rather than rejecting the session.
+    const role = payload.role === "admin" ? "admin" : "user";
+    return { sub: payload.sub, email: payload.email, role };
   } catch {
     return null;
   }

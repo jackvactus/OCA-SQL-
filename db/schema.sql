@@ -34,3 +34,7 @@ create table if not exists activity_log (
 );
 create index if not exists activity_log_user_created_idx on activity_log(user_id, created_at desc);
 create index if not exists activity_log_action_idx on activity_log(action);
+
+alter table users add column if not exists role text not null default 'user' check (role in ('user','admin'));
+alter table users add column if not exists is_active boolean not null default true;
+create index if not exists users_role_idx on users(role);
