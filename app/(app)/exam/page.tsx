@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { quizQuestions } from "@/lib/quiz-data";
+import {
+  quizQuestions,
+  isAnswerCorrect,
+  requiredAnswerCount,
+} from "@/lib/quiz-data";
+import type { QuizQuestion } from "@/lib/types";
 import { useProgress } from "@/hooks/use-progress";
 import {
   Card,
@@ -14,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
@@ -35,17 +41,7 @@ import {
 } from "lucide-react";
 
 type ExamPhase = "setup" | "exam" | "review" | "results";
-
-interface ExamQuestion {
-  id: string;
-  moduleId: string;
-  question: string;
-  options: string[];
-  correctIndex: number;
-  explanation: string;
-  topic: string;
-  difficulty: "easy" | "medium" | "hard";
-}
+type ExamQuestion = QuizQuestion;
 
 const PASS_THRESHOLD = 63;
 const FULL_EXAM_MINUTES = 100;
@@ -73,7 +69,7 @@ export default function ExamPage() {
   const [questionCount, setQuestionCount] = useState<number>(63);
   const [customCount, setCustomCount] = useState<string>("");
   const [examQuestions, setExamQuestions] = useState<ExamQuestion[]>([]);
-  const [answers, setAnswers] = useState<Record<number, number>>({});
+  const [answers, setAnswers] = useState<Record<number, number[]>>({});
   const [markedForReview, setMarkedForReview] = useState<Set<number>>(new Set());
   const [currentIndex, setCurrentIndex] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(0);
@@ -137,9 +133,25 @@ export default function ExamPage() {
     });
   }, [questionCount, customCount]);
 
-  const selectAnswer = useCallback((qIndex: number, optionIndex: number) => {
-    setAnswers((prev) => ({ ...prev, [qIndex]: optionIndex }));
-  }, []);
+  const selectAnswer = useCallback(
+    (qIndex: number, optionIndex: number, multi: boolean, max: number) => {
+      setAnswers((prev) => {
+        if (!multi) return { ...prev, [qIndex]: [optionIndex] };
+        const current = prev[qIndex] ?? [];
+        if (current.includes(optionIndex)) {
+          const next = current.filter((i) => i !== optionIndex);
+          if (next.length === 0) {
+            const { [qIndex]: _, ...rest } = prev;
+            return rest;
+          }
+          return { ...prev, [qIndex]: next };
+        }
+        if (current.length >= max) return prev;
+        return { ...prev, [qIndex]: [...current, optionIndex] };
+      });
+    },
+    [],
+  );
 
   const toggleMark = useCallback((qIndex: number) => {
     setMarkedForReview((prev) => {
@@ -170,7 +182,8 @@ export default function ExamPage() {
   const finishExam = useCallback(() => {
     const timeTaken = Math.round((endTime - startTime) / 1000);
     const score = examQuestions.reduce(
-      (acc, q, i) => (answers[i] === q.correctIndex ? acc + 1 : acc),
+      (acc, q, i) =>
+        isAnswerCorrect(q, answers[i] ?? []) ? acc + 1 : acc,
       0,
     );
     recordExam(score, examQuestions.length, timeTaken);
@@ -187,7 +200,8 @@ export default function ExamPage() {
   }, []);
 
   const score = examQuestions.reduce(
-    (acc, q, i) => (answers[i] === q.correctIndex ? acc + 1 : acc),
+    (acc, q, i) =>
+      isAnswerCorrect(q, answers[i] ?? []) ? acc + 1 : acc,
     0,
   );
   const scorePercent = examQuestions.length
@@ -536,44 +550,106 @@ export default function ExamPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <RadioGroup
-                    value={answers[currentIndex]?.toString()}
-                    onValueChange={(val) =>
-                      selectAnswer(currentIndex, parseInt(val, 10))
-                    }
-                    className="space-y-3"
-                  >
-                    {currentQ.options.map((option, optIdx) => {
-                      const isSelected = answers[currentIndex] === optIdx;
-                      return (
-                        <div
-                          key={optIdx}
-                          className={cn(
-                            "flex items-start space-x-3 rounded-lg border-2 p-4 transition-all cursor-pointer",
-                            isSelected
-                              ? "border-primary bg-primary/5"
-                              : "border-border hover:border-primary/30 hover:bg-muted/30",
-                          )}
-                          onClick={() => selectAnswer(currentIndex, optIdx)}
-                        >
-                          <RadioGroupItem
-                            value={optIdx.toString()}
-                            id={`q-${currentIndex}-opt-${optIdx}`}
-                            className="mt-0.5"
-                          />
-                          <label
-                            htmlFor={`q-${currentIndex}-opt-${optIdx}`}
-                            className="text-sm leading-relaxed cursor-pointer flex-1"
+                  {requiredAnswerCount(currentQ) > 1 && (
+                    <p className="mb-3 text-sm text-primary font-medium">
+                      Choisir {requiredAnswerCount(currentQ)} réponses
+                      {(answers[currentIndex]?.length ?? 0) > 0 &&
+                        ` (${answers[currentIndex].length}/${requiredAnswerCount(currentQ)})`}
+                    </p>
+                  )}
+                  {requiredAnswerCount(currentQ) > 1 ? (
+                    <div className="space-y-3">
+                      {currentQ.options.map((option, optIdx) => {
+                        const isSelected =
+                          answers[currentIndex]?.includes(optIdx) ?? false;
+                        return (
+                          <div
+                            key={optIdx}
+                            className={cn(
+                              "flex items-start space-x-3 rounded-lg border-2 p-4 transition-all cursor-pointer",
+                              isSelected
+                                ? "border-primary bg-primary/5"
+                                : "border-border hover:border-primary/30 hover:bg-muted/30",
+                            )}
+                            onClick={() =>
+                              selectAnswer(
+                                currentIndex,
+                                optIdx,
+                                true,
+                                requiredAnswerCount(currentQ),
+                              )
+                            }
                           >
-                            <span className="font-medium mr-2">
-                              {String.fromCharCode(65 + optIdx)}.
+                            <Checkbox
+                              checked={isSelected}
+                              className="mt-0.5"
+                              onCheckedChange={() =>
+                                selectAnswer(
+                                  currentIndex,
+                                  optIdx,
+                                  true,
+                                  requiredAnswerCount(currentQ),
+                                )
+                              }
+                            />
+                            <span className="text-sm leading-relaxed flex-1">
+                              <span className="font-medium mr-2">
+                                {String.fromCharCode(65 + optIdx)}.
+                              </span>
+                              {option}
                             </span>
-                            {option}
-                          </label>
-                        </div>
-                      );
-                    })}
-                  </RadioGroup>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <RadioGroup
+                      value={answers[currentIndex]?.[0]?.toString()}
+                      onValueChange={(val) =>
+                        selectAnswer(
+                          currentIndex,
+                          parseInt(val, 10),
+                          false,
+                          1,
+                        )
+                      }
+                      className="space-y-3"
+                    >
+                      {currentQ.options.map((option, optIdx) => {
+                        const isSelected =
+                          answers[currentIndex]?.[0] === optIdx;
+                        return (
+                          <div
+                            key={optIdx}
+                            className={cn(
+                              "flex items-start space-x-3 rounded-lg border-2 p-4 transition-all cursor-pointer",
+                              isSelected
+                                ? "border-primary bg-primary/5"
+                                : "border-border hover:border-primary/30 hover:bg-muted/30",
+                            )}
+                            onClick={() =>
+                              selectAnswer(currentIndex, optIdx, false, 1)
+                            }
+                          >
+                            <RadioGroupItem
+                              value={optIdx.toString()}
+                              id={`q-${currentIndex}-opt-${optIdx}`}
+                              className="mt-0.5"
+                            />
+                            <label
+                              htmlFor={`q-${currentIndex}-opt-${optIdx}`}
+                              className="text-sm leading-relaxed cursor-pointer flex-1"
+                            >
+                              <span className="font-medium mr-2">
+                                {String.fromCharCode(65 + optIdx)}.
+                              </span>
+                              {option}
+                            </label>
+                          </div>
+                        );
+                      })}
+                    </RadioGroup>
+                  )}
                 </CardContent>
               </Card>
 
@@ -725,8 +801,12 @@ export default function ExamPage() {
                         </div>
                         <div className="text-xs text-muted-foreground shrink-0">
                           {answered
-                            ? `Answer: ${String.fromCharCode(65 + answers[i])}`
-                            : "Not answered"}
+                            ? `Réponse : ${(answers[i] ?? [])
+                                .slice()
+                                .sort((a, b) => a - b)
+                                .map((n) => String.fromCharCode(65 + n))
+                                .join(", ")}`
+                            : "Sans réponse"}
                         </div>
                       </button>
                     );
@@ -842,9 +922,9 @@ export default function ExamPage() {
               <ScrollArea className="h-[600px] pr-4">
                 <div className="space-y-4">
                   {examQuestions.map((q, i) => {
-                    const userAnswer = answers[i];
-                    const isCorrect = userAnswer === q.correctIndex;
-                    const wasAnswered = userAnswer !== undefined;
+                    const userAnswer = answers[i] ?? [];
+                    const isCorrect = isAnswerCorrect(q, userAnswer);
+                    const wasAnswered = answers[i] !== undefined;
                     return (
                       <div
                         key={q.id}
@@ -890,6 +970,11 @@ export default function ExamPage() {
                               >
                                 {q.difficulty}
                               </Badge>
+                              {q.correctIndexes.length > 1 && (
+                                <Badge variant="outline" className="text-xs">
+                                  {q.correctIndexes.length} réponses
+                                </Badge>
+                              )}
                             </div>
                             <p className="text-sm font-medium leading-relaxed">
                               {q.question}
@@ -899,8 +984,9 @@ export default function ExamPage() {
 
                         <div className="space-y-2 ml-10">
                           {q.options.map((option, optIdx) => {
-                            const isUserAnswer = userAnswer === optIdx;
-                            const isCorrectAnswer = q.correctIndex === optIdx;
+                            const isUserAnswer = userAnswer.includes(optIdx);
+                            const isCorrectAnswer =
+                              q.correctIndexes.includes(optIdx);
                             return (
                               <div
                                 key={optIdx}

@@ -51,7 +51,8 @@ export interface QuizQuestion {
   moduleId: string;
   question: string;
   options: string[];
-  correctIndex: number;
+  /** Index(es) of correct option(s). Length > 1 ⇒ question multi-réponses (choose N). */
+  correctIndexes: number[];
   explanation: string;
   topic: string;
   difficulty: "easy" | "medium" | "hard";

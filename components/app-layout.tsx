@@ -33,7 +33,7 @@ import { resetProgressStore } from "@/lib/progress-store";
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/courses", label: "Cours", icon: BookOpen },
-  { href: "/quiz", label: "Quiz", icon: Brain },
+  { href: "/quiz", label: "Q&R", icon: Brain },
   { href: "/exam", label: "Examen", icon: GraduationCap },
   { href: "/flashcards", label: "Flashcards", icon: Layers },
   { href: "/sandbox", label: "SQL Sandbox", icon: Code2 },

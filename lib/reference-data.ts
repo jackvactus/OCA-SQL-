@@ -1,6 +1,10 @@
 import type { GlossaryTerm, OracleFunction } from "./types";
 
 export const glossary: GlossaryTerm[] = [
+  { term: "CASE", definition: "Expression conditionnelle SQL (simple = égalité ; searched = prédicats libres). Préférable à DECODE.", category: "Fonctions", example: "CASE WHEN salary < 5000 THEN 'Junior' ELSE 'Senior' END" },
+  { term: "CURRENT_DATE", definition: "Date et heure actuelles selon le fuseau de la session client (vs SYSDATE = serveur).", category: "Fonctions" },
+  { term: "ON DELETE CASCADE", definition: "Option de FOREIGN KEY : supprimer le parent supprime aussi les lignes enfants.", category: "Contraintes" },
+  { term: "Functional Index", definition: "Index basé sur une expression (ex. UPPER(nom)) pour accélérer les prédicats correspondants.", category: "Performance", example: "CREATE INDEX idx ON emp(UPPER(last_name));" },
   { term: "ACL (Access Control List)", definition: "Liste contrôlant les permissions d'accès aux objets.", category: "Sécurité" },
   { term: "Aggregate Function", definition: "Fonction opérant sur un ensemble de lignes pour retourner une valeur unique (COUNT, SUM, AVG, MIN, MAX).", category: "Fonctions", example: "SELECT AVG(salary) FROM employees;" },
   { term: "Alias", definition: "Nom alternatif pour une table ou colonne dans une requête.", category: "SQL", example: "SELECT e.first_name FROM employees e;" },
@@ -273,6 +277,14 @@ export const oracleFunctions: OracleFunction[] = [
     result: "03-JUL-26",
   },
   {
+    name: "CURRENT_DATE",
+    category: "Date",
+    syntax: "CURRENT_DATE",
+    description: "Retourne la date et l'heure actuelles selon le fuseau de la session client.",
+    example: "SELECT CURRENT_DATE FROM dual;",
+    result: "date session",
+  },
+  {
     name: "ADD_MONTHS",
     category: "Date",
     syntax: "ADD_MONTHS(date, n)",
@@ -311,6 +323,30 @@ export const oracleFunctions: OracleFunction[] = [
     description: "Extrait une composante (YEAR, MONTH, DAY, etc.) d'une date.",
     example: "SELECT EXTRACT(YEAR FROM SYSDATE) FROM dual;",
     result: "2026",
+  },
+  {
+    name: "FROM_TZ",
+    category: "Date",
+    syntax: "FROM_TZ(timestamp, timezone)",
+    description: "Convertit un TIMESTAMP en TIMESTAMP WITH TIME ZONE en attachant un fuseau.",
+    example: "SELECT FROM_TZ(CAST(SYSDATE AS TIMESTAMP), 'Europe/Paris') FROM dual;",
+    result: "timestamp avec TZ Paris",
+  },
+  {
+    name: "NUMTODSINTERVAL",
+    category: "Date",
+    syntax: "NUMTODSINTERVAL(n, 'DAY'|'HOUR'|'MINUTE'|'SECOND')",
+    description: "Convertit un nombre en INTERVAL DAY TO SECOND.",
+    example: "SELECT NUMTODSINTERVAL(150, 'MINUTE') FROM dual;",
+    result: "+00 02:30:00",
+  },
+  {
+    name: "NUMTOYMINTERVAL",
+    category: "Date",
+    syntax: "NUMTOYMINTERVAL(n, 'YEAR'|'MONTH')",
+    description: "Convertit un nombre en INTERVAL YEAR TO MONTH.",
+    example: "SELECT NUMTOYMINTERVAL(30, 'MONTH') FROM dual;",
+    result: "+02-06",
   },
   {
     name: "TO_CHAR",
