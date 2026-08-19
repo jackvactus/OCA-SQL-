@@ -40,9 +40,9 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
           alt=""
           fill
           priority
-          className="object-cover opacity-40"
+          className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#04090b]/95 via-[#0a1418]/85 to-[#04090b]/95" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#04090b]/90 via-[#0a1418]/50 to-[#04090b]/90" />
         <div className="bg-grid absolute inset-0 opacity-10" />
 
         <div className="relative flex h-full flex-col justify-between p-10 xl:p-14">

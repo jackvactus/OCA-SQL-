@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { Users } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -71,8 +72,10 @@ export default async function AdminUsersPage({
                 users.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell>
-                      <div className="font-medium">{user.display_name || "—"}</div>
-                      <div className="text-xs text-muted-foreground">{user.email}</div>
+                      <Link href={`/admin/users/${user.id}`} className="hover:underline">
+                        <div className="font-medium">{user.display_name || "—"}</div>
+                        <div className="text-xs text-muted-foreground">{user.email}</div>
+                      </Link>
                     </TableCell>
                     <TableCell>
                       <Badge variant={user.role === "admin" ? "default" : "outline"}>

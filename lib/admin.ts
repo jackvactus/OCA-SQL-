@@ -13,6 +13,23 @@ export interface AdminUserRow {
   xp: number;
 }
 
+export interface AdminUserDetail {
+  id: string;
+  email: string;
+  display_name: string | null;
+  role: UserRole;
+  is_active: boolean;
+  created_at: string;
+}
+
+export async function getUserById(id: string): Promise<AdminUserDetail | null> {
+  const result = await query<AdminUserDetail>(
+    `select id, email, display_name, role, is_active, created_at from users where id = $1`,
+    [id],
+  );
+  return result.rows[0] ?? null;
+}
+
 export async function listUsers(search?: string): Promise<AdminUserRow[]> {
   const result = await query<AdminUserRow>(
     `select
@@ -90,7 +107,7 @@ export async function listAllActivity(
   limit: number,
   offset: number,
   filters: { action?: string; search?: string } = {},
-): Promise<{ entries: (ActivityLogEntry & { email: string })[]; total: number }> {
+): Promise<{ entries: (ActivityLogEntry & { email: string; user_id: string })[]; total: number }> {
   const conditions: string[] = [];
   const values: unknown[] = [];
 
@@ -110,8 +127,8 @@ export async function listAllActivity(
   );
 
   values.push(limit, offset);
-  const result = await query<ActivityLogEntry & { email: string }>(
-    `select a.id, a.action, a.metadata, a.created_at, u.email
+  const result = await query<ActivityLogEntry & { email: string; user_id: string }>(
+    `select a.id, a.action, a.metadata, a.created_at, u.email, u.id as user_id
      from activity_log a
      join users u on u.id = a.user_id
      ${where}

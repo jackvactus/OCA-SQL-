@@ -93,9 +93,9 @@ export default function LandingPage() {
           alt=""
           fill
           priority
-          className="object-cover opacity-30"
+          className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#04090b]/90 via-[#04090b]/85 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#04090b]/80 via-[#04090b]/55 to-background" />
         <div className="bg-grid absolute inset-0 opacity-10" />
 
         <div className="relative mx-auto max-w-7xl px-4 py-20 lg:px-8 lg:py-28">
@@ -159,6 +159,18 @@ export default function LandingPage() {
               historique d&apos;activité complet — pas de données fictives, votre tableau de bord
               reflète votre progression réelle dès la première leçon.
             </p>
+            <div className="relative mt-6 h-40 overflow-hidden rounded-xl border border-border/70">
+              <Image
+                src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1200&auto=format&fit=crop"
+                alt="Infrastructure de base de données"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#04090b]/80 via-[#04090b]/10 to-transparent" />
+              <p className="absolute bottom-3 left-4 text-sm font-medium text-white/90">
+                Infrastructure Oracle Database
+              </p>
+            </div>
             <div className="mt-6 grid grid-cols-2 gap-3">
               {chips.map((chip) => (
                 <div
@@ -236,9 +248,9 @@ export default function LandingPage() {
             src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1600&auto=format&fit=crop"
             alt=""
             fill
-            className="object-cover opacity-25"
+            className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-[#04090b]/95 via-[#04090b]/80 to-[#04090b]/95" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#04090b]/85 via-[#04090b]/45 to-[#04090b]/85" />
           <div className="relative">
             <ShieldCheck className="mx-auto h-8 w-8 text-primary" />
             <h2 className="mt-3 text-2xl font-bold text-white lg:text-3xl">Prêt à commencer ?</h2>

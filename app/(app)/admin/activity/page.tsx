@@ -49,7 +49,12 @@ export default async function AdminActivityPage({
                     <p className="font-medium">
                       {ACTIVITY_ACTION_LABELS[entry.action as ActivityAction] ?? entry.action}
                     </p>
-                    <p className="truncate text-xs text-muted-foreground">{entry.email}</p>
+                    <Link
+                      href={`/admin/users/${entry.user_id}`}
+                      className="truncate text-xs text-muted-foreground hover:text-primary hover:underline"
+                    >
+                      {entry.email}
+                    </Link>
                   </div>
                   <span className="whitespace-nowrap text-xs text-muted-foreground">
                     {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale: fr })}
