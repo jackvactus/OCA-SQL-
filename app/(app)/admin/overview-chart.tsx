@@ -2,11 +2,19 @@
 
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-export function AdminOverviewChart({ data }: { data: { day: string; count: number }[] }) {
+export function AdminOverviewChart({
+  data,
+  noDataLabel = "No sign-ups this week.",
+  signupsLabel = "Sign-ups",
+}: {
+  data: { day: string; count: number }[];
+  noDataLabel?: string;
+  signupsLabel?: string;
+}) {
   if (data.length === 0) {
     return (
       <div className="flex h-48 items-center justify-center text-sm text-muted-foreground">
-        Aucune inscription cette semaine.
+        {noDataLabel}
       </div>
     );
   }
@@ -34,7 +42,7 @@ export function AdminOverviewChart({ data }: { data: { day: string; count: numbe
           <Area
             type="monotone"
             dataKey="count"
-            name="Inscriptions"
+            name={signupsLabel}
             stroke="hsl(var(--primary))"
             strokeWidth={2}
             fill="url(#signupsGradient)"

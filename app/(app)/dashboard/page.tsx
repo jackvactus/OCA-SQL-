@@ -37,6 +37,7 @@ import { modules } from "@/lib/modules-data";
 import { quizQuestions } from "@/lib/quiz-data";
 import { useProgress } from "@/hooks/use-progress";
 import { ACTIVITY_ACTION_LABELS, type ActivityAction } from "@/lib/activity-types";
+import { useLanguage } from "@/components/language-provider";
 import {
   PieChart,
   Pie,
@@ -57,6 +58,7 @@ interface RecentActivityEntry {
 }
 
 export default function DashboardPage() {
+  const { t } = useLanguage();
   const { progress, loaded } = useProgress();
   const [recentActivity, setRecentActivity] = useState<RecentActivityEntry[]>([]);
 
@@ -147,27 +149,25 @@ export default function DashboardPage() {
           <div className="mb-2 flex items-center gap-2">
             <Badge variant="secondary" className="gap-1">
               <Flame className="h-3 w-3 text-warning" />
-              {progress.streak} jours de série
+              {progress.streak} {t.dashboard.streakDays}
             </Badge>
-            <Badge variant="outline">Niveau {stats.level}</Badge>
+            <Badge variant="outline">
+              {t.dashboard.level} {stats.level}
+            </Badge>
           </div>
-          <h1 className="text-2xl font-bold lg:text-3xl">
-            Bienvenue sur votre parcours de certification
-          </h1>
-          <p className="mt-1 text-muted-foreground">
-            Oracle Database SQL 1Z0-071 — Préparez-vous à réussir avec un score &gt; 90%
-          </p>
+          <h1 className="text-2xl font-bold lg:text-3xl">{t.dashboard.welcomeTitle}</h1>
+          <p className="mt-1 text-muted-foreground">{t.dashboard.welcomeSubtitle}</p>
           <div className="mt-4 flex flex-wrap gap-3">
             <Link href="/courses">
               <Button className="gap-2">
-                Continuer l'apprentissage
+                {t.dashboard.continueLearning}
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
             <Link href="/exam">
               <Button variant="outline" className="gap-2">
                 <GraduationCap className="h-4 w-4" />
-                Simulateur d'examen
+                {t.dashboard.examSimulator}
               </Button>
             </Link>
           </div>
@@ -191,27 +191,27 @@ export default function DashboardPage() {
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard
           icon={BookOpen}
-          label="Leçons complétées"
+          label={t.dashboard.statLessonsCompleted}
           value={`${stats.completed}/${stats.totalLessons}`}
           color="primary"
         />
         <StatCard
           icon={Brain}
-          label="Quiz complétés"
+          label={t.dashboard.statQuizCompleted}
           value={String(stats.quizCount)}
-          subValue={stats.quizCount > 0 ? `${stats.quizAvg}% moyen` : undefined}
+          subValue={stats.quizCount > 0 ? `${stats.quizAvg}% ${t.dashboard.statQuizAvg}` : undefined}
           color="success"
         />
         <StatCard
           icon={GraduationCap}
-          label="Examens passés"
+          label={t.dashboard.statExamsPassed}
           value={String(stats.examCount)}
-          subValue={stats.examCount > 0 ? `${stats.bestExam}% meilleur` : undefined}
+          subValue={stats.examCount > 0 ? `${stats.bestExam}% ${t.dashboard.statExamBest}` : undefined}
           color="warning"
         />
         <StatCard
           icon={Trophy}
-          label="Points XP"
+          label={t.dashboard.statXpPoints}
           value={String(progress.xp)}
           color="primary"
         />
@@ -224,24 +224,22 @@ export default function DashboardPage() {
               <div>
                 <CardTitle className="flex items-center gap-2 text-base">
                   <Sparkles className="h-4 w-4 text-primary" />
-                  Plan d'étude du jour
+                  {t.dashboard.studyPlanTitle}
                 </CardTitle>
-                <CardDescription>
-                  Une progression claire pour avancer chaque jour avec confiance.
-                </CardDescription>
+                <CardDescription>{t.dashboard.studyPlanDesc}</CardDescription>
               </div>
               <Badge variant="secondary" className="gap-1">
                 <CalendarDays className="h-3 w-3" />
-                Aujourd'hui
+                {t.dashboard.today}
               </Badge>
             </div>
           </CardHeader>
           <CardContent>
             <div className="grid gap-3 md:grid-cols-3">
               {[
-                { title: "Réviser", text: "Fonctions SQL", hint: "NVL / CASE / COALESCE" },
-                { title: "Pratiquer", text: "Quiz ciblé", hint: "10 questions rapides" },
-                { title: "Valider", text: "Mini-examen", hint: "15 min de concentration" },
+                { title: t.dashboard.planReviewTitle, text: t.dashboard.planReviewText, hint: t.dashboard.planReviewHint },
+                { title: t.dashboard.planPracticeTitle, text: t.dashboard.planPracticeText, hint: t.dashboard.planPracticeHint },
+                { title: t.dashboard.planValidateTitle, text: t.dashboard.planValidateText, hint: t.dashboard.planValidateHint },
               ].map((item) => (
                 <div key={item.title} className="rounded-xl border border-border/70 bg-card/70 p-3">
                   <p className="text-sm font-semibold">{item.title}</p>
@@ -257,23 +255,21 @@ export default function DashboardPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Target className="h-4 w-4 text-primary" />
-              Objectif de la semaine
+              {t.dashboard.weeklyGoalTitle}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="rounded-xl border border-primary/20 bg-primary/5 p-3">
-              <p className="text-sm font-semibold">Atteindre 90% de maîtrise</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Terminez les modules clés et passez au moins un simulateur de préparation.
-              </p>
+              <p className="text-sm font-semibold">{t.dashboard.weeklyGoalHeadline}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{t.dashboard.weeklyGoalDesc}</p>
             </div>
             <div className="flex items-center justify-between rounded-lg border border-border/70 p-3 text-sm">
-              <span className="text-muted-foreground">Prochain jalon</span>
-              <span className="font-semibold">Module 6 · Jointures</span>
+              <span className="text-muted-foreground">{t.dashboard.nextMilestone}</span>
+              <span className="font-semibold">{t.dashboard.nextMilestoneValue}</span>
             </div>
             <div className="flex items-center justify-between rounded-lg border border-border/70 p-3 text-sm">
-              <span className="text-muted-foreground">Temps conseillé</span>
-              <span className="font-semibold">25 min / jour</span>
+              <span className="text-muted-foreground">{t.dashboard.recommendedTime}</span>
+              <span className="font-semibold">{t.dashboard.recommendedTimeValue}</span>
             </div>
           </CardContent>
         </Card>
@@ -286,7 +282,7 @@ export default function DashboardPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Target className="h-4 w-4 text-primary" />
-              Progression globale
+              {t.dashboard.globalProgress}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -310,12 +306,12 @@ export default function DashboardPage() {
               </ResponsiveContainer>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-3xl font-bold">{stats.percent}%</span>
-                <span className="text-xs text-muted-foreground">complété</span>
+                <span className="text-xs text-muted-foreground">{t.dashboard.completedLabel}</span>
               </div>
             </div>
             <div className="mt-4 space-y-2">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Leçons</span>
+                <span className="text-muted-foreground">{t.dashboard.lessonsLabel}</span>
                 <span className="font-medium">{stats.completed}/{stats.totalLessons}</span>
               </div>
               <Progress value={stats.percent} className="h-2" />
@@ -328,9 +324,9 @@ export default function DashboardPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <TrendingUp className="h-4 w-4 text-primary" />
-              Activité de la semaine
+              {t.dashboard.weeklyActivity}
             </CardTitle>
-            <CardDescription>XP gagnée par jour</CardDescription>
+            <CardDescription>{t.dashboard.xpPerDay}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-48">
@@ -371,7 +367,7 @@ export default function DashboardPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <BookOpen className="h-4 w-4 text-primary" />
-            Progression par module
+            {t.dashboard.moduleProgress}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -395,7 +391,8 @@ export default function DashboardPage() {
                     <div>
                       <h3 className="text-sm font-semibold">{module.title}</h3>
                       <p className="text-xs text-muted-foreground">
-                        {completedLessons}/{totalLessons} leçons · {module.estimatedHours}h
+                        {completedLessons}/{totalLessons} {t.appShell.lessonsShort} · {module.estimatedHours}
+                        {t.dashboard.hoursShort}
                       </p>
                     </div>
                   </div>
@@ -417,20 +414,18 @@ export default function DashboardPage() {
         <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <CardTitle className="flex items-center gap-2 text-base">
             <History className="h-4 w-4 text-primary" />
-            Activité récente
+            {t.dashboard.recentActivity}
           </CardTitle>
           <Link href="/activity">
             <Button variant="ghost" size="sm" className="gap-1 text-xs">
-              Voir tout
+              {t.dashboard.seeAll}
               <ArrowRight className="h-3 w-3" />
             </Button>
           </Link>
         </CardHeader>
         <CardContent>
           {recentActivity.length === 0 ? (
-            <p className="py-4 text-center text-sm text-muted-foreground">
-              Aucune activité enregistrée pour le moment.
-            </p>
+            <p className="py-4 text-center text-sm text-muted-foreground">{t.dashboard.noActivity}</p>
           ) : (
             <ul className="divide-y divide-border">
               {recentActivity.map((entry) => (
@@ -453,20 +448,20 @@ export default function DashboardPage() {
         <QuickAction
           href="/quiz"
           icon={Brain}
-          title="Quiz adaptatif"
-          description="Testez vos connaissances"
+          title={t.dashboard.quickQuizTitle}
+          description={t.dashboard.quickQuizDesc}
         />
         <QuickAction
           href="/flashcards"
           icon={BookOpen}
-          title="Flashcards"
-          description="Révision espacée"
+          title={t.dashboard.quickFlashTitle}
+          description={t.dashboard.quickFlashDesc}
         />
         <QuickAction
           href="/sandbox"
           icon={Code2}
-          title="SQL Sandbox"
-          description="Pratiquez vos requêtes"
+          title={t.dashboard.quickSandboxTitle}
+          description={t.dashboard.quickSandboxDesc}
         />
       </div>
     </div>

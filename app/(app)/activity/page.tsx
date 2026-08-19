@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enUS, fr } from "date-fns/locale";
 import {
   BookOpen,
   Bookmark,
@@ -22,6 +22,8 @@ import { Button } from "@/components/ui/button";
 import { getSessionUser } from "@/lib/auth/session";
 import { listActivity } from "@/lib/activity";
 import { ACTIVITY_ACTION_LABELS, type ActivityAction } from "@/lib/activity-types";
+import { getLocale } from "@/lib/i18n/get-locale";
+import { dictionary } from "@/lib/i18n/dictionary";
 
 const PAGE_SIZE = 20;
 
@@ -76,6 +78,10 @@ export default async function ActivityPage({
   const user = await getSessionUser();
   if (!user) return null;
 
+  const locale = getLocale();
+  const t = dictionary[locale];
+  const dateLocale = locale === "fr" ? fr : enUS;
+
   const offset = Math.max(Number(searchParams.offset) || 0, 0);
   const entries = await listActivity(user.id, PAGE_SIZE + 1, offset);
   const hasMore = entries.length > PAGE_SIZE;
@@ -86,23 +92,19 @@ export default async function ActivityPage({
       <div>
         <h1 className="flex items-center gap-2 text-2xl font-bold">
           <History className="h-6 w-6 text-primary" />
-          Historique d&apos;activité
+          {t.activity.title}
         </h1>
-        <p className="mt-1 text-muted-foreground">
-          L&apos;ensemble de vos actions sur la plateforme, enregistrées automatiquement.
-        </p>
+        <p className="mt-1 text-muted-foreground">{t.activity.subtitle}</p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Journal complet</CardTitle>
-          <CardDescription>Les événements les plus récents apparaissent en premier.</CardDescription>
+          <CardTitle className="text-base">{t.activity.logTitle}</CardTitle>
+          <CardDescription>{t.activity.logDesc}</CardDescription>
         </CardHeader>
         <CardContent>
           {page.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">
-              Aucune activité enregistrée pour le moment.
-            </p>
+            <p className="py-8 text-center text-sm text-muted-foreground">{t.activity.noActivity}</p>
           ) : (
             <ul className="divide-y divide-border">
               {page.map((entry) => {
@@ -119,7 +121,7 @@ export default async function ActivityPage({
                       <div className="flex flex-wrap items-baseline justify-between gap-x-3">
                         <p className="text-sm font-medium">{label}</p>
                         <span className="whitespace-nowrap text-xs text-muted-foreground">
-                          {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale: fr })}
+                          {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale: dateLocale })}
                         </span>
                       </div>
                       {detail && <p className="mt-0.5 truncate text-xs text-muted-foreground">{detail}</p>}
@@ -135,20 +137,20 @@ export default async function ActivityPage({
       <div className="flex items-center justify-between">
         {offset === 0 ? (
           <Button variant="outline" disabled>
-            Précédent
+            {t.common.previous}
           </Button>
         ) : (
           <Link href={`/activity?offset=${Math.max(offset - PAGE_SIZE, 0)}`}>
-            <Button variant="outline">Précédent</Button>
+            <Button variant="outline">{t.common.previous}</Button>
           </Link>
         )}
         {!hasMore ? (
           <Button variant="outline" disabled>
-            Suivant
+            {t.common.next}
           </Button>
         ) : (
           <Link href={`/activity?offset=${offset + PAGE_SIZE}`}>
-            <Button variant="outline">Suivant</Button>
+            <Button variant="outline">{t.common.next}</Button>
           </Link>
         )}
       </div>

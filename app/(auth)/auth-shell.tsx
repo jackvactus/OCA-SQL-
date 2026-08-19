@@ -6,30 +6,21 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { ArrowLeft, BarChart3, Code2, Layers, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-const features = [
-  {
-    icon: Layers,
-    title: "18 modules structurés",
-    description: "Programme complet couvrant l'intégralité du référentiel 1Z0-071.",
-  },
-  {
-    icon: BarChart3,
-    title: "Suivi & conformité",
-    description: "Progression, XP et examens blancs suivis en continu, par utilisateur.",
-  },
-  {
-    icon: Code2,
-    title: "Pilotage en temps réel",
-    description: "Tableau de bord, historique d'activité et sandbox SQL interactif.",
-  },
-];
+import { useLanguage } from "@/components/language-provider";
+import { LanguageToggle } from "@/components/language-toggle";
 
 export function AuthShell({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
+  const { t } = useLanguage();
 
   useEffect(() => setMounted(true), []);
+
+  const features = [
+    { icon: Layers, title: t.auth.feature1Title, description: t.auth.feature1Desc },
+    { icon: BarChart3, title: t.auth.feature2Title, description: t.auth.feature2Desc },
+    { icon: Code2, title: t.auth.feature3Title, description: t.auth.feature3Desc },
+  ];
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
@@ -56,18 +47,14 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
                 className="h-9 w-9 object-contain"
               />
             </div>
-            <span className="text-lg font-bold uppercase tracking-wide text-white">OracleMaster</span>
+            <span className="text-lg font-bold uppercase tracking-wide text-white">{t.appShell.brand}</span>
           </Link>
 
           <div className="max-w-lg">
             <h1 className="font-display text-4xl font-bold leading-[1.15] text-white xl:text-5xl">
-              La plateforme de référence pour la certification{" "}
-              <span className="text-primary">Oracle Database SQL</span>
+              {t.auth.heroHeadline1} <span className="text-primary">{t.auth.heroHeadlineHighlight}</span>
             </h1>
-            <p className="mt-5 text-lg text-white/60">
-              Pilotez votre préparation de bout en bout — cours, quiz, examens blancs et sandbox SQL,
-              avec chaque action suivie dans votre espace personnel.
-            </p>
+            <p className="mt-5 text-lg text-white/60">{t.auth.heroSubtitle}</p>
 
             <div className="mt-8 space-y-4">
               {features.map((feature) => (
@@ -84,9 +71,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
             </div>
           </div>
 
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/40">
-            Certification Oracle · SQL 1Z0-071
-          </p>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/40">{t.auth.footerTag}</p>
         </div>
       </div>
 
@@ -98,18 +83,21 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
             className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
-            Retour à l&apos;accueil
+            {t.auth.backToHome}
           </Link>
-          {mounted && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              aria-label="Basculer le thème"
-            >
-              {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
-          )}
+          <div className="flex items-center gap-1">
+            <LanguageToggle />
+            {mounted && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                aria-label={t.auth.switchTheme}
+              >
+                {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </Button>
+            )}
+          </div>
         </div>
 
         <div className="flex flex-1 items-center justify-center px-4 pb-10">{children}</div>

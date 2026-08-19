@@ -7,6 +7,7 @@ import { ShieldMinus, ShieldPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import type { UserRole } from "@/lib/auth/jwt";
+import { useLanguage } from "@/components/language-provider";
 
 export function UserRowActions({
   userId,
@@ -20,6 +21,7 @@ export function UserRowActions({
   isSelf: boolean;
 }) {
   const router = useRouter();
+  const { t } = useLanguage();
   const [pending, setPending] = useState(false);
 
   const patch = async (body: { role?: UserRole; isActive?: boolean }) => {
@@ -32,26 +34,26 @@ export function UserRowActions({
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        toast.error(data.error ?? "Échec de la mise à jour");
+        toast.error(data.error ?? t.admin.updateErrorFallback);
         return;
       }
-      toast.success("Utilisateur mis à jour");
+      toast.success(t.admin.updateSuccess);
       router.refresh();
     } catch {
-      toast.error("Erreur réseau, veuillez réessayer");
+      toast.error(t.admin.networkError);
     } finally {
       setPending(false);
     }
   };
 
   if (isSelf) {
-    return <span className="text-xs text-muted-foreground">Vous-même</span>;
+    return <span className="text-xs text-muted-foreground">{t.admin.self}</span>;
   }
 
   return (
     <div className="flex items-center justify-end gap-3">
       <div className="flex items-center gap-2">
-        <span className="text-xs text-muted-foreground">Actif</span>
+        <span className="text-xs text-muted-foreground">{t.admin.activeLabel}</span>
         <Switch
           checked={isActive}
           disabled={pending}
@@ -68,12 +70,12 @@ export function UserRowActions({
         {role === "admin" ? (
           <>
             <ShieldMinus className="h-3.5 w-3.5" />
-            Rétrograder
+            {t.admin.demote}
           </>
         ) : (
           <>
             <ShieldPlus className="h-3.5 w-3.5" />
-            Promouvoir
+            {t.admin.promote}
           </>
         )}
       </Button>

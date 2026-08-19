@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import { BookOpenCheck, Radio, Users } from "lucide-react";
+import type { Dictionary } from "@/lib/i18n/dictionary";
 
 interface PublicStats {
   totalUsers: number;
@@ -10,7 +11,7 @@ interface PublicStats {
   dailyActivity: { day: string; count: number }[];
 }
 
-export function LiveStats() {
+export function LiveStats({ t }: { t: Dictionary }) {
   const [stats, setStats] = useState<PublicStats | null>(null);
 
   useEffect(() => {
@@ -28,10 +29,10 @@ export function LiveStats() {
   return (
     <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-sm">
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold">Tableau de bord de la plateforme</h3>
+        <h3 className="font-semibold">{t.marketing.liveTitle}</h3>
         <span className="flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1 text-xs font-semibold text-success">
           <Radio className="h-3 w-3 animate-pulse" />
-          Live
+          {t.marketing.liveBadge}
         </span>
       </div>
 
@@ -39,21 +40,21 @@ export function LiveStats() {
         <div className="rounded-xl border border-border/70 bg-muted/40 p-3">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Users className="h-3.5 w-3.5" />
-            Apprenants
+            {t.marketing.liveLearners}
           </div>
           <p className="mt-1 text-2xl font-bold tabular-nums">{stats?.totalUsers ?? "—"}</p>
         </div>
         <div className="rounded-xl border border-border/70 bg-muted/40 p-3">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <BookOpenCheck className="h-3.5 w-3.5" />
-            Leçons terminées
+            {t.marketing.liveLessonsCompleted}
           </div>
           <p className="mt-1 text-2xl font-bold tabular-nums">{stats?.totalLessonsCompleted ?? "—"}</p>
         </div>
       </div>
 
       <div className="mt-4">
-        <p className="mb-2 text-xs text-muted-foreground">Activité — 14 derniers jours</p>
+        <p className="mb-2 text-xs text-muted-foreground">{t.marketing.liveActivityLabel}</p>
         <div className="h-24">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData}>
@@ -75,7 +76,7 @@ export function LiveStats() {
               <Area
                 type="monotone"
                 dataKey="count"
-                name="Événements"
+                name={t.marketing.liveActivityLabel}
                 stroke="hsl(var(--primary))"
                 strokeWidth={2}
                 fill="url(#liveActivityGradient)"
@@ -85,9 +86,7 @@ export function LiveStats() {
         </div>
       </div>
 
-      <p className="mt-3 text-center text-xs text-muted-foreground">
-        Données réelles de la plateforme — actualisées à chaque chargement
-      </p>
+      <p className="mt-3 text-center text-xs text-muted-foreground">{t.marketing.liveFooter}</p>
     </div>
   );
 }

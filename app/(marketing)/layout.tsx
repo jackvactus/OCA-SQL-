@@ -1,8 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { LanguageToggle } from "@/components/language-toggle";
+import { getLocale } from "@/lib/i18n/get-locale";
+import { dictionary } from "@/lib/i18n/dictionary";
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
+  const t = dictionary[getLocale()];
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-40 border-b border-border/70 bg-card/70 backdrop-blur">
@@ -17,14 +22,15 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
                 className="h-9 w-9 object-contain"
               />
             </div>
-            <span className="text-lg font-bold leading-none">OracleMaster</span>
+            <span className="text-lg font-bold leading-none">{t.appShell.brand}</span>
           </Link>
           <div className="flex items-center gap-2">
+            <LanguageToggle />
             <Link href="/login">
-              <Button variant="ghost">Se connecter</Button>
+              <Button variant="ghost">{t.marketing.login}</Button>
             </Link>
             <Link href="/register">
-              <Button>S&apos;inscrire</Button>
+              <Button>{t.marketing.register}</Button>
             </Link>
           </div>
         </div>
@@ -34,7 +40,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
 
       <footer className="border-t border-border/70 py-6">
         <div className="mx-auto max-w-7xl px-4 text-center text-sm text-muted-foreground lg:px-8">
-          OracleMaster — Plateforme de formation à la certification Oracle Database SQL 1Z0-071
+          {t.marketing.footer}
         </div>
       </footer>
     </div>

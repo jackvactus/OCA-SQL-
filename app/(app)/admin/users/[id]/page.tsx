@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enUS, fr } from "date-fns/locale";
 import { ArrowLeft, BookOpen, Brain, GraduationCap, History, Trophy } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,8 @@ import { getProgress } from "@/lib/progress";
 import { listActivity } from "@/lib/activity";
 import { modules } from "@/lib/modules-data";
 import { ACTIVITY_ACTION_LABELS, type ActivityAction } from "@/lib/activity-types";
+import { getLocale } from "@/lib/i18n/get-locale";
+import { dictionary } from "@/lib/i18n/dictionary";
 
 const ACTIVITY_PAGE_SIZE = 15;
 
@@ -28,6 +30,10 @@ export default async function AdminUserDetailPage({
 
   const user = await getUserById(params.id);
   if (!user) notFound();
+
+  const locale = getLocale();
+  const t = dictionary[locale];
+  const dateLocale = locale === "fr" ? fr : enUS;
 
   const progress = await getProgress(user.id);
   const offset = Math.max(Number(searchParams.offset) || 0, 0);
@@ -57,32 +63,52 @@ export default async function AdminUserDetailPage({
           className="mb-3 flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
-          Retour aux utilisateurs
+          {t.admin.backToUsers}
         </Link>
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-2xl font-bold">{user.display_name || user.email}</h1>
           <Badge variant={user.role === "admin" ? "default" : "outline"}>
-            {user.role === "admin" ? "Administrateur" : "Utilisateur"}
+            {user.role === "admin" ? t.admin.roleAdmin : t.admin.roleUser}
           </Badge>
           <Badge variant={user.is_active ? "secondary" : "destructive"}>
-            {user.is_active ? "Actif" : "Désactivé"}
+            {user.is_active ? t.admin.statusActive : t.admin.statusDisabled}
           </Badge>
         </div>
         <p className="mt-1 text-sm text-muted-foreground">
-          {user.email} · Inscrit le {new Date(user.created_at).toLocaleDateString("fr-FR")}
+          {user.email} · {t.admin.joinedOn}{" "}
+          {new Date(user.created_at).toLocaleDateString(locale === "fr" ? "fr-FR" : "en-US")}
         </p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard icon={BookOpen} label="Leçons" value={`${progress.completedLessons.length}/${totalLessons}`} />
-        <StatCard icon={Brain} label="Quiz" value={String(quizCount)} sub={quizCount > 0 ? `${quizAvg}% moyen` : undefined} />
-        <StatCard icon={GraduationCap} label="Examens" value={String(examCount)} sub={examCount > 0 ? `${bestExam}% meilleur` : undefined} />
-        <StatCard icon={Trophy} label="XP" value={String(progress.xp)} sub={`${progress.streak} jours de série`} />
+        <StatCard
+          icon={BookOpen}
+          label={t.admin.statLessons}
+          value={`${progress.completedLessons.length}/${totalLessons}`}
+        />
+        <StatCard
+          icon={Brain}
+          label={t.admin.statQuiz}
+          value={String(quizCount)}
+          sub={quizCount > 0 ? `${quizAvg}% ${t.admin.quizAvg}` : undefined}
+        />
+        <StatCard
+          icon={GraduationCap}
+          label={t.admin.statExams}
+          value={String(examCount)}
+          sub={examCount > 0 ? `${bestExam}% ${t.admin.examBest}` : undefined}
+        />
+        <StatCard
+          icon={Trophy}
+          label={t.admin.statXp}
+          value={String(progress.xp)}
+          sub={`${progress.streak} ${t.admin.streakDays}`}
+        />
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Progression par module</CardTitle>
+          <CardTitle className="text-base">{t.admin.moduleProgressTitle}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {modules.map((module) => {
@@ -113,13 +139,13 @@ export default async function AdminUserDetailPage({
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <History className="h-4 w-4 text-primary" />
-            Activité de {user.display_name || user.email}
+            {t.admin.userActivityPrefix} {user.display_name || user.email}
           </CardTitle>
-          <CardDescription>Journal complet des actions de ce compte.</CardDescription>
+          <CardDescription>{t.admin.userActivityDesc}</CardDescription>
         </CardHeader>
         <CardContent>
           {activityPage.length === 0 ? (
-            <p className="py-6 text-center text-sm text-muted-foreground">Aucune activité enregistrée.</p>
+            <p className="py-6 text-center text-sm text-muted-foreground">{t.activity.noActivity}</p>
           ) : (
             <ul className="divide-y divide-border">
               {activityPage.map((entry) => (
@@ -128,7 +154,7 @@ export default async function AdminUserDetailPage({
                     {ACTIVITY_ACTION_LABELS[entry.action as ActivityAction] ?? entry.action}
                   </span>
                   <span className="whitespace-nowrap text-xs text-muted-foreground">
-                    {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale: fr })}
+                    {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale: dateLocale })}
                   </span>
                 </li>
               ))}
@@ -140,20 +166,20 @@ export default async function AdminUserDetailPage({
       <div className="flex items-center justify-between">
         {offset === 0 ? (
           <Button variant="outline" disabled>
-            Précédent
+            {t.common.previous}
           </Button>
         ) : (
           <Link href={`/admin/users/${user.id}?offset=${Math.max(offset - ACTIVITY_PAGE_SIZE, 0)}`}>
-            <Button variant="outline">Précédent</Button>
+            <Button variant="outline">{t.common.previous}</Button>
           </Link>
         )}
         {!hasMore ? (
           <Button variant="outline" disabled>
-            Suivant
+            {t.common.next}
           </Button>
         ) : (
           <Link href={`/admin/users/${user.id}?offset=${offset + ACTIVITY_PAGE_SIZE}`}>
-            <Button variant="outline">Suivant</Button>
+            <Button variant="outline">{t.common.next}</Button>
           </Link>
         )}
       </div>

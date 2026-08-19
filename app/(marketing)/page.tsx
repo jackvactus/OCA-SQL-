@@ -20,6 +20,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { modules } from "@/lib/modules-data";
 import { quizQuestions } from "@/lib/quiz-data";
+import { getLocale } from "@/lib/i18n/get-locale";
+import { dictionary, type Dictionary } from "@/lib/i18n/dictionary";
+import type { Locale } from "@/lib/i18n/locale";
 import { LiveStats } from "./live-stats";
 import { DifficultyChart } from "./difficulty-chart";
 
@@ -28,60 +31,69 @@ import { DifficultyChart } from "./difficulty-chart";
 const EXAM_PASS_THRESHOLD = 63;
 const EXAM_DURATION_MINUTES = 100;
 
-const heroStats = [
-  { icon: Layers, value: `${modules.length}`, label: "Modules structurés" },
-  { icon: Brain, value: `${quizQuestions.length}+`, label: "Questions corrigées" },
-  { icon: Target, value: `${EXAM_PASS_THRESHOLD}%`, label: "Seuil de réussite" },
-  { icon: Clock, value: `${EXAM_DURATION_MINUTES} min`, label: "Examen chronométré" },
-];
+function buildHeroStats(t: Dictionary) {
+  return [
+    { icon: Layers, value: `${modules.length}`, label: t.marketing.statModules },
+    { icon: Brain, value: `${quizQuestions.length}+`, label: t.marketing.statQuestions },
+    { icon: Target, value: `${EXAM_PASS_THRESHOLD}%`, label: t.marketing.statPassThreshold },
+    { icon: Clock, value: `${EXAM_DURATION_MINUTES} min`, label: t.marketing.statExamDuration },
+  ];
+}
 
-const chips = [
-  { icon: ShieldCheck, label: "Contenu 100% aligné 1Z0-071" },
-  { icon: Radar, label: "Suivi de progression en temps réel" },
-  { icon: Code2, label: "SQL Sandbox interactif" },
-  { icon: History, label: "Historique d'activité complet" },
-];
+function buildChips(t: Dictionary) {
+  return [
+    { icon: ShieldCheck, label: t.marketing.chip1 },
+    { icon: Radar, label: t.marketing.chip2 },
+    { icon: Code2, label: t.marketing.chip3 },
+    { icon: History, label: t.marketing.chip4 },
+  ];
+}
 
-const features = [
-  {
-    icon: BookOpen,
-    title: "Cours structurés",
-    description: `${modules.length} modules progressifs couvrant l'intégralité du programme 1Z0-071, avec exemples et pièges classiques.`,
-  },
-  {
-    icon: Brain,
-    title: "Quiz adaptatif",
-    description: `${quizQuestions.length}+ questions corrigées et expliquées pour ancrer chaque notion durablement.`,
-  },
-  {
-    icon: GraduationCap,
-    title: "Simulateur d'examen",
-    description: `Conditions réelles : ${EXAM_DURATION_MINUTES} minutes, ${EXAM_PASS_THRESHOLD}% pour réussir, score détaillé par domaine.`,
-  },
-  {
-    icon: Layers,
-    title: "Flashcards SRS",
-    description: "Révision espacée qui s'adapte à votre mémoire pour retenir sur le long terme.",
-  },
-  {
-    icon: Code2,
-    title: "SQL Sandbox",
-    description: "Un espace pour écrire et tester vos propres requêtes SQL librement.",
-  },
-  {
-    icon: Library,
-    title: "Référence complète",
-    description: "Glossaire et fonctions Oracle SQL toujours à portée de main.",
-  },
-];
+function buildFeatures(t: Dictionary, locale: Locale) {
+  return [
+    {
+      icon: BookOpen,
+      title: t.marketing.feature1Title,
+      description:
+        locale === "fr"
+          ? `${modules.length} modules progressifs couvrant l'intégralité du programme 1Z0-071, avec exemples et pièges classiques.`
+          : `${modules.length} progressive modules covering the entire 1Z0-071 syllabus, with examples and classic traps.`,
+    },
+    {
+      icon: Brain,
+      title: t.marketing.feature2Title,
+      description:
+        locale === "fr"
+          ? `${quizQuestions.length}+ questions corrigées et expliquées pour ancrer chaque notion durablement.`
+          : `${quizQuestions.length}+ reviewed, explained questions to lock in every concept for the long run.`,
+    },
+    {
+      icon: GraduationCap,
+      title: t.marketing.feature3Title,
+      description:
+        locale === "fr"
+          ? `Conditions réelles : ${EXAM_DURATION_MINUTES} minutes, ${EXAM_PASS_THRESHOLD}% pour réussir, score détaillé par domaine.`
+          : `Real conditions: ${EXAM_DURATION_MINUTES} minutes, ${EXAM_PASS_THRESHOLD}% to pass, a detailed score by domain.`,
+    },
+    { icon: Layers, title: t.marketing.feature4Title, description: t.marketing.feature4Desc },
+    { icon: Code2, title: t.marketing.feature5Title, description: t.marketing.feature5Desc },
+    { icon: Library, title: t.marketing.feature6Title, description: t.marketing.feature6Desc },
+  ];
+}
 
 export default function LandingPage() {
+  const locale = getLocale();
+  const t = dictionary[locale];
+  const heroStats = buildHeroStats(t);
+  const chips = buildChips(t);
+  const features = buildFeatures(t, locale);
+
   const difficultyCounts = { easy: 0, medium: 0, hard: 0 };
   for (const q of quizQuestions) difficultyCounts[q.difficulty] += 1;
   const difficultyData = [
-    { label: "Facile", count: difficultyCounts.easy },
-    { label: "Moyen", count: difficultyCounts.medium },
-    { label: "Difficile", count: difficultyCounts.hard },
+    { label: t.marketing.difficultyEasy, count: difficultyCounts.easy },
+    { label: t.marketing.difficultyMedium, count: difficultyCounts.medium },
+    { label: t.marketing.difficultyHard, count: difficultyCounts.hard },
   ];
 
   return (
@@ -102,27 +114,22 @@ export default function LandingPage() {
           <div className="mx-auto max-w-3xl text-center">
             <Badge variant="secondary" className="gap-1.5 border-white/10 bg-white/10 text-white">
               <Database className="h-3 w-3 text-primary" />
-              Plateforme de formation Oracle Database SQL
+              {t.marketing.heroBadge}
             </Badge>
             <h1 className="mt-5 font-display text-4xl font-bold leading-tight text-white lg:text-6xl">
-              Maîtrisez Oracle Database SQL —{" "}
-              <span className="text-primary">Certification 1Z0-071</span>
+              {t.marketing.heroTitle1} <span className="text-primary">{t.marketing.heroTitleHighlight}</span>
             </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-lg text-white/60">
-              Cours interactifs, quiz adaptatif, simulateur d&apos;examen, flashcards et SQL sandbox
-              réunis sur une seule plateforme. Chaque leçon, chaque quiz et chaque examen que vous
-              complétez est suivi dans votre espace personnel.
-            </p>
+            <p className="mx-auto mt-5 max-w-2xl text-lg text-white/60">{t.marketing.heroSubtitle}</p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link href="/register">
                 <Button size="lg" className="gap-2">
-                  Accéder à la plateforme
+                  {t.marketing.heroCtaPrimary}
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
               <Link href="/login">
                 <Button size="lg" variant="outline" className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white">
-                  Se connecter
+                  {t.marketing.heroCtaSecondary}
                 </Button>
               </Link>
             </div>
@@ -149,26 +156,20 @@ export default function LandingPage() {
           <div>
             <Badge variant="secondary" className="gap-1.5">
               <Radar className="h-3 w-3 text-primary" />
-              Aperçu en direct
+              {t.marketing.liveSectionBadge}
             </Badge>
-            <h2 className="mt-4 text-2xl font-bold lg:text-3xl">
-              Une plateforme pensée pour votre progression
-            </h2>
-            <p className="mt-3 text-muted-foreground">
-              Chaque connexion, chaque leçon terminée et chaque quiz complété est enregistré dans un
-              historique d&apos;activité complet — pas de données fictives, votre tableau de bord
-              reflète votre progression réelle dès la première leçon.
-            </p>
+            <h2 className="mt-4 text-2xl font-bold lg:text-3xl">{t.marketing.liveSectionTitle}</h2>
+            <p className="mt-3 text-muted-foreground">{t.marketing.liveSectionDesc}</p>
             <div className="relative mt-6 h-40 overflow-hidden rounded-xl border border-border/70">
               <Image
                 src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1200&auto=format&fit=crop"
-                alt="Infrastructure de base de données"
+                alt={t.marketing.imageCaption}
                 fill
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#04090b]/80 via-[#04090b]/10 to-transparent" />
               <p className="absolute bottom-3 left-4 text-sm font-medium text-white/90">
-                Infrastructure Oracle Database
+                {t.marketing.imageCaption}
               </p>
             </div>
             <div className="mt-6 grid grid-cols-2 gap-3">
@@ -183,17 +184,15 @@ export default function LandingPage() {
               ))}
             </div>
           </div>
-          <LiveStats />
+          <LiveStats t={t} />
         </div>
       </section>
 
       {/* Modules grid */}
       <section className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="mb-8 text-center">
-          <h2 className="text-2xl font-bold lg:text-3xl">Modules intégrés, expérience unifiée</h2>
-          <p className="mt-2 text-muted-foreground">
-            Une préparation complète, du premier cours au jour de l&apos;examen.
-          </p>
+          <h2 className="text-2xl font-bold lg:text-3xl">{t.marketing.modulesTitle}</h2>
+          <p className="mt-2 text-muted-foreground">{t.marketing.modulesSubtitle}</p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature) => (
@@ -217,8 +216,10 @@ export default function LandingPage() {
             <Card>
               <CardContent className="p-6">
                 <div className="mb-4 flex items-center justify-between">
-                  <h3 className="font-semibold">Répartition des questions par difficulté</h3>
-                  <Badge variant="outline">{quizQuestions.length} questions</Badge>
+                  <h3 className="font-semibold">{t.marketing.vizCardTitle}</h3>
+                  <Badge variant="outline">
+                    {quizQuestions.length} {t.marketing.vizQuestionsCount}
+                  </Badge>
                 </div>
                 <DifficultyChart data={difficultyData} />
               </CardContent>
@@ -227,16 +228,10 @@ export default function LandingPage() {
           <div className="order-1 lg:order-2">
             <Badge variant="secondary" className="gap-1.5">
               <Brain className="h-3 w-3 text-primary" />
-              Basé sur le contenu réel
+              {t.marketing.vizBadge}
             </Badge>
-            <h2 className="mt-4 text-2xl font-bold lg:text-3xl">
-              Des visualisations qui parlent à vos progrès
-            </h2>
-            <p className="mt-3 text-muted-foreground">
-              La banque de questions est calibrée sur les trois niveaux de difficulté de l&apos;examen
-              réel, pour que le quiz adaptatif et le simulateur reflètent fidèlement ce qui vous
-              attend le jour J.
-            </p>
+            <h2 className="mt-4 text-2xl font-bold lg:text-3xl">{t.marketing.vizTitle}</h2>
+            <p className="mt-3 text-muted-foreground">{t.marketing.vizDesc}</p>
           </div>
         </div>
       </section>
@@ -253,15 +248,12 @@ export default function LandingPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-[#04090b]/85 via-[#04090b]/45 to-[#04090b]/85" />
           <div className="relative">
             <ShieldCheck className="mx-auto h-8 w-8 text-primary" />
-            <h2 className="mt-3 text-2xl font-bold text-white lg:text-3xl">Prêt à commencer ?</h2>
-            <p className="mx-auto mt-2 max-w-xl text-white/60">
-              Créez votre compte en quelques secondes et retrouvez votre tableau de bord, votre
-              progression et l&apos;historique complet de vos activités à chaque connexion.
-            </p>
+            <h2 className="mt-3 text-2xl font-bold text-white lg:text-3xl">{t.marketing.ctaTitle}</h2>
+            <p className="mx-auto mt-2 max-w-xl text-white/60">{t.marketing.ctaDesc}</p>
             <div className="mt-6 flex justify-center gap-3">
               <Link href="/register">
                 <Button size="lg" className="gap-2">
-                  Créer mon compte
+                  {t.marketing.ctaButton}
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>

@@ -1,13 +1,15 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
+import { enUS, fr } from "date-fns/locale";
 import { Activity } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { requireAdmin } from "@/lib/auth/session";
 import { listAllActivity } from "@/lib/admin";
 import { ACTIVITY_ACTION_LABELS, type ActivityAction } from "@/lib/activity-types";
+import { getLocale } from "@/lib/i18n/get-locale";
+import { dictionary } from "@/lib/i18n/dictionary";
 
 const PAGE_SIZE = 25;
 
@@ -19,6 +21,10 @@ export default async function AdminActivityPage({
   const admin = await requireAdmin();
   if (!admin) redirect("/dashboard");
 
+  const locale = getLocale();
+  const t = dictionary[locale];
+  const dateLocale = locale === "fr" ? fr : enUS;
+
   const offset = Math.max(Number(searchParams.offset) || 0, 0);
   const { entries, total } = await listAllActivity(PAGE_SIZE, offset);
   const hasMore = offset + PAGE_SIZE < total;
@@ -28,19 +34,21 @@ export default async function AdminActivityPage({
       <div>
         <h1 className="flex items-center gap-2 text-2xl font-bold">
           <Activity className="h-6 w-6 text-primary" />
-          Journal d&apos;activité global
+          {t.admin.globalActivityTitle}
         </h1>
-        <p className="mt-1 text-muted-foreground">{total} événement(s) enregistré(s) au total</p>
+        <p className="mt-1 text-muted-foreground">
+          {total} {t.admin.globalActivitySubtitle}
+        </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Toutes les actions, tous les comptes</CardTitle>
-          <CardDescription>Les événements les plus récents apparaissent en premier.</CardDescription>
+          <CardTitle className="text-base">{t.admin.globalActivityCardTitle}</CardTitle>
+          <CardDescription>{t.admin.globalActivityCardDesc}</CardDescription>
         </CardHeader>
         <CardContent>
           {entries.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">Aucune activité enregistrée.</p>
+            <p className="py-8 text-center text-sm text-muted-foreground">{t.activity.noActivity}</p>
           ) : (
             <ul className="divide-y divide-border">
               {entries.map((entry) => (
@@ -57,7 +65,7 @@ export default async function AdminActivityPage({
                     </Link>
                   </div>
                   <span className="whitespace-nowrap text-xs text-muted-foreground">
-                    {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale: fr })}
+                    {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale: dateLocale })}
                   </span>
                 </li>
               ))}
@@ -69,20 +77,20 @@ export default async function AdminActivityPage({
       <div className="flex items-center justify-between">
         {offset === 0 ? (
           <Button variant="outline" disabled>
-            Précédent
+            {t.common.previous}
           </Button>
         ) : (
           <Link href={`/admin/activity?offset=${Math.max(offset - PAGE_SIZE, 0)}`}>
-            <Button variant="outline">Précédent</Button>
+            <Button variant="outline">{t.common.previous}</Button>
           </Link>
         )}
         {!hasMore ? (
           <Button variant="outline" disabled>
-            Suivant
+            {t.common.next}
           </Button>
         ) : (
           <Link href={`/admin/activity?offset=${offset + PAGE_SIZE}`}>
-            <Button variant="outline">Suivant</Button>
+            <Button variant="outline">{t.common.next}</Button>
           </Link>
         )}
       </div>

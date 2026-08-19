@@ -13,6 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { loginSchema, type LoginInput } from "@/lib/validation/auth";
 import { sanitizeRedirectPath } from "@/lib/utils";
+import { useLanguage } from "@/components/language-provider";
 import { AuthShell } from "../auth-shell";
 
 export default function LoginPage() {
@@ -28,6 +29,7 @@ export default function LoginPage() {
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useLanguage();
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -46,15 +48,15 @@ function LoginForm() {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error ?? "Impossible de vous connecter");
+        toast.error(data.error ?? t.auth.toastLoginErrorFallback);
         return;
       }
-      toast.success("Connexion réussie");
+      toast.success(t.auth.toastLoginSuccess);
       const next = sanitizeRedirectPath(searchParams.get("next"));
       router.push(next);
       router.refresh();
     } catch {
-      toast.error("Erreur réseau, veuillez réessayer");
+      toast.error(t.auth.toastNetworkError);
     } finally {
       setSubmitting(false);
     }
@@ -64,11 +66,9 @@ function LoginForm() {
     <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 shadow-sm animate-scale-in">
       <div className="mb-6">
         <h1 className="flex items-center gap-2 text-2xl font-bold">
-          Bienvenue <span aria-hidden>👋</span>
+          {t.auth.loginWelcome} <span aria-hidden>👋</span>
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Connectez-vous à votre espace de formation OracleMaster
-        </p>
+        <p className="mt-1 text-sm text-muted-foreground">{t.auth.loginSubtitle}</p>
       </div>
 
       <Form {...form}>
@@ -78,14 +78,14 @@ function LoginForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Adresse e-mail</FormLabel>
+                <FormLabel>{t.auth.emailLabel}</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
                       type="email"
                       autoComplete="email"
-                      placeholder="vous@exemple.com"
+                      placeholder={t.auth.emailPlaceholder}
                       className="pl-9"
                       {...field}
                     />
@@ -100,7 +100,7 @@ function LoginForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Mot de passe</FormLabel>
+                <FormLabel>{t.auth.passwordLabel}</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -133,32 +133,30 @@ function LoginForm() {
               render={({ field }) => (
                 <label className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                  Se souvenir de moi
+                  {t.auth.rememberMe}
                 </label>
               )}
             />
             <button
               type="button"
-              onClick={() =>
-                toast.info("Contactez un administrateur pour réinitialiser votre mot de passe.")
-              }
+              onClick={() => toast.info(t.auth.forgotPasswordToast)}
               className="text-sm font-medium text-primary hover:underline"
             >
-              Mot de passe oublié ?
+              {t.auth.forgotPassword}
             </button>
           </div>
 
           <Button type="submit" className="w-full gap-2" disabled={submitting}>
             <LogIn className="h-4 w-4" />
-            {submitting ? "Connexion..." : "Se connecter"}
+            {submitting ? t.auth.loginButtonLoading : t.auth.loginButton}
           </Button>
         </form>
       </Form>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        Pas encore de compte ?{" "}
+        {t.auth.noAccount}{" "}
         <Link href="/register" className="font-medium text-primary hover:underline">
-          Créer un compte
+          {t.auth.createAccount}
         </Link>
       </p>
     </div>

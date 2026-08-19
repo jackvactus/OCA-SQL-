@@ -31,19 +31,24 @@ import { cn } from "@/lib/utils";
 import { useProgress } from "@/hooks/use-progress";
 import { resetProgressStore } from "@/lib/progress-store";
 import type { UserRole } from "@/lib/auth/jwt";
+import { useLanguage } from "@/components/language-provider";
+import { LanguageToggle } from "@/components/language-toggle";
 
-const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/courses", label: "Cours", icon: BookOpen },
-  { href: "/quiz", label: "Q&R", icon: Brain },
-  { href: "/exam", label: "Examen", icon: GraduationCap },
-  { href: "/flashcards", label: "Flashcards", icon: Layers },
-  { href: "/sandbox", label: "SQL Sandbox", icon: Code2 },
-  { href: "/reference", label: "Référence", icon: Library },
-  { href: "/activity", label: "Activité", icon: History },
-];
-
-const adminNavItem = { href: "/admin", label: "Administration", icon: ShieldCheck };
+function useNavItems() {
+  const { t } = useLanguage();
+  const navItems = [
+    { href: "/dashboard", label: t.nav.dashboard, icon: LayoutDashboard },
+    { href: "/courses", label: t.nav.courses, icon: BookOpen },
+    { href: "/quiz", label: t.nav.quiz, icon: Brain },
+    { href: "/exam", label: t.nav.exam, icon: GraduationCap },
+    { href: "/flashcards", label: t.nav.flashcards, icon: Layers },
+    { href: "/sandbox", label: t.nav.sandbox, icon: Code2 },
+    { href: "/reference", label: t.nav.reference, icon: Library },
+    { href: "/activity", label: t.nav.activity, icon: History },
+  ];
+  const adminNavItem = { href: "/admin", label: t.nav.admin, icon: ShieldCheck };
+  return { navItems, adminNavItem };
+}
 
 export function AppLayout({
   children,
@@ -58,6 +63,8 @@ export function AppLayout({
   const [mounted, setMounted] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const { theme, setTheme } = useTheme();
+  const { t } = useLanguage();
+  const { navItems, adminNavItem } = useNavItems();
   const { progress, loaded } = useProgress();
 
   useEffect(() => setMounted(true), []);
@@ -100,8 +107,8 @@ export function AppLayout({
               />
             </div>
             <div>
-              <h1 className="text-lg font-bold leading-none">OracleMaster</h1>
-              <p className="text-xs text-muted-foreground">1Z0-071 Training</p>
+              <h1 className="text-lg font-bold leading-none">{t.appShell.brand}</h1>
+              <p className="text-xs text-muted-foreground">{t.appShell.brandTag}</p>
             </div>
           </div>
 
@@ -134,7 +141,9 @@ export function AppLayout({
             <div className="border-t border-border p-4">
               <div className="rounded-xl border border-border/70 bg-muted/40 p-3">
                 <div className="mb-3 flex items-center justify-between">
-                  <span className="text-sm font-semibold">Niveau {level}</span>
+                  <span className="text-sm font-semibold">
+                    {t.appShell.level} {level}
+                  </span>
                   <span className="text-xs text-muted-foreground">{progress.xp} XP</span>
                 </div>
                 <div className="h-2 overflow-hidden rounded-full bg-muted">
@@ -146,11 +155,11 @@ export function AppLayout({
                 <div className="mt-3 flex items-center gap-4 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Flame className="h-3.5 w-3.5 text-warning" />
-                    {progress.streak} jours
+                    {progress.streak} {t.appShell.days}
                   </span>
                   <span className="flex items-center gap-1">
                     <Trophy className="h-3.5 w-3.5 text-primary" />
-                    {progress.completedLessons.length} leçons
+                    {progress.completedLessons.length} {t.appShell.lessonsShort}
                   </span>
                 </div>
               </div>
@@ -186,12 +195,13 @@ export function AppLayout({
                 href="/search"
                 className="w-64 rounded-lg border border-input bg-background py-2 pl-9 pr-3 text-sm text-muted-foreground transition-colors hover:border-primary block"
               >
-                Rechercher...
+                {t.nav.searchPlaceholder}
               </Link>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
+            <LanguageToggle />
             {mounted && (
               <Button
                 variant="ghost"
@@ -210,7 +220,7 @@ export function AppLayout({
             <Button
               variant="ghost"
               size="icon"
-              title="Déconnexion"
+              title={t.nav.logout}
               onClick={handleLogout}
               disabled={loggingOut}
             >

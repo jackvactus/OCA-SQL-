@@ -14,6 +14,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { requireAdmin } from "@/lib/auth/session";
 import { listUsers } from "@/lib/admin";
+import { getLocale } from "@/lib/i18n/get-locale";
+import { dictionary } from "@/lib/i18n/dictionary";
 import { UserRowActions } from "./user-row-actions";
 
 export default async function AdminUsersPage({
@@ -24,6 +26,8 @@ export default async function AdminUsersPage({
   const admin = await requireAdmin();
   if (!admin) redirect("/dashboard");
 
+  const locale = getLocale();
+  const t = dictionary[locale];
   const users = await listUsers(searchParams.q);
 
   return (
@@ -31,19 +35,21 @@ export default async function AdminUsersPage({
       <div>
         <h1 className="flex items-center gap-2 text-2xl font-bold">
           <Users className="h-6 w-6 text-primary" />
-          Utilisateurs
+          {t.admin.usersTitle}
         </h1>
-        <p className="mt-1 text-muted-foreground">{users.length} compte(s) au total</p>
+        <p className="mt-1 text-muted-foreground">
+          {users.length} {t.admin.usersCount}
+        </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Rechercher</CardTitle>
-          <CardDescription>Par e-mail ou nom affiché</CardDescription>
+          <CardTitle className="text-base">{t.admin.searchTitle}</CardTitle>
+          <CardDescription>{t.admin.searchDesc}</CardDescription>
         </CardHeader>
         <CardContent>
           <form method="get" className="flex gap-2">
-            <Input name="q" placeholder="ex: jean@exemple.com" defaultValue={searchParams.q ?? ""} />
+            <Input name="q" placeholder={t.admin.searchPlaceholder} defaultValue={searchParams.q ?? ""} />
           </form>
         </CardContent>
       </Card>
@@ -53,19 +59,19 @@ export default async function AdminUsersPage({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Utilisateur</TableHead>
-                <TableHead>Rôle</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead>Progression</TableHead>
-                <TableHead>Inscrit le</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>{t.admin.colUser}</TableHead>
+                <TableHead>{t.admin.colRole}</TableHead>
+                <TableHead>{t.admin.colStatus}</TableHead>
+                <TableHead>{t.admin.colProgress}</TableHead>
+                <TableHead>{t.admin.colJoined}</TableHead>
+                <TableHead className="text-right">{t.admin.colActions}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {users.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="py-8 text-center text-sm text-muted-foreground">
-                    Aucun utilisateur trouvé.
+                    {t.admin.noUsers}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -79,19 +85,19 @@ export default async function AdminUsersPage({
                     </TableCell>
                     <TableCell>
                       <Badge variant={user.role === "admin" ? "default" : "outline"}>
-                        {user.role === "admin" ? "Administrateur" : "Utilisateur"}
+                        {user.role === "admin" ? t.admin.roleAdmin : t.admin.roleUser}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <Badge variant={user.is_active ? "secondary" : "destructive"}>
-                        {user.is_active ? "Actif" : "Désactivé"}
+                        {user.is_active ? t.admin.statusActive : t.admin.statusDisabled}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
-                      {user.completed_lessons_count} leçons · {user.xp} XP
+                      {user.completed_lessons_count} {t.appShell.lessonsShort} · {user.xp} XP
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
-                      {new Date(user.created_at).toLocaleDateString("fr-FR")}
+                      {new Date(user.created_at).toLocaleDateString(locale === "fr" ? "fr-FR" : "en-US")}
                     </TableCell>
                     <TableCell className="text-right">
                       <UserRowActions
