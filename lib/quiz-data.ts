@@ -1,7 +1,7 @@
 /**
  * Oracle 1Z0-071 — banque Q&R professionnelle
  * Sources : modules du site + documents OCA (1Z0-071 / SQL 2)
- * 230 questions — réponses vérifiées (Oracle SQL), multi-réponses type examen.
+ * 238 questions — réponses vérifiées (Oracle SQL), multi-réponses type examen.
  */
 import type { QuizQuestion } from "./types";
 
@@ -3612,6 +3612,110 @@ export const quizQuestions: QuizQuestion[] = [
     explanation: "FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → FETCH. SELECT s'écrit en premier mais s'exécute après HAVING.",
     topic: "Ordre d'exécution",
     difficulty: "easy",
+  },
+  {
+    id: "q231",
+    moduleId: "m4",
+    question:
+      "Parmi ces types Oracle, lequel ne stocke ni fraction de seconde ni information de fuseau horaire ?",
+    options: ["DATE", "TIMESTAMP", "TIMESTAMP WITH TIME ZONE", "TIMESTAMP WITH LOCAL TIME ZONE"],
+    correctIndexes: [0],
+    explanation:
+      "DATE stocke siècle, année, mois, jour, heure, minute et seconde (précision à la seconde), sans fraction de seconde ni fuseau. TIMESTAMP ajoute les fractions de seconde ; les deux variantes WITH TIME ZONE ajoutent en plus l'information de fuseau.",
+    topic: "Types DATE/TIMESTAMP",
+    difficulty: "easy",
+  },
+  {
+    id: "q232",
+    moduleId: "m4",
+    question:
+      "Quelle est la différence essentielle entre TIMESTAMP WITH TIME ZONE et TIMESTAMP WITH LOCAL TIME ZONE ?",
+    options: [
+      "Elles sont strictement identiques",
+      "WITH TIME ZONE conserve le fuseau d'origine de la valeur ; WITH LOCAL TIME ZONE normalise le stockage sur le fuseau de la base et affiche selon le fuseau de la session",
+      "WITH LOCAL TIME ZONE ne peut pas être utilisée dans une contrainte CHECK",
+      "WITH TIME ZONE ne peut stocker que des dates passées",
+    ],
+    correctIndexes: [1],
+    explanation:
+      "TIMESTAMP WITH TIME ZONE stocke le fuseau tel qu'il a été saisi et le restitue tel quel. TIMESTAMP WITH LOCAL TIME ZONE ne stocke pas le fuseau par ligne : la valeur est normalisée sur le fuseau de la base, puis convertie à l'affichage selon le fuseau de la session qui lit la donnée.",
+    topic: "TIMESTAMP WITH TIME ZONE vs LOCAL",
+    difficulty: "medium",
+  },
+  {
+    id: "q233",
+    moduleId: "m4",
+    question:
+      "Quelle fonction retourne le fuseau horaire configuré au niveau de la base de données (et non celui de la session en cours) ?",
+    options: ["SESSIONTIMEZONE", "DBTIMEZONE", "CURRENT_TIMESTAMP", "SYSTIMESTAMP"],
+    correctIndexes: [1],
+    explanation:
+      "DBTIMEZONE retourne le fuseau horaire de la base (défini à sa création). SESSIONTIMEZONE retourne celui de la session cliente courante — les deux peuvent différer.",
+    topic: "DBTIMEZONE / SESSIONTIMEZONE",
+    difficulty: "easy",
+  },
+  {
+    id: "q234",
+    moduleId: "m4",
+    question:
+      "Lesquelles de ces fonctions reflètent le fuseau horaire de la SESSION cliente plutôt que celui du serveur ? (Choisissez deux réponses.)",
+    options: ["SYSDATE", "CURRENT_DATE", "SYSTIMESTAMP", "CURRENT_TIMESTAMP"],
+    correctIndexes: [1, 3],
+    explanation:
+      "CURRENT_DATE et CURRENT_TIMESTAMP dépendent du fuseau horaire de la session cliente. SYSDATE et SYSTIMESTAMP dépendent du fuseau horaire du système d'exploitation du serveur de base de données — ils peuvent donc différer.",
+    topic: "SYSDATE vs CURRENT_DATE",
+    difficulty: "hard",
+  },
+  {
+    id: "q235",
+    moduleId: "m4",
+    question: "Quel est le type de résultat d'une soustraction entre deux valeurs TIMESTAMP ?",
+    options: ["NUMBER (nombre de jours)", "INTERVAL DAY TO SECOND", "DATE", "VARCHAR2"],
+    correctIndexes: [1],
+    explanation:
+      "DATE - DATE retourne un NUMBER représentant un nombre de jours. TIMESTAMP - TIMESTAMP retourne en revanche un INTERVAL DAY TO SECOND, précis jusqu'à la fraction de seconde.",
+    topic: "Arithmétique DATE vs TIMESTAMP",
+    difficulty: "medium",
+  },
+  {
+    id: "q236",
+    moduleId: "m4",
+    question:
+      "Quelle fonction retourne l'heure actuelle de la session, convertie dans le fuseau de la session, mais typée TIMESTAMP (sans fuseau affiché) ?",
+    options: ["LOCALTIMESTAMP", "CURRENT_TIMESTAMP", "SYSTIMESTAMP", "DBTIMEZONE"],
+    correctIndexes: [0],
+    explanation:
+      "LOCALTIMESTAMP retourne un TIMESTAMP (et non un TIMESTAMP WITH TIME ZONE) calculé dans le fuseau horaire de la session. CURRENT_TIMESTAMP, elle, retourne bien un TIMESTAMP WITH TIME ZONE.",
+    topic: "LOCALTIMESTAMP",
+    difficulty: "hard",
+  },
+  {
+    id: "q237",
+    moduleId: "m4",
+    question:
+      "Quelle syntaxe permet d'afficher une valeur TIMESTAMP WITH TIME ZONE convertie dans un autre fuseau horaire, sans changer l'instant réel qu'elle représente ?",
+    options: [
+      "valeur AT TIME ZONE 'Europe/Paris'",
+      "CONVERT_TZ(valeur, 'Europe/Paris')",
+      "valeur >> TIMEZONE('Europe/Paris')",
+      "SET TIMEZONE valeur TO 'Europe/Paris'",
+    ],
+    correctIndexes: [0],
+    explanation:
+      "La clause AT TIME ZONE convertit et affiche une valeur TIMESTAMP WITH TIME ZONE dans le fuseau indiqué ; elle ne modifie pas l'instant réel représenté, seulement sa présentation.",
+    topic: "AT TIME ZONE",
+    difficulty: "hard",
+  },
+  {
+    id: "q238",
+    moduleId: "m4",
+    question: "Quelle fonction convertit une valeur TIMESTAMP WITH TIME ZONE en son équivalent UTC ?",
+    options: ["SYS_EXTRACT_UTC", "TO_UTC", "UTC_TIMESTAMP", "DBTIMEZONE"],
+    correctIndexes: [0],
+    explanation:
+      "SYS_EXTRACT_UTC retourne l'équivalent UTC (temps universel coordonné) d'une valeur TIMESTAMP WITH TIME ZONE.",
+    topic: "SYS_EXTRACT_UTC",
+    difficulty: "medium",
   },
 ];
 
