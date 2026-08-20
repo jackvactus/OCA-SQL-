@@ -5,13 +5,16 @@ import {
   BookOpen,
   Brain,
   Clock,
+  Cloud,
   Code2,
   Database,
   GraduationCap,
   History,
   Layers,
   Library,
+  Lock,
   Radar,
+  RefreshCw,
   ShieldCheck,
   Target,
 } from "lucide-react";
@@ -25,6 +28,7 @@ import { dictionary, type Dictionary } from "@/lib/i18n/dictionary";
 import type { Locale } from "@/lib/i18n/locale";
 import { LiveStats } from "./live-stats";
 import { DifficultyChart } from "./difficulty-chart";
+import { SandboxPreview } from "./sandbox-preview";
 
 // Mirrors the constants in app/(app)/exam/page.tsx — kept in sync manually
 // since that file doesn't export them.
@@ -46,6 +50,15 @@ function buildChips(t: Dictionary) {
     { icon: Radar, label: t.marketing.chip2 },
     { icon: Code2, label: t.marketing.chip3 },
     { icon: History, label: t.marketing.chip4 },
+  ];
+}
+
+function buildInfraChips(t: Dictionary) {
+  return [
+    { icon: Database, label: t.marketing.infraChip1 },
+    { icon: Lock, label: t.marketing.infraChip2 },
+    { icon: RefreshCw, label: t.marketing.infraChip3 },
+    { icon: Cloud, label: t.marketing.infraChip4 },
   ];
 }
 
@@ -86,6 +99,7 @@ export default function LandingPage() {
   const t = dictionary[locale];
   const heroStats = buildHeroStats(t);
   const chips = buildChips(t);
+  const infraChips = buildInfraChips(t);
   const features = buildFeatures(t, locale);
 
   const difficultyCounts = { easy: 0, medium: 0, hard: 0 };
@@ -209,6 +223,21 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* SQL Sandbox preview */}
+      <section className="mx-auto max-w-7xl px-4 lg:px-8">
+        <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
+          <div>
+            <Badge variant="secondary" className="gap-1.5">
+              <Code2 className="h-3 w-3 text-primary" />
+              {t.marketing.sandboxBadge}
+            </Badge>
+            <h2 className="mt-4 text-2xl font-bold lg:text-3xl">{t.marketing.sandboxTitle}</h2>
+            <p className="mt-3 text-muted-foreground">{t.marketing.sandboxDesc}</p>
+          </div>
+          <SandboxPreview t={t} />
+        </div>
+      </section>
+
       {/* Visualization showcase */}
       <section className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
@@ -232,6 +261,40 @@ export default function LandingPage() {
             </Badge>
             <h2 className="mt-4 text-2xl font-bold lg:text-3xl">{t.marketing.vizTitle}</h2>
             <p className="mt-3 text-muted-foreground">{t.marketing.vizDesc}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Infrastructure band */}
+      <section className="relative overflow-hidden bg-[#04090b] py-16 lg:py-20">
+        <Image
+          src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1920&auto=format&fit=crop"
+          alt=""
+          fill
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#04090b]/85 via-[#04090b]/70 to-[#04090b]/90" />
+        <div className="bg-grid absolute inset-0 opacity-10" />
+
+        <div className="relative mx-auto max-w-7xl px-4 lg:px-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <Badge variant="secondary" className="gap-1.5 border-white/10 bg-white/10 text-white">
+              <ShieldCheck className="h-3 w-3 text-primary" />
+              {t.marketing.infraBadge}
+            </Badge>
+            <h2 className="mt-4 text-2xl font-bold text-white lg:text-3xl">{t.marketing.infraTitle}</h2>
+            <p className="mt-3 text-white/60">{t.marketing.infraDesc}</p>
+          </div>
+          <div className="mx-auto mt-10 grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {infraChips.map((chip) => (
+              <div
+                key={chip.label}
+                className="flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-white/5 p-5 text-center backdrop-blur"
+              >
+                <chip.icon className="h-5 w-5 text-primary" />
+                <p className="text-sm text-white/80">{chip.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

@@ -8,11 +8,13 @@ import { ArrowLeft, BarChart3, Code2, Layers, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/components/language-provider";
 import { LanguageToggle } from "@/components/language-toggle";
+import { useAuthStats } from "./auth-stats-provider";
 
 export function AuthShell({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
   const { t } = useLanguage();
+  const { moduleCount, questionCount } = useAuthStats();
 
   useEffect(() => setMounted(true), []);
 
@@ -55,6 +57,23 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
               {t.auth.heroHeadline1} <span className="text-primary">{t.auth.heroHeadlineHighlight}</span>
             </h1>
             <p className="mt-5 text-lg text-white/60">{t.auth.heroSubtitle}</p>
+
+            <div className="mt-6 flex items-center gap-6 rounded-xl border border-white/10 bg-white/5 px-5 py-4 backdrop-blur">
+              <div>
+                <p className="text-xl font-bold text-white">{moduleCount}</p>
+                <p className="text-xs text-white/50">{t.auth.statModules}</p>
+              </div>
+              <div className="h-8 w-px bg-white/10" />
+              <div>
+                <p className="text-xl font-bold text-white">{questionCount}+</p>
+                <p className="text-xs text-white/50">{t.auth.statQuestions}</p>
+              </div>
+              <div className="h-8 w-px bg-white/10" />
+              <div>
+                <p className="text-xl font-bold text-white">{t.auth.statTrackingValue}</p>
+                <p className="text-xs text-white/50">{t.auth.statTracking}</p>
+              </div>
+            </div>
 
             <div className="mt-8 space-y-4">
               {features.map((feature) => (
