@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
 
   const body = await request.json().catch(() => null);
   const id = body?.id;
-  if (typeof id !== "string" || !id) {
+  if (typeof id !== "string" || !id.trim() || id.length > 200) {
     return NextResponse.json({ error: "id requis" }, { status: 400 });
   }
 

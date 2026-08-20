@@ -7,6 +7,7 @@ export async function GET(request: NextRequest) {
   if (!admin) return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
 
   const { searchParams } = new URL(request.url);
-  const users = await listUsers(searchParams.get("q") ?? undefined);
+  const search = searchParams.get("q")?.trim().slice(0, 100) || undefined;
+  const users = await listUsers(search);
   return NextResponse.json({ users });
 }

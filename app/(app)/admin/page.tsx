@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Activity, ArrowRight, ShieldCheck, Users } from "lucide-react";
+import { Activity, ArrowRight, BookOpen, ShieldCheck, Users } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAdmin } from "@/lib/auth/session";
 import { getAdminOverviewStats } from "@/lib/admin";
@@ -31,6 +31,21 @@ export default async function AdminOverviewPage() {
         <StatCard label={t.admin.statActive} value={stats.activeUsers} />
         <StatCard label={t.admin.statAdmins} value={stats.adminCount} />
         <StatCard label={t.admin.statEvents} value={stats.totalActivityEvents} />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <InsightCard
+          icon={Activity}
+          label={t.admin.engagedUsers}
+          value={stats.engagedUsersLast7Days}
+          description={t.admin.engagedUsersDesc}
+        />
+        <InsightCard
+          icon={BookOpen}
+          label={t.admin.averageLessons}
+          value={stats.averageLessonsCompleted}
+          description={t.admin.averageLessonsDesc}
+        />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
@@ -108,6 +123,33 @@ function StatCard({ label, value }: { label: string; value: number }) {
       <CardContent className="p-4">
         <p className="text-xs text-muted-foreground">{label}</p>
         <p className="mt-1 text-2xl font-bold">{value}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+function InsightCard({
+  icon: Icon,
+  label,
+  value,
+  description,
+}: {
+  icon: React.ElementType;
+  label: string;
+  value: number;
+  description: string;
+}) {
+  return (
+    <Card className="border-primary/20 bg-primary/[0.04]">
+      <CardContent className="flex items-center gap-4 p-5">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <Icon className="h-5 w-5" />
+        </div>
+        <div>
+          <p className="text-sm font-semibold">{label}</p>
+          <p className="mt-1 text-2xl font-bold tabular-nums">{value}</p>
+          <p className="text-xs text-muted-foreground">{description}</p>
+        </div>
       </CardContent>
     </Card>
   );

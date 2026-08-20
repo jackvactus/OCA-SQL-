@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
+  Award,
   BookOpen,
   Brain,
   Clock,
@@ -12,9 +13,7 @@ import {
   History,
   Layers,
   Library,
-  Lock,
   Radar,
-  RefreshCw,
   ShieldCheck,
   Target,
 } from "lucide-react";
@@ -23,6 +22,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { modules } from "@/lib/modules-data";
 import { quizQuestions } from "@/lib/quiz-data";
+import { workbookQuizQuestions } from "@/lib/quiz-data-en-workbook";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { dictionary, type Dictionary } from "@/lib/i18n/dictionary";
 import type { Locale } from "@/lib/i18n/locale";
@@ -33,12 +33,12 @@ import { SandboxPreview } from "./sandbox-preview";
 // Mirrors the constants in app/(app)/exam/page.tsx — kept in sync manually
 // since that file doesn't export them.
 const EXAM_PASS_THRESHOLD = 63;
-const EXAM_DURATION_MINUTES = 100;
+const EXAM_DURATION_MINUTES = 120;
 
-function buildHeroStats(t: Dictionary) {
+function buildHeroStats(t: Dictionary, questionCount: number) {
   return [
     { icon: Layers, value: `${modules.length}`, label: t.marketing.statModules },
-    { icon: Brain, value: `${quizQuestions.length}+`, label: t.marketing.statQuestions },
+    { icon: Brain, value: `${questionCount}+`, label: t.marketing.statQuestions },
     { icon: Target, value: `${EXAM_PASS_THRESHOLD}%`, label: t.marketing.statPassThreshold },
     { icon: Clock, value: `${EXAM_DURATION_MINUTES} min`, label: t.marketing.statExamDuration },
   ];
@@ -53,16 +53,7 @@ function buildChips(t: Dictionary) {
   ];
 }
 
-function buildInfraChips(t: Dictionary) {
-  return [
-    { icon: Database, label: t.marketing.infraChip1 },
-    { icon: Lock, label: t.marketing.infraChip2 },
-    { icon: RefreshCw, label: t.marketing.infraChip3 },
-    { icon: Cloud, label: t.marketing.infraChip4 },
-  ];
-}
-
-function buildFeatures(t: Dictionary, locale: Locale) {
+function buildFeatures(t: Dictionary, locale: Locale, questionCount: number) {
   return [
     {
       icon: BookOpen,
@@ -77,8 +68,8 @@ function buildFeatures(t: Dictionary, locale: Locale) {
       title: t.marketing.feature2Title,
       description:
         locale === "fr"
-          ? `${quizQuestions.length}+ questions corrigées et expliquées pour ancrer chaque notion durablement.`
-          : `${quizQuestions.length}+ reviewed, explained questions to lock in every concept for the long run.`,
+          ? `${questionCount}+ questions corrigées et expliquées pour ancrer chaque notion durablement.`
+          : `${questionCount}+ reviewed, explained questions to lock in every concept for the long run.`,
     },
     {
       icon: GraduationCap,
@@ -97,13 +88,13 @@ function buildFeatures(t: Dictionary, locale: Locale) {
 export default function LandingPage() {
   const locale = getLocale();
   const t = dictionary[locale];
-  const heroStats = buildHeroStats(t);
+  const questionBank = locale === "en" ? workbookQuizQuestions : quizQuestions;
+  const heroStats = buildHeroStats(t, questionBank.length);
   const chips = buildChips(t);
-  const infraChips = buildInfraChips(t);
-  const features = buildFeatures(t, locale);
+  const features = buildFeatures(t, locale, questionBank.length);
 
   const difficultyCounts = { easy: 0, medium: 0, hard: 0 };
-  for (const q of quizQuestions) difficultyCounts[q.difficulty] += 1;
+  for (const q of questionBank) difficultyCounts[q.difficulty] += 1;
   const difficultyData = [
     { label: t.marketing.difficultyEasy, count: difficultyCounts.easy },
     { label: t.marketing.difficultyMedium, count: difficultyCounts.medium },
@@ -247,7 +238,7 @@ export default function LandingPage() {
                 <div className="mb-4 flex items-center justify-between">
                   <h3 className="font-semibold">{t.marketing.vizCardTitle}</h3>
                   <Badge variant="outline">
-                    {quizQuestions.length} {t.marketing.vizQuestionsCount}
+                    {questionBank.length} {t.marketing.vizQuestionsCount}
                   </Badge>
                 </div>
                 <DifficultyChart data={difficultyData} />
@@ -265,34 +256,40 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Infrastructure band */}
+      {/* Oracle certification paths */}
       <section className="relative overflow-hidden bg-[#04090b] py-16 lg:py-20">
         <Image
-          src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1920&auto=format&fit=crop"
+          src="/oracle-logo.svg"
           alt=""
-          fill
-          className="object-cover"
+          width={220}
+          height={58}
+          className="absolute right-8 top-8 w-44 opacity-10 lg:right-16 lg:top-12 lg:w-56"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#04090b]/85 via-[#04090b]/70 to-[#04090b]/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#04090b] via-[#04090b]/95 to-[#04090b]" />
         <div className="bg-grid absolute inset-0 opacity-10" />
 
         <div className="relative mx-auto max-w-7xl px-4 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <Badge variant="secondary" className="gap-1.5 border-white/10 bg-white/10 text-white">
-              <ShieldCheck className="h-3 w-3 text-primary" />
-              {t.marketing.infraBadge}
+              <Award className="h-3 w-3 text-primary" />
+              {t.marketing.certificationBadge}
             </Badge>
-            <h2 className="mt-4 text-2xl font-bold text-white lg:text-3xl">{t.marketing.infraTitle}</h2>
-            <p className="mt-3 text-white/60">{t.marketing.infraDesc}</p>
+            <h2 className="mt-4 text-2xl font-bold text-white lg:text-3xl">{t.marketing.certificationTitle}</h2>
+            <p className="mt-3 text-white/60">{t.marketing.certificationDesc}</p>
           </div>
-          <div className="mx-auto mt-10 grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {infraChips.map((chip) => (
+          <div className="mx-auto mt-10 grid max-w-5xl grid-cols-1 gap-4 md:grid-cols-3">
+            {[
+              { icon: Database, title: t.marketing.certificationSqlTitle, description: t.marketing.certificationSqlDesc, active: true },
+              { icon: GraduationCap, title: t.marketing.certificationJavaTitle, description: t.marketing.certificationJavaDesc, active: false },
+              { icon: Cloud, title: t.marketing.certificationOciTitle, description: t.marketing.certificationOciDesc, active: false },
+            ].map((path) => (
               <div
-                key={chip.label}
-                className="flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-white/5 p-5 text-center backdrop-blur"
+                key={path.title}
+                className={`flex flex-col gap-3 rounded-xl border p-5 backdrop-blur ${path.active ? "border-primary/60 bg-primary/10" : "border-white/10 bg-white/5"}`}
               >
-                <chip.icon className="h-5 w-5 text-primary" />
-                <p className="text-sm text-white/80">{chip.label}</p>
+                <path.icon className="h-6 w-6 text-primary" />
+                <p className="font-semibold text-white">{path.title}</p>
+                <p className="text-sm leading-relaxed text-white/60">{path.description}</p>
               </div>
             ))}
           </div>

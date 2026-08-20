@@ -6,6 +6,7 @@ import {
   isAnswerCorrect,
   requiredAnswerCount,
 } from "@/lib/quiz-data";
+import { workbookQuizQuestions } from "@/lib/quiz-data-en-workbook";
 import type { QuizQuestion } from "@/lib/types";
 import { useProgress } from "@/hooks/use-progress";
 import {
@@ -23,6 +24,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/language-provider";
 import {
   GraduationCap,
   Clock,
@@ -44,7 +46,7 @@ type ExamPhase = "setup" | "exam" | "review" | "results";
 type ExamQuestion = QuizQuestion;
 
 const PASS_THRESHOLD = 63;
-const FULL_EXAM_MINUTES = 100;
+const FULL_EXAM_MINUTES = 120;
 const FULL_EXAM_QUESTIONS = 63;
 
 function shuffle<T>(arr: T[]): T[] {
@@ -64,6 +66,8 @@ function formatTime(seconds: number): string {
 
 export default function ExamPage() {
   const { recordExam } = useProgress();
+  const { locale } = useLanguage();
+  const questionBank = locale === "en" ? workbookQuizQuestions : quizQuestions;
 
   const [phase, setPhase] = useState<ExamPhase>("setup");
   const [questionCount, setQuestionCount] = useState<number>(63);
@@ -113,9 +117,9 @@ export default function ExamPage() {
     if (count === -1) {
       const parsed = parseInt(customCount, 10);
       if (isNaN(parsed) || parsed < 1) return;
-      count = Math.min(parsed, quizQuestions.length);
+      count = Math.min(parsed, questionBank.length);
     }
-    const selected = shuffle(quizQuestions).slice(0, count);
+    const selected = shuffle(questionBank).slice(0, count);
     const minutes = Math.ceil((count / FULL_EXAM_QUESTIONS) * FULL_EXAM_MINUTES);
     setExamQuestions(selected);
     setAnswers({});
@@ -131,7 +135,7 @@ export default function ExamPage() {
     }).catch(() => {
       // best-effort activity logging, ignore failures
     });
-  }, [questionCount, customCount]);
+  }, [questionCount, customCount, questionBank]);
 
   const selectAnswer = useCallback(
     (qIndex: number, optionIndex: number, multi: boolean, max: number) => {
@@ -277,7 +281,7 @@ export default function ExamPage() {
                   >
                     <div className="text-2xl font-bold">Custom</div>
                     <div className="text-xs text-muted-foreground mt-1">
-                      Up to {quizQuestions.length}
+                      Up to {questionBank.length}
                     </div>
                   </button>
                 </div>
@@ -291,10 +295,10 @@ export default function ExamPage() {
                   <input
                     type="number"
                     min={1}
-                    max={quizQuestions.length}
+                    max={questionBank.length}
                     value={customCount}
                     onChange={(e) => setCustomCount(e.target.value)}
-                    placeholder={`Enter 1-${quizQuestions.length}`}
+                    placeholder={`Enter 1-${questionBank.length}`}
                     className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   />
                 </div>
@@ -310,7 +314,7 @@ export default function ExamPage() {
                       ? Math.ceil(
                           (Math.min(
                             parseInt(customCount, 10) || 1,
-                            quizQuestions.length,
+                            questionBank.length,
                           ) /
                             FULL_EXAM_QUESTIONS) *
                             FULL_EXAM_MINUTES,
@@ -338,7 +342,7 @@ export default function ExamPage() {
                     {questionCount === -1
                       ? Math.min(
                           parseInt(customCount, 10) || 1,
-                          quizQuestions.length,
+                          questionBank.length,
                         )
                       : questionCount}
                   </div>

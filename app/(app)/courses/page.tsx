@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
   BookOpen,
@@ -8,6 +8,7 @@ import {
   ArrowRight,
   CheckCircle2,
   Circle,
+  Search,
 } from "lucide-react";
 import {
   Card,
@@ -19,12 +20,22 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { modules } from "@/lib/modules-data";
 import { useProgress } from "@/hooks/use-progress";
 import { cn } from "@/lib/utils";
 
 export default function CoursesPage() {
   const { progress, loaded } = useProgress();
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("all");
 
   // Group modules by category, preserving discovery order
   const grouped = useMemo(() => {
@@ -48,6 +59,37 @@ export default function CoursesPage() {
     const percent = totalLessons > 0 ? Math.round((completed / totalLessons) * 100) : 0;
     return { totalLessons, completed, totalHours, percent };
   }, [progress.completedLessons]);
+
+  const filteredGroups = useMemo(() => {
+    const normalizedSearch = search.trim().toLowerCase();
+    return grouped
+      .map(([category, categoryModules]) => [
+        category,
+        categoryModules.filter((module) => {
+          const completed = module.lessons.filter((lesson) =>
+            progress.completedLessons.includes(lesson.id),
+          ).length;
+          const complete = completed === module.lessons.length && completed > 0;
+          const started = completed > 0 && !complete;
+          const matchesStatus =
+            status === "all" ||
+            (status === "completed" && complete) ||
+            (status === "started" && started) ||
+            (status === "todo" && !started && !complete);
+          const matchesSearch =
+            !normalizedSearch ||
+            `${module.title} ${module.description} ${module.category}`
+              .toLowerCase()
+              .includes(normalizedSearch);
+          return matchesStatus && matchesSearch;
+        }),
+      ] as [string, typeof modules])
+      .filter(([, categoryModules]) => categoryModules.length > 0);
+  }, [grouped, progress.completedLessons, search, status]);
+
+  const nextModule = modules.find((module) =>
+    module.lessons.some((lesson) => !progress.completedLessons.includes(lesson.id)),
+  );
 
   return (
     <div className="mx-auto max-w-7xl space-y-8 p-4 lg:p-8">
@@ -75,6 +117,14 @@ export default function CoursesPage() {
               1Z0-071. Suivez votre progression, complétez les leçons et maîtrisez chaque
               sujet à votre rythme.
             </p>
+            {nextModule && (
+              <Link href={`/courses/${nextModule.id}`} className="inline-flex pt-2">
+                <Button size="sm" className="gap-2">
+                  Reprendre : {nextModule.title}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            )}
           </div>
 
           {/* Overall progress dial */}
@@ -115,8 +165,37 @@ export default function CoursesPage() {
         </div>
       </header>
 
+      <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:flex-row">
+        <div className="relative flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Rechercher un module ou un sujet..."
+            className="pl-9"
+          />
+        </div>
+        <Select value={status} onValueChange={setStatus}>
+          <SelectTrigger className="w-full sm:w-48">
+            <SelectValue placeholder="Filtrer par état" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tous les modules</SelectItem>
+            <SelectItem value="todo">Non commencés</SelectItem>
+            <SelectItem value="started">En cours</SelectItem>
+            <SelectItem value="completed">Terminés</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       {/* Sections by category */}
-      {grouped.map(([category, mods], sectionIndex) => {
+      {filteredGroups.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-border py-12 text-center">
+          <Search className="mx-auto h-8 w-8 text-muted-foreground/60" />
+          <p className="mt-3 font-medium">Aucun module trouvé</p>
+          <p className="mt-1 text-sm text-muted-foreground">Modifiez votre recherche ou le filtre d’état.</p>
+        </div>
+      ) : filteredGroups.map(([category, mods], sectionIndex) => {
         const sectionCompleted = mods.reduce(
           (s, m) =>
             s +

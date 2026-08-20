@@ -9,7 +9,16 @@ export async function POST(request: NextRequest) {
 
   const body = await request.json().catch(() => null);
   const { score, total, time } = body ?? {};
-  if (typeof score !== "number" || typeof total !== "number" || typeof time !== "number") {
+  if (
+    !Number.isInteger(score) ||
+    !Number.isInteger(total) ||
+    !Number.isFinite(time) ||
+    total <= 0 ||
+    score < 0 ||
+    score > total ||
+    time < 0 ||
+    time > 24 * 60 * 60
+  ) {
     return NextResponse.json({ error: "Paramètres invalides" }, { status: 400 });
   }
 

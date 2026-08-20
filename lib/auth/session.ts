@@ -13,7 +13,17 @@ export async function getSessionUser(): Promise<CurrentUser | null> {
   if (!token) return null;
   const payload = await verifySession(token);
   if (!payload) return null;
-  return { id: payload.sub, email: payload.email, role: payload.role };
+
+  // JWT validation proves the cookie was signed, but the database decides
+  // whether the account is still active and which role it currently has.
+  const result = await query<{ email: string; role: UserRole; is_active: boolean }>(
+    "select email, role, is_active from users where id = $1",
+    [payload.sub],
+  );
+  const user = result.rows[0];
+  if (!user || !user.is_active) return null;
+
+  return { id: payload.sub, email: user.email, role: user.role };
 }
 
 export async function setSessionCookie(user: CurrentUser, options: { remember?: boolean } = {}) {
@@ -47,13 +57,5 @@ export function clearSessionCookie() {
 export async function requireAdmin(): Promise<CurrentUser | null> {
   const sessionUser = await getSessionUser();
   if (!sessionUser) return null;
-
-  const result = await query<{ role: UserRole; is_active: boolean }>(
-    "select role, is_active from users where id = $1",
-    [sessionUser.id],
-  );
-  const row = result.rows[0];
-  if (!row || row.role !== "admin" || !row.is_active) return null;
-
-  return sessionUser;
+  return sessionUser.role === "admin" ? sessionUser : null;
 }

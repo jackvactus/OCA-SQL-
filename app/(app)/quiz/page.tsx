@@ -38,9 +38,11 @@ import {
   isAnswerCorrect,
   requiredAnswerCount,
 } from "@/lib/quiz-data";
+import { workbookQuizQuestions } from "@/lib/quiz-data-en-workbook";
 import { modules } from "@/lib/modules-data";
 import { useProgress } from "@/hooks/use-progress";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/language-provider";
 
 type Difficulty = "all" | "easy" | "medium" | "hard";
 type Phase = "setup" | "question" | "feedback" | "results";
@@ -77,12 +79,14 @@ const difficultyConfig: Record<
 
 export default function QuizPage() {
   const { progress, loaded, recordQuiz } = useProgress();
+  const { locale } = useLanguage();
+  const questionBank = locale === "en" ? workbookQuizQuestions : quizQuestions;
 
   const [selectedModule, setSelectedModule] = useState<string>("all");
   const [selectedDifficulty, setSelectedDifficulty] =
     useState<Difficulty>("all");
   const [phase, setPhase] = useState<Phase>("setup");
-  const [questions, setQuestions] = useState(quizQuestions);
+  const [questions, setQuestions] = useState(questionBank);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<number[]>([]);
   const [score, setScore] = useState(0);
@@ -92,7 +96,7 @@ export default function QuizPage() {
   const [recorded, setRecorded] = useState(false);
 
   const availableCount = useMemo(() => {
-    return quizQuestions.filter((q) => {
+    return questionBank.filter((q) => {
       if (selectedModule !== "all" && q.moduleId !== selectedModule)
         return false;
       if (
@@ -102,11 +106,11 @@ export default function QuizPage() {
         return false;
       return true;
     }).length;
-  }, [selectedModule, selectedDifficulty]);
+  }, [questionBank, selectedModule, selectedDifficulty]);
 
   const startQuiz = useCallback(() => {
     const filtered = shuffle(
-      quizQuestions.filter((q) => {
+      questionBank.filter((q) => {
         if (selectedModule !== "all" && q.moduleId !== selectedModule)
           return false;
         if (
@@ -125,7 +129,7 @@ export default function QuizPage() {
     setAnswers([]);
     setRecorded(false);
     setPhase("question");
-  }, [selectedModule, selectedDifficulty]);
+  }, [questionBank, selectedModule, selectedDifficulty]);
 
   const current = questions[currentIndex];
   const needCount = current ? requiredAnswerCount(current) : 1;
@@ -218,8 +222,8 @@ export default function QuizPage() {
             Entraînement Oracle SQL 1Z0-071 — feedback immédiat et explications
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            {quizQuestions.length} questions · dont{" "}
-            {quizQuestions.filter((q) => q.correctIndexes.length > 1).length}{" "}
+            {questionBank.length} questions · dont{" "}
+            {questionBank.filter((q) => q.correctIndexes.length > 1).length}{" "}
             multi-réponses (type examen)
           </p>
         </div>

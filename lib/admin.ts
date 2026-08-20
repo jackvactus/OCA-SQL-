@@ -145,12 +145,14 @@ export interface AdminOverviewStats {
   activeUsers: number;
   adminCount: number;
   totalActivityEvents: number;
+  engagedUsersLast7Days: number;
+  averageLessonsCompleted: number;
   signupsLast7Days: { day: string; count: number }[];
   topActions: { action: string; count: number }[];
 }
 
 export async function getAdminOverviewStats(): Promise<AdminOverviewStats> {
-  const [userCounts, activityCount, signups, topActions] = await Promise.all([
+  const [userCounts, activityCount, learning, signups, topActions] = await Promise.all([
     query<{ total: string; active: string; admins: string }>(
       `select
          count(*) as total,
@@ -159,6 +161,11 @@ export async function getAdminOverviewStats(): Promise<AdminOverviewStats> {
        from users`,
     ),
     query<{ count: string }>(`select count(*) from activity_log`),
+    query<{ engaged: string; average_lessons: string }>(
+      `select
+         (select count(distinct user_id) from activity_log where created_at > now() - interval '7 days') as engaged,
+         coalesce((select avg(jsonb_array_length(completed_lessons)) from user_progress), 0) as average_lessons`,
+    ),
     query<{ day: string; count: string }>(
       `select to_char(date_trunc('day', created_at), 'YYYY-MM-DD') as day, count(*)
        from users
@@ -175,6 +182,8 @@ export async function getAdminOverviewStats(): Promise<AdminOverviewStats> {
     activeUsers: Number(userCounts.rows[0]?.active ?? 0),
     adminCount: Number(userCounts.rows[0]?.admins ?? 0),
     totalActivityEvents: Number(activityCount.rows[0]?.count ?? 0),
+    engagedUsersLast7Days: Number(learning.rows[0]?.engaged ?? 0),
+    averageLessonsCompleted: Math.round(Number(learning.rows[0]?.average_lessons ?? 0) * 10) / 10,
     signupsLast7Days: signups.rows.map((r) => ({ day: r.day, count: Number(r.count) })),
     topActions: topActions.rows.map((r) => ({ action: r.action, count: Number(r.count) })),
   };

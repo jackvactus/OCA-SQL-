@@ -7,8 +7,10 @@ export async function GET(request: NextRequest) {
   if (!admin) return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
 
   const { searchParams } = new URL(request.url);
-  const limit = Math.min(Math.max(Number(searchParams.get("limit")) || 20, 1), 100);
-  const offset = Math.max(Number(searchParams.get("offset")) || 0, 0);
+  const parsedLimit = Number(searchParams.get("limit"));
+  const parsedOffset = Number(searchParams.get("offset"));
+  const limit = Number.isInteger(parsedLimit) ? Math.min(Math.max(parsedLimit, 1), 100) : 20;
+  const offset = Number.isInteger(parsedOffset) ? Math.max(parsedOffset, 0) : 0;
   const action = searchParams.get("action") ?? undefined;
   const search = searchParams.get("q") ?? undefined;
 

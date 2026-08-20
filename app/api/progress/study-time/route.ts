@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
 
   const body = await request.json().catch(() => null);
   const minutes = body?.minutes;
-  if (typeof minutes !== "number") {
+  if (!Number.isFinite(minutes) || minutes <= 0 || minutes > 24 * 60) {
     return NextResponse.json({ error: "minutes requis" }, { status: 400 });
   }
 

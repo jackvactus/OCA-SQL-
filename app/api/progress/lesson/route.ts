@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth/session";
 import { applyCompleteLesson, updateProgress } from "@/lib/progress";
 import { logActivity } from "@/lib/activity";
+import { modules } from "@/lib/modules-data";
+
+const lessonIds = new Set(modules.flatMap((module) => module.lessons.map((lesson) => lesson.id)));
 
 export async function POST(request: NextRequest) {
   const user = await getSessionUser();
@@ -9,7 +12,7 @@ export async function POST(request: NextRequest) {
 
   const body = await request.json().catch(() => null);
   const lessonId = body?.lessonId;
-  if (typeof lessonId !== "string" || !lessonId) {
+  if (typeof lessonId !== "string" || !lessonIds.has(lessonId)) {
     return NextResponse.json({ error: "lessonId requis" }, { status: 400 });
   }
 

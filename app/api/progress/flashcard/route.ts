@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth/session";
 import { applyUpdateFlashcard, updateProgress } from "@/lib/progress";
 import { logActivity } from "@/lib/activity";
+import { modules } from "@/lib/modules-data";
+
+const flashcardIds = new Set(
+  modules.flatMap((module) => module.lessons.flatMap((lesson) => lesson.flashcards.map((card) => card.id))),
+);
 
 export async function POST(request: NextRequest) {
   const user = await getSessionUser();
@@ -9,7 +14,13 @@ export async function POST(request: NextRequest) {
 
   const body = await request.json().catch(() => null);
   const { cardId, quality } = body ?? {};
-  if (typeof cardId !== "string" || typeof quality !== "number") {
+  if (
+    typeof cardId !== "string" ||
+    !flashcardIds.has(cardId) ||
+    !Number.isInteger(quality) ||
+    quality < 0 ||
+    quality > 5
+  ) {
     return NextResponse.json({ error: "Paramètres invalides" }, { status: 400 });
   }
 
