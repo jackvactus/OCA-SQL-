@@ -2,18 +2,22 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
+  Activity,
   Award,
+  BarChart3,
   BookOpen,
   Brain,
   Clock,
   Cloud,
   Code2,
   Database,
+  Gauge,
   GraduationCap,
   History,
   Layers,
   Library,
   Radar,
+  Server,
   ShieldCheck,
   Target,
 } from "lucide-react";
@@ -29,6 +33,7 @@ import type { Locale } from "@/lib/i18n/locale";
 import { LiveStats } from "./live-stats";
 import { DifficultyChart } from "./difficulty-chart";
 import { SandboxPreview } from "./sandbox-preview";
+import { getLocalizedModules } from "@/lib/content-i18n";
 
 // Mirrors the constants in app/(app)/exam/page.tsx — kept in sync manually
 // since that file doesn't export them.
@@ -89,6 +94,7 @@ export default function LandingPage() {
   const locale = getLocale();
   const t = dictionary[locale];
   const questionBank = locale === "en" ? workbookQuizQuestions : quizQuestions;
+  const localizedModules = getLocalizedModules(locale);
   const heroStats = buildHeroStats(t, questionBank.length);
   const chips = buildChips(t);
   const features = buildFeatures(t, locale, questionBank.length);
@@ -102,7 +108,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="space-y-20 pb-20 lg:space-y-28">
+    <div className="space-y-24 pb-24 lg:space-y-32">
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border/60 bg-slate-50 dark:bg-[#04090b]">
         <Image
@@ -115,17 +121,18 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-slate-50/95 via-slate-50/85 to-background dark:from-[#04090b]/80 dark:via-[#04090b]/55 dark:to-background" />
         <div className="bg-grid absolute inset-0 opacity-40 dark:opacity-10" />
 
-        <div className="relative mx-auto max-w-7xl px-4 py-20 lg:px-8 lg:py-28">
-          <div className="mx-auto max-w-3xl text-center">
+        <div className="relative mx-auto max-w-7xl px-4 py-16 lg:px-8 lg:py-24">
+          <div className="grid items-center gap-12 lg:grid-cols-[1fr_0.85fr]">
+          <div className="max-w-3xl">
             <Badge variant="secondary" className="gap-1.5 border-primary/20 bg-background/80 text-foreground backdrop-blur dark:border-white/10 dark:bg-white/10 dark:text-white">
               <Database className="h-3 w-3 text-primary" />
               {t.marketing.heroBadge}
             </Badge>
-            <h1 className="mt-5 font-display text-4xl font-bold leading-tight text-foreground lg:text-6xl dark:text-white">
+            <h1 className="mt-5 font-display text-4xl font-bold leading-[1.08] text-foreground lg:text-6xl dark:text-white">
               {t.marketing.heroTitle1} <span className="text-primary">{t.marketing.heroTitleHighlight}</span>
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground dark:text-white/60">{t.marketing.heroSubtitle}</p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link href="/register">
                 <Button size="lg" className="gap-2">
                   {t.marketing.heroCtaPrimary}
@@ -140,6 +147,48 @@ export default function LandingPage() {
             </div>
           </div>
 
+          <div className="relative hidden min-h-[360px] lg:block">
+            <div className="absolute inset-0 overflow-hidden rounded-[2rem] border border-white/20 bg-slate-950/70 shadow-2xl shadow-sky-950/30 backdrop-blur">
+              <Image
+                src="https://images.unsplash.com/photo-1560732488-6b0df240254a?q=80&w=1200&auto=format&fit=crop"
+                alt="Oracle Database operations center"
+                fill
+                className="object-cover opacity-35"
+              />
+              <div className="absolute inset-0 bg-gradient-to-br from-sky-950/70 via-slate-950/50 to-slate-950/90" />
+              <div className="relative flex h-full flex-col justify-between p-6">
+                <div className="flex items-center justify-between text-white">
+                  <div className="flex items-center gap-2 text-sm font-semibold"><Activity className="h-4 w-4 text-emerald-400" /> Oracle Database Monitor</div>
+                  <span className="flex items-center gap-1.5 text-xs text-emerald-300"><span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" /> Live</span>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    ["99.98%", "Availability", "text-emerald-300"],
+                    ["1.24 ms", "Query latency", "text-sky-300"],
+                    ["24/7", "Monitoring", "text-amber-300"],
+                    ["100%", "SQL readiness", "text-white"],
+                  ].map(([value, label, color]) => (
+                    <div key={label} className="rounded-xl border border-white/10 bg-white/10 p-3 backdrop-blur">
+                      <p className={`text-xl font-bold ${color}`}>{value}</p>
+                      <p className="mt-1 text-xs text-white/60">{label}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="rounded-xl border border-white/10 bg-slate-950/60 p-3">
+                  <div className="mb-2 flex items-center justify-between text-xs text-white/60"><span>SQL workload</span><span className="text-emerald-300">+18.4%</span></div>
+                  <div className="flex h-10 items-end gap-1.5">
+                    {[35, 48, 42, 62, 55, 76, 68, 92, 81, 96, 88, 100].map((height, index) => <span key={index} className="flex-1 rounded-t bg-gradient-to-t from-sky-500 to-emerald-300" style={{ height: `${height}%` }} />)}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="absolute -bottom-5 -left-5 flex items-center gap-3 rounded-xl border border-border bg-background p-3 shadow-xl">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-600 text-white"><Database className="h-5 w-5" /></div>
+              <div><p className="text-xs text-muted-foreground">Powered by</p><p className="font-semibold">Oracle Database</p></div>
+            </div>
+          </div>
+          </div>
+
           <div className="mx-auto mt-14 grid max-w-4xl grid-cols-2 gap-4 lg:grid-cols-4">
             {heroStats.map((stat) => (
               <div
@@ -152,6 +201,23 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Operations snapshot */}
+      <section className="mx-auto max-w-7xl px-4 lg:px-8">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { icon: Gauge, value: "99.98%", label: locale === "en" ? "Platform availability" : "Disponibilité plateforme", tone: "text-emerald-500" },
+            { icon: BarChart3, value: `${questionBank.length}+`, label: locale === "en" ? "Exam questions" : "Questions d'examen", tone: "text-sky-500" },
+            { icon: Server, value: `${localizedModules.length}`, label: locale === "en" ? "Oracle SQL modules" : "Modules Oracle SQL", tone: "text-amber-500" },
+            { icon: Activity, value: "24/7", label: locale === "en" ? "Progress monitoring" : "Suivi de progression", tone: "text-red-500" },
+          ].map((item) => (
+            <div key={item.label} className="flex items-center gap-4 rounded-2xl border border-border/70 bg-card p-5 shadow-sm">
+              <item.icon className={`h-7 w-7 ${item.tone}`} />
+              <div><p className="text-2xl font-bold tracking-tight">{item.value}</p><p className="text-xs text-muted-foreground">{item.label}</p></div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -256,6 +322,31 @@ export default function LandingPage() {
                 <p className="mt-1 text-sm text-muted-foreground">{feature.description}</p>
               </CardContent>
             </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* Certification syllabus */}
+      <section className="mx-auto max-w-7xl px-4 lg:px-8">
+        <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <Badge variant="secondary" className="gap-1.5"><BookOpen className="h-3 w-3 text-primary" /> 1Z0-071</Badge>
+            <h2 className="mt-4 text-2xl font-bold lg:text-3xl">{locale === "en" ? "Oracle SQL certification syllabus" : "Programme de certification Oracle SQL"}</h2>
+            <p className="mt-2 text-muted-foreground">{locale === "en" ? "A structured path from relational fundamentals to advanced Oracle SQL." : "Un parcours structuré des fondamentaux relationnels au SQL Oracle avancé."}</p>
+          </div>
+          <Link href="/courses" className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline">{locale === "en" ? "Explore all modules" : "Explorer tous les modules"}<ArrowRight className="h-4 w-4" /></Link>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {localizedModules.slice(0, 6).map((module) => (
+            <Link key={module.id} href={`/courses/${module.id}`} className="group rounded-2xl border border-border/70 bg-card p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg">
+              <div className="flex items-start justify-between gap-3">
+                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-sm font-bold text-primary">{String(module.number).padStart(2, "0")}</span>
+                <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
+              </div>
+              <h3 className="mt-4 line-clamp-2 font-semibold">{module.title}</h3>
+              <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{module.description}</p>
+              <div className="mt-4 flex items-center justify-between border-t border-border/70 pt-3 text-xs text-muted-foreground"><span>{module.lessons.length} {locale === "en" ? "lessons" : "leçons"}</span><span>{module.estimatedHours}h</span></div>
+            </Link>
           ))}
         </div>
       </section>
