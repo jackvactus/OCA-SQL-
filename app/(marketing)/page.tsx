@@ -287,6 +287,61 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Oracle technology gallery */}
+      <section className="mx-auto max-w-7xl px-4 lg:px-8">
+        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <Badge variant="secondary" className="gap-1.5">
+              <Server className="h-3 w-3 text-primary" />
+              Oracle technology
+            </Badge>
+            <h2 className="mt-4 text-2xl font-bold lg:text-3xl">
+              {locale === "en" ? "See the world behind the queries" : "Découvrez l'univers derrière vos requêtes"}
+            </h2>
+            <p className="mt-2 max-w-2xl text-muted-foreground">
+              {locale === "en"
+                ? "From data center infrastructure to SQL development, connect every concept to production technology."
+                : "De l'infrastructure des data centers au développement SQL, reliez chaque notion aux technologies de production."}
+            </p>
+          </div>
+        </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          {[
+            {
+              src: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1000&auto=format&fit=crop",
+              alt: locale === "en" ? "Oracle database server racks" : "Baies de serveurs Oracle Database",
+              label: locale === "en" ? "Database infrastructure" : "Infrastructure Database",
+              icon: Server,
+            },
+            {
+              src: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop",
+              alt: locale === "en" ? "SQL and computer circuit technology" : "Technologie SQL et circuits informatiques",
+              label: locale === "en" ? "SQL engineering" : "Ingénierie SQL",
+              icon: Code2,
+            },
+            {
+              src: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop",
+              alt: locale === "en" ? "Cloud computing infrastructure" : "Infrastructure cloud et données",
+              label: locale === "en" ? "Cloud data operations" : "Opérations data cloud",
+              icon: Cloud,
+            },
+          ].map((visual, index) => (
+            <div
+              key={visual.label}
+              className="group relative min-h-[230px] overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm animate-slide-up"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              <Image src={visual.src} alt={visual.alt} fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 flex items-center gap-2 p-5 text-white">
+                <visual.icon className="h-4 w-4 text-sky-300" />
+                <span className="text-sm font-semibold">{visual.label}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Live preview */}
       <section id="practice" className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="space-y-8">
