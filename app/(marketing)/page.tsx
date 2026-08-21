@@ -289,7 +289,7 @@ export default function LandingPage() {
 
       {/* Live preview */}
       <section id="practice" className="mx-auto max-w-7xl px-4 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
+        <div className="space-y-8">
           <div>
             <Badge variant="secondary" className="gap-1.5">
               <Radar className="h-3 w-3 text-primary" />

@@ -36,7 +36,7 @@ export function LiveStats({ t }: { t: Dictionary }) {
         </span>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-3">
+      <div className="mt-4 space-y-3">
         <div className="rounded-xl border border-border/70 bg-muted/40 p-3">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Users className="h-3.5 w-3.5" />
