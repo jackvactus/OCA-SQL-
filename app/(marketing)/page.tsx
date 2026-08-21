@@ -123,7 +123,17 @@ export default function LandingPage() {
 
         <div className="relative mx-auto max-w-7xl px-4 py-16 lg:px-8 lg:py-24">
           <div className="grid items-center gap-12 lg:grid-cols-[1fr_0.85fr]">
-          <div className="max-w-3xl">
+          <div className="relative max-w-3xl overflow-hidden rounded-[2rem] px-1 py-2 lg:px-3 lg:py-5">
+            <Image
+              src="/oracle-db-icon.svg"
+              alt=""
+              width={360}
+              height={360}
+              aria-hidden="true"
+              className="pointer-events-none absolute left-1/2 top-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 opacity-[0.08] mix-blend-multiply dark:opacity-20 dark:mix-blend-screen"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-slate-50/20 via-slate-50/60 to-slate-50/20 dark:from-slate-950/10 dark:via-slate-950/35 dark:to-slate-950/10" />
+            <div className="relative z-10">
             <Badge variant="secondary" className="gap-1.5 border-primary/20 bg-background/80 text-foreground backdrop-blur dark:border-white/10 dark:bg-white/10 dark:text-white">
               <Database className="h-3 w-3 text-primary" />
               {t.marketing.heroBadge}
@@ -144,6 +154,7 @@ export default function LandingPage() {
                   {t.marketing.heroCtaSecondary}
                 </Button>
               </Link>
+            </div>
             </div>
           </div>
 
