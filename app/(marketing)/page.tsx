@@ -110,7 +110,7 @@ export default function LandingPage() {
   return (
     <div className="space-y-24 pb-24 lg:space-y-32">
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-border/60 bg-slate-50 dark:bg-[#04090b]">
+      <section className="relative overflow-hidden border-b border-border/60 bg-slate-100 dark:bg-[#04090b]">
         <Image
           src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1920&auto=format&fit=crop"
           alt="Oracle Database server infrastructure"
@@ -130,9 +130,9 @@ export default function LandingPage() {
               width={1400}
               height={800}
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-35 dark:opacity-45"
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20 dark:opacity-40"
             />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-slate-50/88 via-slate-50/65 to-slate-50/35 dark:from-slate-950/85 dark:via-slate-950/60 dark:to-slate-950/45" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-slate-100/95 via-slate-100/88 to-slate-100/72 dark:from-slate-950/85 dark:via-slate-950/60 dark:to-slate-950/45" />
             <Image
               src="/oracle-db-icon.svg"
               alt=""
