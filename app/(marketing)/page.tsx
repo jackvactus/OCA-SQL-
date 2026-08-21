@@ -127,8 +127,7 @@ export default function LandingPage() {
             <Image
               src="https://images.unsplash.com/photo-1554306274-f23873d9a26c?q=80&w=1400&auto=format&fit=crop"
               alt=""
-              width={1400}
-              height={800}
+              fill
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-30 dark:opacity-45"
             />
