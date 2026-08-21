@@ -125,6 +125,15 @@ export default function LandingPage() {
           <div className="grid items-center gap-12 lg:grid-cols-[1fr_0.85fr]">
           <div className="relative max-w-3xl overflow-hidden rounded-[2rem] px-1 py-2 lg:px-3 lg:py-5">
             <Image
+              src="https://images.unsplash.com/photo-1554306274-f23873d9a26c?q=80&w=1400&auto=format&fit=crop"
+              alt=""
+              width={1400}
+              height={800}
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-35 dark:opacity-45"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-slate-50/88 via-slate-50/65 to-slate-50/35 dark:from-slate-950/85 dark:via-slate-950/60 dark:to-slate-950/45" />
+            <Image
               src="/oracle-db-icon.svg"
               alt=""
               width={360}
