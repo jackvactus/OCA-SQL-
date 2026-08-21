@@ -60,21 +60,21 @@ export function SandboxPreview({ t }: { t: Dictionary }) {
           5 {t.marketing.sandboxResultLabel}
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left font-mono text-[11px]">
+          <table className="w-full table-fixed text-left font-mono text-[10px] sm:text-[11px]">
             <thead>
               <tr className="text-white/40">
-                <th className="py-1 pr-4 font-normal">EMPLOYEE_ID</th>
-                <th className="py-1 pr-4 font-normal">FIRST_NAME</th>
-                <th className="py-1 pr-4 font-normal">LAST_NAME</th>
+                <th className="w-1/4 break-words py-1 pr-1 font-normal sm:pr-4">EMPLOYEE_ID</th>
+                <th className="w-1/4 break-words py-1 pr-1 font-normal sm:pr-4">FIRST_NAME</th>
+                <th className="w-1/4 break-words py-1 pr-1 font-normal sm:pr-4">LAST_NAME</th>
                 <th className="py-1 font-normal">SALARY</th>
               </tr>
             </thead>
             <tbody>
               {rows.map((row) => (
                 <tr key={row[0]} className="text-white/70">
-                  <td className="py-0.5 pr-4">{row[0]}</td>
-                  <td className="py-0.5 pr-4">{row[1]}</td>
-                  <td className="py-0.5 pr-4">{row[2]}</td>
+                  <td className="break-words py-0.5 pr-1 sm:pr-4">{row[0]}</td>
+                  <td className="break-words py-0.5 pr-1 sm:pr-4">{row[1]}</td>
+                  <td className="break-words py-0.5 pr-1 sm:pr-4">{row[2]}</td>
                   <td className="py-0.5 text-sky-300">{row[3]}</td>
                 </tr>
               ))}
