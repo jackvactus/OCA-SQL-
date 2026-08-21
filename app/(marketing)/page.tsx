@@ -130,9 +130,9 @@ export default function LandingPage() {
               width={1400}
               height={800}
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20 dark:opacity-40"
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-30 dark:opacity-45"
             />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-slate-100/95 via-slate-100/88 to-slate-100/72 dark:from-slate-950/85 dark:via-slate-950/60 dark:to-slate-950/45" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-slate-100/92 via-slate-100/78 to-slate-100/48 dark:from-slate-950/85 dark:via-slate-950/60 dark:to-slate-950/45" />
             <Image
               src="/oracle-db-icon.svg"
               alt=""
@@ -167,7 +167,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="relative min-h-[300px] lg:min-h-[360px]">
+          <div className="relative min-h-[300px] lg:-translate-y-2 lg:min-h-[360px]">
             <div className="absolute inset-0 overflow-hidden rounded-[2rem] border border-white/20 bg-slate-950/70 shadow-2xl shadow-sky-950/30 backdrop-blur">
               <Image
                 src="https://images.unsplash.com/photo-1560732488-6b0df240254a?q=80&w=1200&auto=format&fit=crop"
@@ -209,11 +209,12 @@ export default function LandingPage() {
           </div>
           </div>
 
-          <div className="mx-auto mt-14 grid max-w-4xl grid-cols-2 gap-4 lg:grid-cols-4">
-            {heroStats.map((stat) => (
+          <div className="mx-auto mt-14 grid max-w-5xl grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+            {heroStats.map((stat, index) => (
               <div
                 key={stat.label}
-                className="rounded-xl border border-border/70 bg-background/75 p-4 text-center shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5"
+                className="animate-slide-up rounded-xl border border-border/70 bg-background/80 p-4 text-center shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg dark:border-white/10 dark:bg-white/5"
+                style={{ animationDelay: `${index * 90}ms` }}
               >
                 <stat.icon className="mx-auto h-5 w-5 text-primary" />
                 <p className="mt-2 text-2xl font-bold text-foreground dark:text-white">{stat.value}</p>
