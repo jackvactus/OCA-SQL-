@@ -308,21 +308,21 @@ export default function LandingPage() {
         <div className="grid gap-4 md:grid-cols-3">
           {[
             {
-              src: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1000&auto=format&fit=crop",
-              alt: locale === "en" ? "Oracle database server racks" : "Baies de serveurs Oracle Database",
-              label: locale === "en" ? "Database infrastructure" : "Infrastructure Database",
+              src: "/logo-image.png",
+              alt: locale === "en" ? "Oracle Database logo and server illustration" : "Logo Oracle Database et illustration serveur",
+              label: locale === "en" ? "Oracle Database" : "Oracle Database",
               icon: Server,
             },
             {
-              src: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop",
-              alt: locale === "en" ? "SQL and computer circuit technology" : "Technologie SQL et circuits informatiques",
-              label: locale === "en" ? "SQL engineering" : "Ingénierie SQL",
+              src: "/oracle-db-icon.svg",
+              alt: locale === "en" ? "Oracle Database 19c technology icon" : "Icône technologie Oracle Database 19c",
+              label: locale === "en" ? "Oracle Database 19c" : "Oracle Database 19c",
               icon: Code2,
             },
             {
-              src: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop",
-              alt: locale === "en" ? "Cloud computing infrastructure" : "Infrastructure cloud et données",
-              label: locale === "en" ? "Cloud data operations" : "Opérations data cloud",
+              src: "/oracle-logo.svg",
+              alt: locale === "en" ? "Oracle Cloud Infrastructure logo" : "Logo Oracle Cloud Infrastructure",
+              label: locale === "en" ? "Oracle Cloud Infrastructure" : "Oracle Cloud Infrastructure",
               icon: Cloud,
             },
           ].map((visual, index) => (
@@ -331,10 +331,11 @@ export default function LandingPage() {
               className="group relative min-h-[230px] overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm animate-slide-up"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <Image src={visual.src} alt={visual.alt} fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 flex items-center gap-2 p-5 text-white">
-                <visual.icon className="h-4 w-4 text-sky-300" />
+              <div className="absolute inset-0 flex items-center justify-center bg-white p-8 transition-transform duration-700 group-hover:scale-105">
+                <Image src={visual.src} alt={visual.alt} fill className="object-contain p-8" />
+              </div>
+              <div className="absolute inset-x-0 bottom-0 flex items-center gap-2 bg-slate-950/80 p-5 text-white backdrop-blur-sm">
+                <visual.icon className="h-4 w-4 text-red-300" />
                 <span className="text-sm font-semibold">{visual.label}</span>
               </div>
             </div>
