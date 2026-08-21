@@ -33,7 +33,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <LanguageToggle />
-            <Link href="/login">
+            <Link href="/login" className="hidden sm:block">
               <Button variant="ghost">{t.marketing.login}</Button>
             </Link>
             <Link href="/register">

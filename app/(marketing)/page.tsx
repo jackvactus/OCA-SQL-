@@ -147,7 +147,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="relative hidden min-h-[360px] lg:block">
+          <div className="relative min-h-[300px] lg:min-h-[360px]">
             <div className="absolute inset-0 overflow-hidden rounded-[2rem] border border-white/20 bg-slate-950/70 shadow-2xl shadow-sky-950/30 backdrop-blur">
               <Image
                 src="https://images.unsplash.com/photo-1560732488-6b0df240254a?q=80&w=1200&auto=format&fit=crop"
