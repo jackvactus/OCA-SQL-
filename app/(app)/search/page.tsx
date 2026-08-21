@@ -25,10 +25,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { modules } from "@/lib/modules-data";
+import { getLocalizedModules, getLocalizedGlossary, getLocalizedFunctions } from "@/lib/content-i18n";
 import { quizQuestions } from "@/lib/quiz-data";
+import { workbookQuizQuestions } from "@/lib/quiz-data-en-workbook";
 import { glossary, oracleFunctions } from "@/lib/reference-data";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/language-provider";
 
 /* ------------------------------------------------------------------ */
 /* Types                                                               */
@@ -109,16 +111,17 @@ const SUGGESTIONS = [
 /* Search logic                                                        */
 /* ------------------------------------------------------------------ */
 
-function buildResults(query: string): SearchResult[] {
+function buildResults(query: string, locale: "fr" | "en"): SearchResult[] {
   const q = query.trim().toLowerCase();
   if (!q) return [];
 
   const results: SearchResult[] = [];
+  const activeModules = getLocalizedModules(locale);
   const matches = (text: string | undefined | null) =>
     !!text && text.toLowerCase().includes(q);
 
   // Modules (courses)
-  for (const mod of modules) {
+  for (const mod of activeModules) {
     if (matches(mod.title) || matches(mod.description)) {
       results.push({
         id: `course-${mod.id}`,
@@ -133,7 +136,7 @@ function buildResults(query: string): SearchResult[] {
   }
 
   // Lessons
-  for (const mod of modules) {
+  for (const mod of activeModules) {
     for (const lesson of mod.lessons) {
       if (matches(lesson.title)) {
         results.push({
@@ -150,9 +153,10 @@ function buildResults(query: string): SearchResult[] {
   }
 
   // Quiz questions
-  for (const qz of quizQuestions) {
+  const questionBank = locale === "en" ? workbookQuizQuestions : quizQuestions;
+  for (const qz of questionBank) {
     if (matches(qz.question) || matches(qz.topic)) {
-      const mod = modules.find((m) => m.id === qz.moduleId);
+      const mod = activeModules.find((m) => m.id === qz.moduleId);
       results.push({
         id: `quiz-${qz.id}`,
         type: "quiz",
@@ -166,7 +170,7 @@ function buildResults(query: string): SearchResult[] {
   }
 
   // Glossary terms
-  for (const term of glossary) {
+  for (const term of getLocalizedGlossary(locale)) {
     if (matches(term.term) || matches(term.definition)) {
       results.push({
         id: `glossary-${term.term}`,
@@ -181,7 +185,7 @@ function buildResults(query: string): SearchResult[] {
   }
 
   // Oracle functions
-  for (const fn of oracleFunctions) {
+  for (const fn of getLocalizedFunctions(locale)) {
     if (matches(fn.name) || matches(fn.description)) {
       results.push({
         id: `function-${fn.name}`,
@@ -203,6 +207,7 @@ function buildResults(query: string): SearchResult[] {
 /* ------------------------------------------------------------------ */
 
 export default function SearchPage() {
+  const { locale } = useLanguage();
   const [query, setQuery] = useState("");
   const [activeQuery, setActiveQuery] = useState("");
   const [filter, setFilter] = useState<FilterType>("all");
@@ -277,7 +282,7 @@ export default function SearchPage() {
   );
 
   // Compute results
-  const allResults = useMemo(() => buildResults(activeQuery), [activeQuery]);
+  const allResults = useMemo(() => buildResults(activeQuery, locale), [activeQuery, locale]);
 
   const filtered = useMemo(() => {
     if (filter === "all") return allResults;
@@ -528,7 +533,7 @@ export default function SearchPage() {
             <BrowseCard
               icon={GraduationCap}
               title="Courses"
-              description={`${modules.length} modules with interactive lessons`}
+              description={`${getLocalizedModules(locale).length} ${locale === "en" ? "modules with interactive lessons" : "modules avec leçons interactives"}`}
               link="/courses"
               color="text-sky-400"
             />

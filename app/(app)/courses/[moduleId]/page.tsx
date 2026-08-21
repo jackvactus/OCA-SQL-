@@ -28,10 +28,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { modules } from "@/lib/modules-data";
+import { getLocalizedModules } from "@/lib/content-i18n";
 import { useProgress } from "@/hooks/use-progress";
 import { cn } from "@/lib/utils";
 import type { Lesson, LessonSection } from "@/lib/types";
+import { useLanguage } from "@/components/language-provider";
 
 /* ------------------------------------------------------------------ */
 /* Helpers                                                             */
@@ -233,6 +234,9 @@ function ContentSection({ section }: { section: LessonSection }) {
 /* ------------------------------------------------------------------ */
 
 export default function LessonDetailPage() {
+  const { locale } = useLanguage();
+  const en = locale === "en";
+  const modules = getLocalizedModules(locale);
   const params = useParams();
   const moduleId = params?.moduleId as string;
   const { progress, loaded, completeLesson } = useProgress();
@@ -287,14 +291,14 @@ export default function LessonDetailPage() {
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-secondary">
           <BookOpen className="h-8 w-8 text-muted-foreground" />
         </div>
-        <h1 className="text-2xl font-bold tracking-tight">Module introuvable</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{en ? "Module not found" : "Module introuvable"}</h1>
         <p className="text-sm text-muted-foreground">
-          Le module que vous recherchez n&apos;existe pas ou a été déplacé.
+          {en ? "The module you are looking for does not exist or has moved." : "Le module que vous recherchez n&apos;existe pas ou a été déplacé."}
         </p>
         <Button asChild>
           <Link href="/courses">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Retour aux modules
+            {en ? "Back to courses" : "Retour aux modules"}
           </Link>
         </Button>
       </div>
@@ -310,7 +314,7 @@ export default function LessonDetailPage() {
           className="flex items-center gap-1.5 transition-colors hover:text-foreground"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          Modules
+          {en ? "Courses" : "Modules"}
         </Link>
         <ChevronRight className="h-3.5 w-3.5" />
         <span className="font-medium text-foreground">{currentModule.title}</span>
@@ -366,9 +370,9 @@ export default function LessonDetailPage() {
               </span>
             </div>
             <div className="text-sm">
-              <p className="font-semibold">Progression du module</p>
+              <p className="font-semibold">{en ? "Module progress" : "Progression du module"}</p>
               <p className="text-muted-foreground">
-                {completedCount} / {currentModule.lessons.length} leçons
+                {completedCount} / {currentModule.lessons.length} {en ? "lessons" : "leçons"}
               </p>
             </div>
           </div>
@@ -383,10 +387,10 @@ export default function LessonDetailPage() {
             <CardHeader className="border-b border-border pb-4">
               <CardTitle className="flex items-center gap-2 text-base">
                 <BookOpen className="h-4 w-4 text-primary" />
-                Leçons
+                {en ? "Lessons" : "Leçons"}
               </CardTitle>
               <p className="text-xs text-muted-foreground">
-                {completedCount} / {currentModule.lessons.length} complétées
+                {completedCount} / {currentModule.lessons.length} {en ? "completed" : "complétées"}
               </p>
             </CardHeader>
             <ScrollArea className="h-[calc(100vh-320px)] min-h-[300px]">
@@ -452,7 +456,7 @@ export default function LessonDetailPage() {
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge variant="secondary" className="gap-1">
                       <BookOpen className="h-3 w-3" />
-                      Leçon {activeIndex + 1} / {currentModule.lessons.length}
+                      {en ? "Lesson" : "Leçon"} {activeIndex + 1} / {currentModule.lessons.length}
                     </Badge>
                     <Badge variant="outline" className="gap-1">
                       <Clock className="h-3 w-3" />
@@ -461,7 +465,7 @@ export default function LessonDetailPage() {
                     {isCompleted && (
                       <Badge className="gap-1 border-transparent bg-[hsl(var(--success))] text-[hsl(var(--success-foreground))]">
                         <CheckCircle2 className="h-3 w-3" />
-                        Terminé
+                        {en ? "Completed" : "Terminé"}
                       </Badge>
                     )}
                   </div>
@@ -476,7 +480,7 @@ export default function LessonDetailPage() {
                     <div className="space-y-3">
                       <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                         <Award className="h-4 w-4 text-primary" />
-                        Objectifs pédagogiques
+                        {en ? "Learning objectives" : "Objectifs pédagogiques"}
                       </h2>
                       <ul className="space-y-2">
                         {activeLesson.objectives.map((obj, i) => (
@@ -496,7 +500,7 @@ export default function LessonDetailPage() {
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-2 text-lg">
                     <FileText className="h-5 w-5 text-primary" />
-                    Contenu
+                    {en ? "Content" : "Contenu"}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -512,7 +516,7 @@ export default function LessonDetailPage() {
                   <CardHeader className="pb-4">
                     <CardTitle className="flex items-center gap-2 text-lg">
                       <CheckCircle2 className="h-5 w-5 text-primary" />
-                      Points clés à retenir
+                      {en ? "Key takeaways" : "Points clés à retenir"}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -577,7 +581,7 @@ export default function LessonDetailPage() {
                   <CardHeader className="pb-4">
                     <CardTitle className="flex items-center gap-2 text-lg">
                       <Code2 className="h-5 w-5 text-primary" />
-                      Exercices
+                      {en ? "Exercises" : "Exercices"}
                       <Badge variant="secondary" className="ml-1">
                         {activeLesson.exercises.length}
                       </Badge>
@@ -623,7 +627,7 @@ export default function LessonDetailPage() {
                         <div className="mt-3 flex items-start gap-2 rounded-md bg-secondary/40 p-2.5 text-xs text-muted-foreground">
                           <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
                           <span>
-                            <span className="font-semibold text-foreground">Indice :</span>{" "}
+                            <span className="font-semibold text-foreground">{en ? "Hint:" : "Indice :"}</span>{" "}
                             {ex.hint}
                           </span>
                         </div>
@@ -653,12 +657,12 @@ export default function LessonDetailPage() {
                     </div>
                     <div>
                       <p className="font-semibold">
-                        {isCompleted ? "Leçon terminée !" : "Prêt à valider ?"}
+                        {isCompleted ? (en ? "Lesson completed!" : "Leçon terminée !") : (en ? "Ready to complete?" : "Prêt à valider ?")}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         {isCompleted
-                          ? "Vous pouvez passer à la leçon suivante."
-                          : "Marquez cette leçon comme terminée pour suivre votre progression."}
+                          ? (en ? "You can move on to the next lesson." : "Vous pouvez passer à la leçon suivante.")
+                          : (en ? "Mark this lesson as complete to track your progress." : "Marquez cette leçon comme terminée pour suivre votre progression.")}
                       </p>
                     </div>
                   </div>
@@ -675,12 +679,12 @@ export default function LessonDetailPage() {
                     {isCompleted ? (
                       <>
                         <CheckCircle2 className="mr-2 h-4 w-4" />
-                        Terminé
+                        {en ? "Completed" : "Terminé"}
                       </>
                     ) : (
                       <>
                         <CheckCircle2 className="mr-2 h-4 w-4" />
-                        Marquer comme terminé
+                        {en ? "Mark as complete" : "Marquer comme terminé"}
                       </>
                     )}
                   </Button>
@@ -702,7 +706,7 @@ export default function LessonDetailPage() {
                     >
                       <ArrowLeft className="h-4 w-4 shrink-0 text-primary" />
                       <span className="flex flex-col items-start text-left">
-                        <span className="text-xs text-muted-foreground">Précédent</span>
+                        <span className="text-xs text-muted-foreground">{en ? "Previous" : "Précédent"}</span>
                         <span className="line-clamp-1 text-sm font-medium">
                           {prevLesson.title}
                         </span>
@@ -725,7 +729,7 @@ export default function LessonDetailPage() {
                       className="flex items-center justify-end gap-3"
                     >
                       <span className="flex flex-col items-end text-right">
-                        <span className="text-xs text-muted-foreground">Suivant</span>
+                        <span className="text-xs text-muted-foreground">{en ? "Next" : "Suivant"}</span>
                         <span className="line-clamp-1 text-sm font-medium">
                           {nextLesson.title}
                         </span>

@@ -29,7 +29,9 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { glossary, oracleFunctions } from "@/lib/reference-data";
+import { getLocalizedGlossary, getLocalizedFunctions } from "@/lib/content-i18n";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/language-provider";
 
 // Derive unique category lists preserving first-seen order.
 const glossaryCategories = Array.from(
@@ -179,6 +181,11 @@ function CategoryFilter({
 }
 
 export default function ReferencePage() {
+  const { locale } = useLanguage();
+  const activeGlossary = getLocalizedGlossary(locale);
+  const activeFunctions = getLocalizedFunctions(locale);
+  const activeGlossaryCategories = Array.from(new Set(activeGlossary.map((item) => item.category)));
+  const activeFunctionCategories = Array.from(new Set(activeFunctions.map((item) => item.category)));
   const [glossarySearch, setGlossarySearch] = useState("");
   const [glossaryCategory, setGlossaryCategory] = useState("all");
   const [functionSearch, setFunctionSearch] = useState("");
@@ -187,7 +194,7 @@ export default function ReferencePage() {
 
   const filteredGlossary = useMemo(() => {
     const query = glossarySearch.trim().toLowerCase();
-    return glossary.filter((item) => {
+    return activeGlossary.filter((item) => {
       const matchesCategory =
         glossaryCategory === "all" || item.category === glossaryCategory;
       if (!matchesCategory) return false;
@@ -198,11 +205,11 @@ export default function ReferencePage() {
         (item.example?.toLowerCase().includes(query) ?? false)
       );
     });
-  }, [glossarySearch, glossaryCategory]);
+  }, [activeGlossary, glossarySearch, glossaryCategory]);
 
   const filteredFunctions = useMemo(() => {
     const query = functionSearch.trim().toLowerCase();
-    return oracleFunctions.filter((item) => {
+    return activeFunctions.filter((item) => {
       const matchesCategory =
         functionCategory === "all" || item.category === functionCategory;
       if (!matchesCategory) return false;
@@ -215,7 +222,7 @@ export default function ReferencePage() {
         item.result.toLowerCase().includes(query)
       );
     });
-  }, [functionSearch, functionCategory]);
+  }, [activeFunctions, functionSearch, functionCategory]);
 
   const toggleExpanded = useCallback((name: string) => {
     setExpanded((prev) => ({ ...prev, [name]: !prev[name] }));
@@ -233,7 +240,7 @@ export default function ReferencePage() {
               Référence
             </Badge>
             <Badge variant="outline" className="text-muted-foreground">
-              {glossary.length} termes · {oracleFunctions.length} fonctions
+              {activeGlossary.length} {locale === "en" ? "terms" : "termes"} · {activeFunctions.length} {locale === "en" ? "functions" : "fonctions"}
             </Badge>
           </div>
           <h1 className="text-2xl font-bold tracking-tight lg:text-3xl">
@@ -275,13 +282,13 @@ export default function ReferencePage() {
               />
             </div>
             <CategoryFilter
-              categories={glossaryCategories}
+              categories={activeGlossaryCategories}
               active={glossaryCategory}
               onSelect={setGlossaryCategory}
             />
             <p className="text-xs text-muted-foreground">
-              {filteredGlossary.length} terme
-              {filteredGlossary.length > 1 ? "s" : ""} trouvé
+              {filteredGlossary.length} {locale === "en" ? "term" : "terme"}
+              {filteredGlossary.length > 1 ? "s" : ""} {locale === "en" ? "found" : "trouvé"}
               {filteredGlossary.length > 1 ? "s" : ""}
             </p>
           </div>
@@ -361,7 +368,7 @@ export default function ReferencePage() {
               />
             </div>
             <CategoryFilter
-              categories={functionCategories}
+              categories={activeFunctionCategories}
               active={functionCategory}
               onSelect={setFunctionCategory}
             />

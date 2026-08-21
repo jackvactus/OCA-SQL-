@@ -104,27 +104,27 @@ export default function LandingPage() {
   return (
     <div className="space-y-20 pb-20 lg:space-y-28">
       {/* Hero */}
-      <section className="relative overflow-hidden bg-[#04090b]">
+      <section className="relative overflow-hidden border-b border-border/60 bg-slate-50 dark:bg-[#04090b]">
         <Image
-          src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1920&auto=format&fit=crop"
-          alt=""
+          src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1920&auto=format&fit=crop"
+          alt="Oracle Database server infrastructure"
           fill
           priority
-          className="object-cover"
+          className="object-cover opacity-25 dark:opacity-60"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#04090b]/80 via-[#04090b]/55 to-background" />
-        <div className="bg-grid absolute inset-0 opacity-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-50/95 via-slate-50/85 to-background dark:from-[#04090b]/80 dark:via-[#04090b]/55 dark:to-background" />
+        <div className="bg-grid absolute inset-0 opacity-40 dark:opacity-10" />
 
         <div className="relative mx-auto max-w-7xl px-4 py-20 lg:px-8 lg:py-28">
           <div className="mx-auto max-w-3xl text-center">
-            <Badge variant="secondary" className="gap-1.5 border-white/10 bg-white/10 text-white">
+            <Badge variant="secondary" className="gap-1.5 border-primary/20 bg-background/80 text-foreground backdrop-blur dark:border-white/10 dark:bg-white/10 dark:text-white">
               <Database className="h-3 w-3 text-primary" />
               {t.marketing.heroBadge}
             </Badge>
-            <h1 className="mt-5 font-display text-4xl font-bold leading-tight text-white lg:text-6xl">
+            <h1 className="mt-5 font-display text-4xl font-bold leading-tight text-foreground lg:text-6xl dark:text-white">
               {t.marketing.heroTitle1} <span className="text-primary">{t.marketing.heroTitleHighlight}</span>
             </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-lg text-white/60">{t.marketing.heroSubtitle}</p>
+            <p className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground dark:text-white/60">{t.marketing.heroSubtitle}</p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link href="/register">
                 <Button size="lg" className="gap-2">
@@ -144,13 +144,59 @@ export default function LandingPage() {
             {heroStats.map((stat) => (
               <div
                 key={stat.label}
-                className="rounded-xl border border-white/10 bg-white/5 p-4 text-center backdrop-blur"
+                className="rounded-xl border border-border/70 bg-background/75 p-4 text-center shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5"
               >
                 <stat.icon className="mx-auto h-5 w-5 text-primary" />
-                <p className="mt-2 text-2xl font-bold text-white">{stat.value}</p>
-                <p className="text-xs text-white/50">{stat.label}</p>
+                <p className="mt-2 text-2xl font-bold text-foreground dark:text-white">{stat.value}</p>
+                <p className="text-xs text-muted-foreground dark:text-white/50">{stat.label}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Oracle Database visual gallery */}
+      <section className="mx-auto max-w-7xl px-4 lg:px-8">
+        <div className="mb-7 max-w-2xl">
+          <Badge variant="secondary" className="gap-1.5">
+            <Database className="h-3 w-3 text-primary" />
+            Oracle Database
+          </Badge>
+          <h2 className="mt-4 text-2xl font-bold lg:text-3xl">{t.marketing.visualTitle}</h2>
+          <p className="mt-3 text-muted-foreground">{t.marketing.visualDesc}</p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-[1.2fr_0.8fr]">
+          <div className="relative min-h-[260px] overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
+            <Image
+              src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1400&auto=format&fit=crop"
+              alt="Oracle Database data center servers"
+              fill
+              className="object-cover transition-transform duration-700 hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+            <Image src="/oracle-logo.svg" alt="Oracle" width={150} height={40} className="absolute bottom-5 left-5 h-auto w-28 opacity-95" />
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1">
+            <div className="relative min-h-[124px] overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
+              <Image
+                src="https://images.unsplash.com/photo-1560732488-6b0df240254a?q=80&w=900&auto=format&fit=crop"
+                alt="Database monitoring screens"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-slate-950/35" />
+              <Image src="/oracle-db-icon.svg" alt="Oracle Database" width={56} height={56} className="absolute bottom-4 left-4 h-12 w-12 rounded-xl" />
+            </div>
+            <div className="relative min-h-[124px] overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
+              <Image
+                src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=900&auto=format&fit=crop"
+                alt="SQL and database technology"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-sky-950/35" />
+              <span className="absolute bottom-4 left-4 rounded-lg border border-white/20 bg-slate-950/60 px-3 py-1.5 text-sm font-semibold text-white backdrop-blur">SQL / Data / Cloud</span>
+            </div>
           </div>
         </div>
       </section>
@@ -167,8 +213,8 @@ export default function LandingPage() {
             <p className="mt-3 text-muted-foreground">{t.marketing.liveSectionDesc}</p>
             <div className="relative mt-6 h-40 overflow-hidden rounded-xl border border-border/70">
               <Image
-                src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1200&auto=format&fit=crop"
-                alt={t.marketing.imageCaption}
+                src="https://images.unsplash.com/photo-1554306274-f23873d9a26c?q=80&w=1200&auto=format&fit=crop"
+                alt="Oracle Database operations room"
                 fill
                 className="object-cover"
               />
@@ -257,7 +303,7 @@ export default function LandingPage() {
       </section>
 
       {/* Oracle certification paths */}
-      <section className="relative overflow-hidden bg-[#04090b] py-16 lg:py-20">
+      <section className="relative overflow-hidden bg-slate-100 py-16 dark:bg-[#04090b] lg:py-20">
         <Image
           src="/oracle-logo.svg"
           alt=""
@@ -265,17 +311,17 @@ export default function LandingPage() {
           height={58}
           className="absolute right-8 top-8 w-44 opacity-10 lg:right-16 lg:top-12 lg:w-56"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#04090b] via-[#04090b]/95 to-[#04090b]" />
-        <div className="bg-grid absolute inset-0 opacity-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-100 via-slate-100/95 to-slate-100 dark:from-[#04090b] dark:via-[#04090b]/95 dark:to-[#04090b]" />
+        <div className="bg-grid absolute inset-0 opacity-40 dark:opacity-10" />
 
         <div className="relative mx-auto max-w-7xl px-4 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
-            <Badge variant="secondary" className="gap-1.5 border-white/10 bg-white/10 text-white">
+            <Badge variant="secondary" className="gap-1.5 border-primary/20 bg-background/80 text-foreground backdrop-blur dark:border-white/10 dark:bg-white/10 dark:text-white">
               <Award className="h-3 w-3 text-primary" />
               {t.marketing.certificationBadge}
             </Badge>
-            <h2 className="mt-4 text-2xl font-bold text-white lg:text-3xl">{t.marketing.certificationTitle}</h2>
-            <p className="mt-3 text-white/60">{t.marketing.certificationDesc}</p>
+            <h2 className="mt-4 text-2xl font-bold text-foreground lg:text-3xl dark:text-white">{t.marketing.certificationTitle}</h2>
+            <p className="mt-3 text-muted-foreground dark:text-white/60">{t.marketing.certificationDesc}</p>
           </div>
           <div className="mx-auto mt-10 grid max-w-5xl grid-cols-1 gap-4 md:grid-cols-3">
             {[
@@ -285,11 +331,11 @@ export default function LandingPage() {
             ].map((path) => (
               <div
                 key={path.title}
-                className={`flex flex-col gap-3 rounded-xl border p-5 backdrop-blur ${path.active ? "border-primary/60 bg-primary/10" : "border-white/10 bg-white/5"}`}
+                  className={`flex flex-col gap-3 rounded-xl border p-5 backdrop-blur ${path.active ? "border-primary/60 bg-primary/10" : "border-border/70 bg-background/70 dark:border-white/10 dark:bg-white/5"}`}
               >
                 <path.icon className="h-6 w-6 text-primary" />
-                <p className="font-semibold text-white">{path.title}</p>
-                <p className="text-sm leading-relaxed text-white/60">{path.description}</p>
+                <p className="font-semibold text-foreground dark:text-white">{path.title}</p>
+                <p className="text-sm leading-relaxed text-muted-foreground dark:text-white/60">{path.description}</p>
               </div>
             ))}
           </div>

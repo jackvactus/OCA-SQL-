@@ -28,11 +28,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { modules } from "@/lib/modules-data";
+import { getLocalizedModules } from "@/lib/content-i18n";
 import { useProgress } from "@/hooks/use-progress";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/language-provider";
 
 export default function CoursesPage() {
+  const { locale } = useLanguage();
+  const en = locale === "en";
+  const modules = getLocalizedModules(locale);
   const { progress, loaded } = useProgress();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
@@ -103,24 +107,24 @@ export default function CoursesPage() {
                 <BookOpen className="h-3 w-3" />
                 {modules.length} modules
               </Badge>
-              <Badge variant="outline">{totals.totalLessons} leçons</Badge>
+              <Badge variant="outline">{totals.totalLessons} {en ? "lessons" : "leçons"}</Badge>
               <Badge variant="outline" className="gap-1">
                 <Clock className="h-3 w-3" />
                 {totals.totalHours}h
               </Badge>
             </div>
             <h1 className="text-2xl font-bold tracking-tight lg:text-3xl">
-              Modules de cours
+              {en ? "Course modules" : "Modules de cours"}
             </h1>
             <p className="max-w-2xl text-sm text-muted-foreground lg:text-base">
-              Parcourez les modules de préparation à la certification Oracle Database SQL
-              1Z0-071. Suivez votre progression, complétez les leçons et maîtrisez chaque
-              sujet à votre rythme.
+              {en
+                ? "Browse the Oracle Database SQL 1Z0-071 certification modules. Track your progress, complete lessons, and master every topic at your own pace."
+                : "Parcourez les modules de préparation à la certification Oracle Database SQL 1Z0-071. Suivez votre progression, complétez les leçons et maîtrisez chaque sujet à votre rythme."}
             </p>
             {nextModule && (
               <Link href={`/courses/${nextModule.id}`} className="inline-flex pt-2">
                 <Button size="sm" className="gap-2">
-                  Reprendre : {nextModule.title}
+                  {en ? "Resume: " : "Reprendre : "}{nextModule.title}
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
@@ -156,9 +160,9 @@ export default function CoursesPage() {
               </span>
             </div>
             <div className="text-sm">
-              <p className="font-semibold">Progression globale</p>
+              <p className="font-semibold">{en ? "Overall progress" : "Progression globale"}</p>
               <p className="text-muted-foreground">
-                {totals.completed} / {totals.totalLessons} leçons complétées
+                {totals.completed} / {totals.totalLessons} {en ? "lessons completed" : "leçons complétées"}
               </p>
             </div>
           </div>
@@ -171,19 +175,19 @@ export default function CoursesPage() {
           <Input
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Rechercher un module ou un sujet..."
+            placeholder={en ? "Search a module or topic..." : "Rechercher un module ou un sujet..."}
             className="pl-9"
           />
         </div>
         <Select value={status} onValueChange={setStatus}>
           <SelectTrigger className="w-full sm:w-48">
-            <SelectValue placeholder="Filtrer par état" />
+            <SelectValue placeholder={en ? "Filter by status" : "Filtrer par état"} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tous les modules</SelectItem>
-            <SelectItem value="todo">Non commencés</SelectItem>
-            <SelectItem value="started">En cours</SelectItem>
-            <SelectItem value="completed">Terminés</SelectItem>
+            <SelectItem value="all">{en ? "All modules" : "Tous les modules"}</SelectItem>
+            <SelectItem value="todo">{en ? "Not started" : "Non commencés"}</SelectItem>
+            <SelectItem value="started">{en ? "In progress" : "En cours"}</SelectItem>
+            <SelectItem value="completed">{en ? "Completed" : "Terminés"}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -192,8 +196,8 @@ export default function CoursesPage() {
       {filteredGroups.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border py-12 text-center">
           <Search className="mx-auto h-8 w-8 text-muted-foreground/60" />
-          <p className="mt-3 font-medium">Aucun module trouvé</p>
-          <p className="mt-1 text-sm text-muted-foreground">Modifiez votre recherche ou le filtre d’état.</p>
+          <p className="mt-3 font-medium">{en ? "No modules found" : "Aucun module trouvé"}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{en ? "Adjust your search or status filter." : "Modifiez votre recherche ou le filtre d’état."}</p>
         </div>
       ) : filteredGroups.map(([category, mods], sectionIndex) => {
         const sectionCompleted = mods.reduce(
@@ -222,7 +226,7 @@ export default function CoursesPage() {
               </div>
               <div className="flex items-center gap-3 text-sm text-muted-foreground">
                 <span className="hidden sm:inline">
-                  {sectionCompleted} / {sectionTotal} leçons
+                  {sectionCompleted} / {sectionTotal} {en ? "lessons" : "leçons"}
                 </span>
                 <div className="h-2 w-24 overflow-hidden rounded-full bg-secondary">
                   <div
@@ -311,7 +315,7 @@ export default function CoursesPage() {
                         <div className="flex items-center gap-4 text-xs text-muted-foreground">
                           <span className="flex items-center gap-1.5">
                             <BookOpen className="h-3.5 w-3.5" />
-                            {totalLessons} leçon{totalLessons > 1 ? "s" : ""}
+                            {totalLessons} {en ? "lesson" : "leçon"}{totalLessons > 1 ? "s" : ""}
                           </span>
                           <span className="flex items-center gap-1.5">
                             <Clock className="h-3.5 w-3.5" />
@@ -326,7 +330,7 @@ export default function CoursesPage() {
                               {isComplete ? (
                                 <span className="flex items-center gap-1 font-medium text-success">
                                   <CheckCircle2 className="h-3 w-3" />
-                                  Terminé
+                                  {en ? "Completed" : "Terminé"}
                                 </span>
                               ) : isStarted ? (
                                 <span className="font-medium text-primary">
@@ -335,7 +339,7 @@ export default function CoursesPage() {
                               ) : (
                                 <span className="flex items-center gap-1">
                                   <Circle className="h-3 w-3" />
-                                  Non commencé
+                                  {en ? "Not started" : "Non commencé"}
                                 </span>
                               )}
                             </span>
@@ -356,7 +360,7 @@ export default function CoursesPage() {
                         <div className="flex items-center justify-between pt-1">
                           <span className="text-sm font-medium text-primary">
                             {isComplete
-                              ? "Réviser"
+                              ? en ? "Review" : "Réviser"
                               : isStarted
                                 ? "Continuer"
                                 : "Commencer"}

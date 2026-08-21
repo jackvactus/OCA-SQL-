@@ -29,24 +29,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { modules } from "@/lib/modules-data";
+import { getLocalizedModules } from "@/lib/content-i18n";
 import { useProgress } from "@/hooks/use-progress";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/language-provider";
 
-// Collect every flashcard from every module/lesson into a flat list.
-const allFlashcards = modules.flatMap((module) =>
-  module.lessons.flatMap((lesson) =>
-    lesson.flashcards.map((flashcard) => ({
-      ...flashcard,
-      moduleTitle: module.title,
-      moduleId: module.id,
-    })),
-  ),
-);
-
-const allCategories = Array.from(
-  new Set(allFlashcards.map((card) => card.category)),
-).sort();
+function getAllFlashcards(locale: "fr" | "en") {
+  return getLocalizedModules(locale).flatMap((module) =>
+    module.lessons.flatMap((lesson) =>
+      lesson.flashcards.map((flashcard) => ({
+        ...flashcard,
+        moduleTitle: module.title,
+        moduleId: module.id,
+      })),
+    ),
+  );
+}
 
 type Rating = {
   label: string;
@@ -87,6 +85,10 @@ const ratings: Rating[] = [
 ];
 
 export default function FlashcardsPage() {
+  const { locale } = useLanguage();
+  const en = locale === "en";
+  const allFlashcards = useMemo(() => getAllFlashcards(locale), [locale]);
+  const allCategories = useMemo(() => Array.from(new Set(allFlashcards.map((card) => card.category))).sort(), [allFlashcards]);
   const { progress, loaded, updateFlashcard } = useProgress();
 
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
@@ -263,8 +265,7 @@ export default function FlashcardsPage() {
             <span className="gradient-text">Flashcards</span>
           </h1>
           <p className="mt-2 text-muted-foreground">
-            Spaced repetition study — review what&apos;s due, learn what&apos;s
-            new
+            {en ? "Spaced repetition study - review what is due and learn what is new" : "Révision espacée : révisez ce qui est dû et apprenez ce qui est nouveau"}
           </p>
         </div>
 
@@ -277,24 +278,24 @@ export default function FlashcardsPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-xl">
                     <Brain className="h-5 w-5 text-primary" />
-                    Study Session
+                    {en ? "Study session" : "Session de révision"}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Category filter */}
                   <div className="space-y-2">
                     <label className="text-sm font-medium">
-                      Filter by category
+                      {en ? "Filter by category" : "Filtrer par catégorie"}
                     </label>
                     <Select
                       value={selectedCategory}
                       onValueChange={setSelectedCategory}
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a category" />
+                        <SelectValue placeholder={en ? "Select a category" : "Sélectionner une catégorie"} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">All Categories</SelectItem>
+                        <SelectItem value="all">{en ? "All categories" : "Toutes les catégories"}</SelectItem>
                         {allCategories.map((category) => (
                           <SelectItem key={category} value={category}>
                             {category}
@@ -315,7 +316,7 @@ export default function FlashcardsPage() {
                           {dueCards.length}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          card{dueCards.length !== 1 ? "s" : ""} ready to study
+                          {en ? "card" : "carte"}{dueCards.length !== 1 ? "s" : ""} {en ? "ready to study" : "prête(s) à réviser"}
                         </p>
                       </div>
                     </div>
@@ -324,7 +325,7 @@ export default function FlashcardsPage() {
                       className="border-primary/30 bg-primary/5 text-primary"
                     >
                       {selectedCategory === "all"
-                        ? "All categories"
+                        ? en ? "All categories" : "Toutes les catégories"
                         : selectedCategory}
                     </Badge>
                   </div>
@@ -337,13 +338,12 @@ export default function FlashcardsPage() {
                   >
                     <Brain className="mr-2 h-4 w-4" />
                     {dueCards.length > 0
-                      ? "Start Studying"
-                      : "No Cards Due"}
+                      ? en ? "Start studying" : "Commencer la révision"
+                      : en ? "No cards due" : "Aucune carte à réviser"}
                   </Button>
                   {dueCards.length === 0 && (
                     <p className="text-center text-sm text-muted-foreground">
-                      You&apos;re all caught up! Come back later or switch
-                      categories.
+                      {en ? "You are all caught up! Come back later or switch categories." : "Tout est à jour ! Revenez plus tard ou changez de catégorie."}
                     </p>
                   )}
                 </CardContent>
@@ -357,11 +357,11 @@ export default function FlashcardsPage() {
                 <div className="space-y-2 animate-fade-in">
                   <div className="flex items-center justify-between text-sm">
                     <span className="font-medium text-muted-foreground">
-                      Card {currentIndex + 1} of {queue.length}
+                      {en ? "Card" : "Carte"} {currentIndex + 1} {en ? "of" : "sur"} {queue.length}
                     </span>
                     <span className="flex items-center gap-1.5 font-medium">
                       <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                      {reviewedCount} reviewed
+                      {reviewedCount} {en ? "reviewed" : "révisées"}
                     </span>
                   </div>
                   <Progress value={progressPercent} className="h-2" />
@@ -408,12 +408,12 @@ export default function FlashcardsPage() {
                               variant="outline"
                               className="font-normal text-muted-foreground"
                             >
-                              {currentRecord ? "Due" : "New"}
+                              {currentRecord ? (en ? "Due" : "À réviser") : (en ? "New" : "Nouvelle")}
                             </Badge>
                           </div>
                           <CardTitle className="mt-3 flex items-center gap-2 text-sm font-medium uppercase tracking-wide text-muted-foreground">
                             <Brain className="h-4 w-4" />
-                            Question
+                            {en ? "Question" : "Question"}
                           </CardTitle>
                         </CardHeader>
                         <CardContent className="flex flex-1 flex-col items-center justify-center text-center">
@@ -422,7 +422,7 @@ export default function FlashcardsPage() {
                           </p>
                           <p className="mt-6 flex items-center gap-1.5 text-sm text-muted-foreground">
                             <RefreshCw className="h-3.5 w-3.5" />
-                            Click to flip
+                            {en ? "Click to flip" : "Cliquez pour retourner"}
                           </p>
                         </CardContent>
                       </Card>
@@ -447,12 +447,12 @@ export default function FlashcardsPage() {
                               variant="outline"
                               className="border-primary/30 bg-primary/10 text-primary"
                             >
-                              Answer
+                              {en ? "Answer" : "Réponse"}
                             </Badge>
                           </div>
                           <CardTitle className="mt-3 flex items-center gap-2 text-sm font-medium uppercase tracking-wide text-muted-foreground">
                             <CheckCircle2 className="h-4 w-4" />
-                            Answer
+                            {en ? "Answer" : "Réponse"}
                           </CardTitle>
                         </CardHeader>
                         <CardContent className="flex flex-1 flex-col items-center justify-center text-center">
@@ -476,12 +476,12 @@ export default function FlashcardsPage() {
                       disabled={currentIndex === 0}
                     >
                       <ChevronLeft className="mr-1 h-4 w-4" />
-                      Prev
+                      {en ? "Previous" : "Précédente"}
                     </Button>
                     <span className="text-xs text-muted-foreground">
                       {isFlipped
-                        ? "Rate your recall"
-                        : "Flip the card to reveal the answer"}
+                        ? (en ? "Rate your recall" : "Évaluez votre mémoire")
+                        : (en ? "Flip the card to reveal the answer" : "Retournez la carte pour voir la réponse")}
                     </span>
                     <Button
                       variant="ghost"
@@ -489,7 +489,7 @@ export default function FlashcardsPage() {
                       onClick={handleNext}
                       disabled={currentIndex >= queue.length - 1}
                     >
-                      Next
+                      {en ? "Next" : "Suivante"}
                       <ChevronRight className="ml-1 h-4 w-4" />
                     </Button>
                   </div>
@@ -527,15 +527,15 @@ export default function FlashcardsPage() {
 
                   {/* Keyboard hint */}
                   <p className="text-center text-xs text-muted-foreground">
-                    Shortcuts:{" "}
+                    {en ? "Shortcuts:" : "Raccourcis :"}{" "}
                     <kbd className="rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px]">
                       Space
                     </kbd>{" "}
-                    to flip ·{" "}
+                    {en ? "to flip ·" : "pour retourner ·"}{" "}
                     <kbd className="rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px]">
                       1-4
                     </kbd>{" "}
-                    to rate
+                    {en ? "to rate" : "pour noter"}
                   </p>
                 </div>
               </div>
@@ -548,7 +548,7 @@ export default function FlashcardsPage() {
                   <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10">
                     <Trophy className="h-10 w-10 text-emerald-500" />
                   </div>
-                  <CardTitle className="text-2xl">Session Complete!</CardTitle>
+                  <CardTitle className="text-2xl">{en ? "Session complete!" : "Session terminée !"}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="text-center">
@@ -556,8 +556,7 @@ export default function FlashcardsPage() {
                       {reviewedCount}
                     </div>
                     <p className="mt-2 text-muted-foreground">
-                      card{reviewedCount !== 1 ? "s" : ""} reviewed this
-                      session
+                      {reviewedCount} {en ? "card" : "carte"}{reviewedCount !== 1 ? "s" : ""} {en ? "reviewed this session" : "révisée(s) pendant cette session"}
                     </p>
                   </div>
 
@@ -566,14 +565,13 @@ export default function FlashcardsPage() {
                       <span className="font-semibold text-primary">
                         +{reviewedCount * 5} XP
                       </span>{" "}
-                      earned · Total: {progress.xp} XP
+                      {en ? "earned · Total:" : "gagnés · Total :"} {progress.xp} XP
                     </p>
                   )}
 
                   <div className="rounded-lg bg-muted/40 p-4 text-center text-sm">
                     <p className="text-muted-foreground">
-                      Great work! Spaced repetition helps move knowledge into
-                      long-term memory. Review again when cards are due.
+                      {en ? "Great work! Spaced repetition helps move knowledge into long-term memory. Review again when cards are due." : "Excellent travail ! La répétition espacée aide à ancrer les connaissances dans la mémoire à long terme. Révisez à nouveau quand les cartes seront dues."}
                     </p>
                   </div>
 
@@ -585,7 +583,7 @@ export default function FlashcardsPage() {
                       onClick={restart}
                     >
                       <RotateCcw className="mr-2 h-4 w-4" />
-                      Back to Setup
+                      {en ? "Back to setup" : "Retour à la configuration"}
                     </Button>
                     <Button
                       size="lg"
@@ -594,7 +592,7 @@ export default function FlashcardsPage() {
                       disabled={dueCards.length === 0}
                     >
                       <RefreshCw className="mr-2 h-4 w-4" />
-                      Study Again
+                      {en ? "Study again" : "Réviser à nouveau"}
                     </Button>
                   </div>
                 </CardContent>
@@ -608,7 +606,7 @@ export default function FlashcardsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Trophy className="h-5 w-5 text-amber-500" />
-                  Statistics
+                  {en ? "Statistics" : "Statistiques"}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -618,7 +616,7 @@ export default function FlashcardsPage() {
                     <Layers className="h-5 w-5 text-primary" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm text-muted-foreground">Total cards</p>
+                    <p className="text-sm text-muted-foreground">{en ? "Total cards" : "Total des cartes"}</p>
                     <p className="text-xl font-bold">{stats.total}</p>
                   </div>
                 </div>
@@ -629,7 +627,7 @@ export default function FlashcardsPage() {
                     <Calendar className="h-5 w-5 text-amber-500" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm text-muted-foreground">Due today</p>
+                    <p className="text-sm text-muted-foreground">{en ? "Due today" : "À réviser aujourd'hui"}</p>
                     <p className="text-xl font-bold">{stats.dueToday}</p>
                   </div>
                 </div>
@@ -640,7 +638,7 @@ export default function FlashcardsPage() {
                     <CheckCircle2 className="h-5 w-5 text-emerald-500" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm text-muted-foreground">Learned</p>
+                    <p className="text-sm text-muted-foreground">{en ? "Learned" : "Apprises"}</p>
                     <p className="text-xl font-bold">{stats.learned}</p>
                   </div>
                 </div>
@@ -648,7 +646,7 @@ export default function FlashcardsPage() {
                 {/* Learning progress bar */}
                 <div className="space-y-1.5 pt-2">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">Mastery</span>
+                    <span className="text-muted-foreground">{en ? "Mastery" : "Maîtrise"}</span>
                     <span className="font-medium">
                       {stats.total > 0
                         ? Math.round((stats.learned / stats.total) * 100)
@@ -669,7 +667,7 @@ export default function FlashcardsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <Layers className="h-5 w-5 text-primary" />
-                  Categories
+                  {en ? "Categories" : "Catégories"}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
@@ -699,7 +697,7 @@ export default function FlashcardsPage() {
                             variant="outline"
                             className="border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400"
                           >
-                            {due} due
+                            {due} {en ? "due" : "à réviser"}
                           </Badge>
                         )}
                         <span className="text-xs text-muted-foreground">
@@ -718,7 +716,7 @@ export default function FlashcardsPage() {
                       : "border-border hover:bg-accent/5",
                   )}
                 >
-                  <span className="font-medium">All Categories</span>
+                  <span className="font-medium">{en ? "All categories" : "Toutes les catégories"}</span>
                   <span className="text-xs text-muted-foreground">
                     {allFlashcards.length}
                   </span>

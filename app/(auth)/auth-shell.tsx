@@ -29,8 +29,8 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
       {/* Left — dark hero panel */}
       <div className="relative hidden overflow-hidden bg-[#0a1418] lg:block">
         <Image
-          src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1600&auto=format&fit=crop"
-          alt=""
+          src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1600&auto=format&fit=crop"
+          alt="Oracle Database server infrastructure"
           fill
           priority
           className="object-cover"

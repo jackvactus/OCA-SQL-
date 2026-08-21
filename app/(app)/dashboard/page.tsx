@@ -33,7 +33,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { modules } from "@/lib/modules-data";
+import { getLocalizedModules } from "@/lib/content-i18n";
 import { quizQuestions } from "@/lib/quiz-data";
 import { useProgress } from "@/hooks/use-progress";
 import { ACTIVITY_ACTION_LABELS, type ActivityAction } from "@/lib/activity-types";
@@ -58,7 +58,8 @@ interface RecentActivityEntry {
 }
 
 export default function DashboardPage() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
+  const modules = getLocalizedModules(locale);
   const { progress, loaded } = useProgress();
   const [recentActivity, setRecentActivity] = useState<RecentActivityEntry[]>([]);
 

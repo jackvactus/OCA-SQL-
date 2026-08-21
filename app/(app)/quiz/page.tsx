@@ -39,7 +39,7 @@ import {
   requiredAnswerCount,
 } from "@/lib/quiz-data";
 import { workbookQuizQuestions } from "@/lib/quiz-data-en-workbook";
-import { modules } from "@/lib/modules-data";
+import { getLocalizedModules } from "@/lib/content-i18n";
 import { useProgress } from "@/hooks/use-progress";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/language-provider";
@@ -58,20 +58,23 @@ function shuffle<T>(arr: T[]): T[] {
 
 const difficultyConfig: Record<
   "easy" | "medium" | "hard",
-  { label: string; className: string }
+  { fr: string; en: string; className: string }
 > = {
   easy: {
-    label: "Facile",
+    fr: "Facile",
+    en: "Easy",
     className:
       "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800",
   },
   medium: {
-    label: "Moyen",
+    fr: "Moyen",
+    en: "Medium",
     className:
       "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border-amber-200 dark:border-amber-800",
   },
   hard: {
-    label: "Difficile",
+    fr: "Difficile",
+    en: "Hard",
     className:
       "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300 border-rose-200 dark:border-rose-800",
   },
@@ -80,6 +83,7 @@ const difficultyConfig: Record<
 export default function QuizPage() {
   const { progress, loaded, recordQuiz } = useProgress();
   const { locale } = useLanguage();
+  const modules = getLocalizedModules(locale);
   const questionBank = locale === "en" ? workbookQuizQuestions : quizQuestions;
 
   const [selectedModule, setSelectedModule] = useState<string>("all");
@@ -351,7 +355,7 @@ export default function QuizPage() {
                     variant="outline"
                     className={difficultyConfig[current.difficulty].className}
                   >
-                    {difficultyConfig[current.difficulty].label}
+                    {difficultyConfig[current.difficulty][locale]}
                   </Badge>
                   <Badge variant="secondary" className="font-normal">
                     {current.topic}
