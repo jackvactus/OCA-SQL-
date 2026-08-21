@@ -122,8 +122,8 @@ export default function LandingPage() {
         <div className="bg-grid absolute inset-0 opacity-40 dark:opacity-10" />
 
         <div className="relative mx-auto max-w-7xl px-4 py-16 lg:px-8 lg:py-24">
-          <div className="grid items-center gap-12 lg:grid-cols-[1fr_0.85fr]">
-          <div className="relative max-w-3xl overflow-hidden rounded-[2rem] px-1 py-2 lg:px-3 lg:py-5">
+          <div className="space-y-10">
+          <div className="relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] px-3 py-5 text-center lg:px-8 lg:py-8">
             <Image
               src="https://images.unsplash.com/photo-1554306274-f23873d9a26c?q=80&w=1400&auto=format&fit=crop"
               alt=""
@@ -147,11 +147,11 @@ export default function LandingPage() {
               <Database className="h-3 w-3 text-primary" />
               {t.marketing.heroBadge}
             </Badge>
-            <h1 className="mt-5 font-display text-4xl font-bold leading-[1.08] text-foreground lg:text-6xl dark:text-white">
+            <h1 className="mx-auto mt-5 max-w-5xl font-display text-5xl font-bold leading-[1.04] text-foreground lg:text-7xl dark:text-white">
               {t.marketing.heroTitle1} <span className="text-primary">{t.marketing.heroTitleHighlight}</span>
             </h1>
             <p className="mt-5 max-w-2xl text-lg text-muted-foreground dark:text-white/60">{t.marketing.heroSubtitle}</p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link href="/register">
                 <Button size="lg" className="gap-2">
                   {t.marketing.heroCtaPrimary}
@@ -167,7 +167,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="relative min-h-[300px] lg:-translate-y-2 lg:min-h-[360px]">
+          <div className="relative mx-auto min-h-[300px] w-full max-w-5xl lg:-translate-y-2 lg:min-h-[390px]">
             <div className="absolute inset-0 overflow-hidden rounded-[2rem] border border-white/20 bg-slate-950/70 shadow-2xl shadow-sky-950/30 backdrop-blur">
               <Image
                 src="https://images.unsplash.com/photo-1560732488-6b0df240254a?q=80&w=1200&auto=format&fit=crop"
