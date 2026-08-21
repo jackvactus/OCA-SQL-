@@ -131,7 +131,7 @@ export default function LandingPage() {
             <h1 className="mt-5 font-display text-4xl font-bold leading-[1.08] text-foreground lg:text-6xl dark:text-white">
               {t.marketing.heroTitle1} <span className="text-primary">{t.marketing.heroTitleHighlight}</span>
             </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground dark:text-white/60">{t.marketing.heroSubtitle}</p>
+            <p className="mt-5 max-w-2xl text-lg text-muted-foreground dark:text-white/60">{t.marketing.heroSubtitle}</p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link href="/register">
                 <Button size="lg" className="gap-2">
@@ -140,7 +140,7 @@ export default function LandingPage() {
                 </Button>
               </Link>
               <Link href="/login">
-                <Button size="lg" variant="outline" className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white">
+                <Button size="lg" variant="outline" className="border-border bg-background/70 text-foreground hover:bg-background dark:border-white/20 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:hover:text-white">
                   {t.marketing.heroCtaSecondary}
                 </Button>
               </Link>
@@ -158,15 +158,15 @@ export default function LandingPage() {
               <div className="absolute inset-0 bg-gradient-to-br from-sky-950/70 via-slate-950/50 to-slate-950/90" />
               <div className="relative flex h-full flex-col justify-between p-6">
                 <div className="flex items-center justify-between text-white">
-                  <div className="flex items-center gap-2 text-sm font-semibold"><Activity className="h-4 w-4 text-emerald-400" /> Oracle Database Monitor</div>
-                  <span className="flex items-center gap-1.5 text-xs text-emerald-300"><span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" /> Live</span>
+                  <div className="flex items-center gap-2 text-sm font-semibold"><Activity className="h-4 w-4 text-emerald-400" /> {locale === "en" ? "Oracle Database Monitor" : "Moniteur Oracle Database"}</div>
+                  <span className="flex items-center gap-1.5 text-xs text-emerald-300"><span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" /> {locale === "en" ? "Live" : "En direct"}</span>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    ["99.98%", "Availability", "text-emerald-300"],
-                    ["1.24 ms", "Query latency", "text-sky-300"],
-                    ["24/7", "Monitoring", "text-amber-300"],
-                    ["100%", "SQL readiness", "text-white"],
+                    ["99.98%", locale === "en" ? "Availability" : "Disponibilité", "text-emerald-300"],
+                    ["1.24 ms", locale === "en" ? "Query latency" : "Latence SQL", "text-sky-300"],
+                    ["24/7", locale === "en" ? "Monitoring" : "Surveillance", "text-amber-300"],
+                    ["100%", locale === "en" ? "SQL readiness" : "Préparation SQL", "text-white"],
                   ].map(([value, label, color]) => (
                     <div key={label} className="rounded-xl border border-white/10 bg-white/10 p-3 backdrop-blur">
                       <p className={`text-xl font-bold ${color}`}>{value}</p>
@@ -175,7 +175,7 @@ export default function LandingPage() {
                   ))}
                 </div>
                 <div className="rounded-xl border border-white/10 bg-slate-950/60 p-3">
-                  <div className="mb-2 flex items-center justify-between text-xs text-white/60"><span>SQL workload</span><span className="text-emerald-300">+18.4%</span></div>
+                  <div className="mb-2 flex items-center justify-between text-xs text-white/60"><span>{locale === "en" ? "SQL workload" : "Charge SQL"}</span><span className="text-emerald-300">+18.4%</span></div>
                   <div className="flex h-10 items-end gap-1.5">
                     {[35, 48, 42, 62, 55, 76, 68, 92, 81, 96, 88, 100].map((height, index) => <span key={index} className="flex-1 rounded-t bg-gradient-to-t from-sky-500 to-emerald-300" style={{ height: `${height}%` }} />)}
                   </div>
@@ -184,7 +184,7 @@ export default function LandingPage() {
             </div>
             <div className="absolute -bottom-5 -left-5 flex items-center gap-3 rounded-xl border border-border bg-background p-3 shadow-xl">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-600 text-white"><Database className="h-5 w-5" /></div>
-              <div><p className="text-xs text-muted-foreground">Powered by</p><p className="font-semibold">Oracle Database</p></div>
+              <div><p className="text-xs text-muted-foreground">{locale === "en" ? "Powered by" : "Propulsé par"}</p><p className="font-semibold">Oracle Database</p></div>
             </div>
           </div>
           </div>
@@ -205,7 +205,7 @@ export default function LandingPage() {
       </section>
 
       {/* Operations snapshot */}
-      <section className="mx-auto max-w-7xl px-4 lg:px-8">
+      <section id="platform" className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
             { icon: Gauge, value: "99.98%", label: locale === "en" ? "Platform availability" : "Disponibilité plateforme", tone: "text-emerald-500" },
@@ -222,7 +222,7 @@ export default function LandingPage() {
       </section>
 
       {/* Oracle Database visual gallery */}
-      <section className="mx-auto max-w-7xl px-4 lg:px-8">
+      <section id="syllabus" className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="mb-7 max-w-2xl">
           <Badge variant="secondary" className="gap-1.5">
             <Database className="h-3 w-3 text-primary" />
@@ -268,7 +268,7 @@ export default function LandingPage() {
       </section>
 
       {/* Live preview */}
-      <section className="mx-auto max-w-7xl px-4 lg:px-8">
+      <section id="practice" className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
           <div>
             <Badge variant="secondary" className="gap-1.5">

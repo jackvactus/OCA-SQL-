@@ -25,6 +25,11 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             </div>
             <span className="text-lg font-bold leading-none">{t.appShell.brand}</span>
           </Link>
+          <nav className="hidden items-center gap-6 text-sm text-muted-foreground lg:flex" aria-label="Primary navigation">
+            <Link href="/#platform" className="transition-colors hover:text-foreground">{getLocale() === "en" ? "Platform" : "Plateforme"}</Link>
+            <Link href="/#syllabus" className="transition-colors hover:text-foreground">{getLocale() === "en" ? "Syllabus" : "Programme"}</Link>
+            <Link href="/#practice" className="transition-colors hover:text-foreground">{getLocale() === "en" ? "Practice" : "Pratique"}</Link>
+          </nav>
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <LanguageToggle />
