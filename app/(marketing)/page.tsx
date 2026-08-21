@@ -320,8 +320,8 @@ export default function LandingPage() {
               icon: Code2,
             },
             {
-              src: "/oracle-logo.svg",
-              alt: locale === "en" ? "Oracle Cloud Infrastructure logo" : "Logo Oracle Cloud Infrastructure",
+              src: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop",
+              alt: locale === "en" ? "Cloud infrastructure and data network" : "Infrastructure cloud et réseau de données",
               label: locale === "en" ? "Oracle Cloud Infrastructure" : "Oracle Cloud Infrastructure",
               icon: Cloud,
             },
