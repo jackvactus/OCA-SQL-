@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CourseBlockView } from "@/components/course-blocks";
+import { CurriculumProgress, SessionDoneBadge } from "@/components/session-review";
 import { getSessionUser } from "@/lib/auth/session";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { dictionary } from "@/lib/i18n/dictionary";
@@ -102,10 +103,13 @@ export default async function CurriculumPage() {
                   {tr(curriculum.subtitle, locale)}
                 </p>
               </div>
-              <p className="shrink-0 text-xs text-muted-foreground">
-                {stats.sessions} {t.curriculum.sessions} · {stats.topics} {t.curriculum.topics} ·{" "}
-                {stats.hours} {t.curriculum.hours}
-              </p>
+              <div className="shrink-0 space-y-2">
+                <p className="text-xs text-muted-foreground">
+                  {stats.sessions} {t.curriculum.sessions} · {stats.topics} {t.curriculum.topics} ·{" "}
+                  {stats.hours} {t.curriculum.hours}
+                </p>
+                <CurriculumProgress sessionIds={curriculum.sessions.map((s) => s.id)} />
+              </div>
             </div>
 
             <ol className="space-y-3">
@@ -128,7 +132,10 @@ export default async function CurriculumPage() {
                         {String(session.number).padStart(2, "0")}
                       </span>
                       <div className="min-w-0 flex-1">
-                        <h3 className="font-bold leading-tight">{tr(session.title, locale)}</h3>
+                        <h3 className="flex items-center gap-2 font-bold leading-tight">
+                          {tr(session.title, locale)}
+                          <SessionDoneBadge sessionId={session.id} />
+                        </h3>
                         <p className="text-pretty mt-1 text-sm leading-relaxed text-muted-foreground">
                           {tr(session.summary, locale)}
                         </p>

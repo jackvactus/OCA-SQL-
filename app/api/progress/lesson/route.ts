@@ -3,8 +3,15 @@ import { getSessionUser } from "@/lib/auth/session";
 import { applyCompleteLesson, updateProgress } from "@/lib/progress";
 import { logActivity } from "@/lib/activity";
 import { modules } from "@/lib/modules-data";
+import { allSessionIds } from "@/lib/curricula";
 
-const lessonIds = new Set(modules.flatMap((module) => module.lessons.map((lesson) => lesson.id)));
+// Les sessions de cursus (`lib/curricula.ts`) sont suivies dans le meme
+// tableau `completedLessons` que les lecons des modules : leurs identifiants
+// sont globalement uniques, ils ne peuvent pas entrer en collision.
+const lessonIds = new Set([
+  ...modules.flatMap((module) => module.lessons.map((lesson) => lesson.id)),
+  ...allSessionIds,
+]);
 
 export async function POST(request: NextRequest) {
   const user = await getSessionUser();

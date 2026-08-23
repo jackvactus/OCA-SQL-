@@ -37,6 +37,11 @@ export interface CourseTopic {
   blocks: CourseBlock[];
 }
 
+export interface SelfCheck {
+  question: Bilingual;
+  answer: Bilingual;
+}
+
 export interface CourseSession {
   id: string;
   number: number;
@@ -44,6 +49,10 @@ export interface CourseSession {
   summary: Bilingual;
   estimatedMinutes: number;
   topics: CourseTopic[];
+  /** Ce qu'il faut avoir retenu en fermant la session. */
+  keyTakeaways?: Bilingual[];
+  /** Questions de contrôle, réponse masquée jusqu'au clic. */
+  selfCheck?: SelfCheck[];
 }
 
 export function tr(value: Bilingual, locale: Locale): string {

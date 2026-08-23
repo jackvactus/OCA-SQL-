@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, Brain, Clock, ListOrdered } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CourseBlockView } from "@/components/course-blocks";
+import { SessionReview } from "@/components/session-review";
 import { getSessionUser } from "@/lib/auth/session";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { dictionary } from "@/lib/i18n/dictionary";
@@ -102,6 +103,12 @@ export default async function CurriculumSessionPage({
               </section>
             ))}
           </div>
+
+          <SessionReview
+            sessionId={session.id}
+            keyTakeaways={session.keyTakeaways}
+            selfCheck={session.selfCheck}
+          />
 
           {/* Navigation entre sessions */}
           <nav className="mt-12 flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">

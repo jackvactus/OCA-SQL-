@@ -3,6 +3,17 @@ import { courseSessions as ocaSessions, courseMeta as ocaMeta } from "./course-o
 import { ocp1Sessions } from "./course-ocp1";
 import { ocp2Sessions } from "./course-ocp2";
 import type { TrackId } from "./certification-tracks";
+import { sessionExtras } from "./course-extras";
+
+/** Rattache à chaque session ses points à retenir et ses questions de contrôle. */
+function withExtras(sessions: CourseSession[]): CourseSession[] {
+  return sessions.map((session) => {
+    const extras = sessionExtras[session.id];
+    return extras
+      ? { ...session, keyTakeaways: extras.keyTakeaways, selfCheck: extras.selfCheck }
+      : session;
+  });
+}
 
 /** Registre des trois cursus de la plateforme. */
 export interface Curriculum {
@@ -23,7 +34,7 @@ export const curricula: Curriculum[] = [
     title: ocaMeta.title,
     subtitle: ocaMeta.subtitle,
     accent: "primary",
-    sessions: ocaSessions,
+    sessions: withExtras(ocaSessions),
   },
   {
     id: "ocp-dba-i",
@@ -38,7 +49,7 @@ export const curricula: Curriculum[] = [
       en: "Architecture, instance, security, storage, networking and data movement — the administration half of 1Z0-082.",
     },
     accent: "sky",
-    sessions: ocp1Sessions,
+    sessions: withExtras(ocp1Sessions),
   },
   {
     id: "ocp-dba-ii",
@@ -53,7 +64,7 @@ export const curricula: Curriculum[] = [
       en: "Multitenant, RMAN, Flashback, duplication, upgrades and tuning — the whole of 1Z0-083.",
     },
     accent: "amber",
-    sessions: ocp2Sessions,
+    sessions: withExtras(ocp2Sessions),
   },
 ];
 
