@@ -1,12 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import {
-  quizQuestions,
-  isAnswerCorrect,
-  requiredAnswerCount,
-} from "@/lib/quiz-data";
-import { workbookQuizQuestions } from "@/lib/quiz-data-en-workbook";
+import { isAnswerCorrect, requiredAnswerCount } from "@/lib/quiz-data";
+import { getQuestionBank } from "@/lib/quiz-banks";
+import { certificationTracks, type TrackId } from "@/lib/certification-tracks";
 import type { QuizQuestion } from "@/lib/types";
 import { useProgress } from "@/hooks/use-progress";
 import { drawQuestions } from "@/lib/quiz-shuffle";
@@ -59,7 +56,9 @@ function formatTime(seconds: number): string {
 export default function ExamPage() {
   const { recordExam } = useProgress();
   const { locale } = useLanguage();
-  const questionBank = locale === "en" ? workbookQuizQuestions : quizQuestions;
+  const [selectedTrack, setSelectedTrack] = useState<TrackId>("oca-sql");
+  const questionBank = getQuestionBank(selectedTrack, locale);
+  const activeTrack = certificationTracks.find((track) => track.id === selectedTrack);
 
   const [phase, setPhase] = useState<ExamPhase>("setup");
   const [questionCount, setQuestionCount] = useState<number>(63);
@@ -239,6 +238,40 @@ export default function ExamPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              <div>
+                <h3 className="mb-3 text-sm font-medium">
+                  {locale === "en" ? "Certification track" : "Parcours de certification"}
+                </h3>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  {certificationTracks.map((track) => (
+                    <button
+                      key={track.id}
+                      onClick={() => setSelectedTrack(track.id)}
+                      className={cn(
+                        "rounded-lg border-2 p-3 text-left transition-all",
+                        selectedTrack === track.id
+                          ? "border-primary bg-primary/5"
+                          : "border-border hover:border-primary/50",
+                      )}
+                    >
+                      <div className="font-mono text-xs text-muted-foreground">{track.examCode}</div>
+                      <div className="mt-0.5 text-sm font-semibold">{track.shortLabel}</div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        {getQuestionBank(track.id, locale).length}{" "}
+                        {locale === "en" ? "questions" : "questions"}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+                {activeTrack && (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {locale === "en" ? "Real exam: " : "Examen réel : "}
+                    {activeTrack.questions} questions · {activeTrack.durationMinutes} min ·{" "}
+                    {activeTrack.passScorePercent} %
+                  </p>
+                )}
+              </div>
+
               <div>
                 <h3 className="text-sm font-medium mb-3">
                   Number of Questions

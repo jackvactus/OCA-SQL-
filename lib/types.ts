@@ -48,6 +48,12 @@ export interface Module {
 
 export interface QuizQuestion {
   id: string;
+  /**
+   * Parcours auquel la question appartient. Absent ⇒ "oca-sql", pour rester
+   * compatible avec les banques historiques.
+   */
+  track?: "oca-sql" | "ocp-dba-i" | "ocp-dba-ii";
+  /** Module du site (m1…m18) ou session de cursus (`ocp1-session-3`…). */
   moduleId: string;
   question: string;
   options: string[];

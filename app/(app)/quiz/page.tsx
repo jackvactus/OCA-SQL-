@@ -33,12 +33,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  quizQuestions,
-  isAnswerCorrect,
-  requiredAnswerCount,
-} from "@/lib/quiz-data";
-import { workbookQuizQuestions } from "@/lib/quiz-data-en-workbook";
+import { isAnswerCorrect, requiredAnswerCount } from "@/lib/quiz-data";
+import { getQuestionBank } from "@/lib/quiz-banks";
+import { certificationTracks, type TrackId } from "@/lib/certification-tracks";
+import { curricula } from "@/lib/curricula";
+import { tr } from "@/lib/course-oca-sql";
 import { getLocalizedModules } from "@/lib/content-i18n";
 import { drawQuestions } from "@/lib/quiz-shuffle";
 import { useProgress } from "@/hooks/use-progress";
@@ -76,7 +75,19 @@ export default function QuizPage() {
   const { progress, loaded, recordQuiz } = useProgress();
   const { locale } = useLanguage();
   const modules = getLocalizedModules(locale);
-  const questionBank = locale === "en" ? workbookQuizQuestions : quizQuestions;
+
+  const [selectedTrack, setSelectedTrack] = useState<TrackId>("oca-sql");
+  const questionBank = getQuestionBank(selectedTrack, locale);
+
+  // Le filtre « module » liste les modules du site pour OCA SQL, et les
+  // sessions du cursus correspondant pour les deux parcours OCP.
+  const scopeOptions =
+    selectedTrack === "oca-sql"
+      ? modules.map((m) => ({ id: m.id, label: `${m.number}. ${m.title}` }))
+      : (curricula.find((c) => c.id === selectedTrack)?.sessions ?? []).map((session) => ({
+          id: session.id,
+          label: `${session.number}. ${tr(session.title, locale)}`,
+        }));
 
   const [selectedModule, setSelectedModule] = useState<string>("all");
   const [selectedDifficulty, setSelectedDifficulty] =
@@ -234,7 +245,37 @@ export default function QuizPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label className="text-sm font-medium">Module</Label>
+                <Label className="text-sm font-medium">
+                  {locale === "en" ? "Certification track" : "Parcours de certification"}
+                </Label>
+                <Select
+                  value={selectedTrack}
+                  onValueChange={(v) => {
+                    setSelectedTrack(v as TrackId);
+                    setSelectedModule("all");
+                  }}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {certificationTracks.map((track) => (
+                      <SelectItem key={track.id} value={track.id}>
+                        {track.examCode} — {track.shortLabel}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">
+                  {selectedTrack === "oca-sql"
+                    ? "Module"
+                    : locale === "en"
+                      ? "Session"
+                      : "Session"}
+                </Label>
                 <Select
                   value={selectedModule}
                   onValueChange={setSelectedModule}
@@ -243,10 +284,12 @@ export default function QuizPage() {
                     <SelectValue placeholder="Choisir un module" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Tous les modules</SelectItem>
-                    {modules.map((m) => (
-                      <SelectItem key={m.id} value={m.id}>
-                        {m.number}. {m.title}
+                    <SelectItem value="all">
+                      {locale === "en" ? "All" : "Tout"}
+                    </SelectItem>
+                    {scopeOptions.map((option) => (
+                      <SelectItem key={option.id} value={option.id}>
+                        {option.label}
                       </SelectItem>
                     ))}
                   </SelectContent>

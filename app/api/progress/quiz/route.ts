@@ -2,13 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth/session";
 import { applyRecordQuiz, updateProgress } from "@/lib/progress";
 import { logActivity } from "@/lib/activity";
-import { quizQuestions } from "@/lib/quiz-data";
-import { workbookQuizQuestions } from "@/lib/quiz-data-en-workbook";
+import { allQuestionIds } from "@/lib/quiz-banks";
 
-const quizIds = new Set([
-  ...quizQuestions.map((question) => question.id),
-  ...workbookQuizQuestions.map((question) => question.id),
-]);
+const quizIds = allQuestionIds;
 
 export async function POST(request: NextRequest) {
   const user = await getSessionUser();
