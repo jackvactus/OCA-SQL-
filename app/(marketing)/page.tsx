@@ -298,7 +298,13 @@ export default function LandingPage() {
               className="object-cover transition-transform duration-700 hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-            <Image src="/oracle-logo.svg" alt="" aria-hidden="true" width={150} height={40} className="absolute bottom-5 left-5 h-auto w-28 opacity-95" />
+            <Image
+              src="/art/oracle-wordmark-light.svg"
+              alt="Oracle"
+              width={480}
+              height={96}
+              className="absolute bottom-5 left-5 h-auto w-28 opacity-90"
+            />
           </div>
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1">
             <div className="relative min-h-[124px] overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
@@ -526,11 +532,12 @@ export default function LandingPage() {
       {/* Oracle certification paths */}
       <section className="relative overflow-hidden bg-slate-100 py-16 dark:bg-[#04090b] lg:py-20">
         <Image
-          src="/oracle-logo.svg"
+          src="/art/oracle-wordmark.svg"
           alt=""
-          width={220}
-          height={58}
-          className="absolute right-8 top-8 w-44 opacity-10 lg:right-16 lg:top-12 lg:w-56"
+          aria-hidden="true"
+          width={480}
+          height={96}
+          className="absolute right-8 top-8 w-40 opacity-[0.07] lg:right-16 lg:top-12 lg:w-52 dark:opacity-[0.12]"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-slate-100 via-slate-100/95 to-slate-100 dark:from-[#04090b] dark:via-[#04090b]/95 dark:to-[#04090b]" />
         <div className="bg-grid absolute inset-0 opacity-40 dark:opacity-10" />

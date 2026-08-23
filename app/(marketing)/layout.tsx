@@ -46,8 +46,9 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
       <main className="flex-1">{children}</main>
 
       <footer className="border-t border-border/70 py-6">
-        <div className="mx-auto max-w-7xl px-4 text-center text-sm text-muted-foreground lg:px-8">
-          {t.marketing.footer}
+        <div className="mx-auto max-w-3xl space-y-2 px-4 text-center lg:px-8">
+          <p className="text-sm text-muted-foreground">{t.marketing.footer}</p>
+          <p className="text-xs leading-relaxed text-muted-foreground/70">{t.marketing.trademark}</p>
         </div>
       </footer>
     </div>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 96" width="480" height="96" role="img" aria-label="Oracle">
+  <title>Oracle</title>
+  <!-- Variante claire de la marque verbale, pour les fonds sombres.
+       Usage nominatif : la plateforme prépare aux certifications Oracle
+       Database, elle n'est ni éditée ni approuvée par Oracle Corporation. -->
+  <text
+    x="240"
+    y="70"
+    text-anchor="middle"
+    font-family="Helvetica Neue, Helvetica, Arial, Liberation Sans, sans-serif"
+    font-size="72"
+    font-weight="400"
+    letter-spacing="1"
+    fill="#FFFFFF"
+  >ORACLE</text>
+</svg>

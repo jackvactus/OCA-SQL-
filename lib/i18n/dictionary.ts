@@ -95,6 +95,8 @@ const fr = {
     login: "Se connecter",
     register: "S'inscrire",
     footer: "OracleMaster — Plateforme de formation à la certification Oracle Database SQL 1Z0-071",
+    trademark:
+      "Oracle et Oracle Database sont des marques déposées d’Oracle Corporation. Cette plateforme est indépendante : elle n’est ni éditée, ni approuvée, ni affiliée à Oracle Corporation.",
     heroBadge: "Plateforme de formation Oracle Database SQL",
     heroTitle1: "Maîtrisez Oracle Database SQL —",
     heroTitleHighlight: "Certification 1Z0-071",
@@ -424,6 +426,8 @@ const en: typeof fr = {
     login: "Log in",
     register: "Sign up",
     footer: "OracleMaster — Training platform for the Oracle Database SQL 1Z0-071 certification",
+    trademark:
+      "Oracle and Oracle Database are registered trademarks of Oracle Corporation. This platform is independent: it is not published, endorsed by, or affiliated with Oracle Corporation.",
     heroBadge: "Oracle Database SQL training platform",
     heroTitle1: "Master Oracle Database SQL —",
     heroTitleHighlight: "1Z0-071 Certification",
