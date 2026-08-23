@@ -9,6 +9,7 @@ import {
 import { workbookQuizQuestions } from "@/lib/quiz-data-en-workbook";
 import type { QuizQuestion } from "@/lib/types";
 import { useProgress } from "@/hooks/use-progress";
+import { drawQuestions } from "@/lib/quiz-shuffle";
 import {
   Card,
   CardHeader,
@@ -48,15 +49,6 @@ type ExamQuestion = QuizQuestion;
 const PASS_THRESHOLD = 63;
 const FULL_EXAM_MINUTES = 120;
 const FULL_EXAM_QUESTIONS = 63;
-
-function shuffle<T>(arr: T[]): T[] {
-  const copy = [...arr];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
 
 function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -119,7 +111,7 @@ export default function ExamPage() {
       if (isNaN(parsed) || parsed < 1) return;
       count = Math.min(parsed, questionBank.length);
     }
-    const selected = shuffle(questionBank).slice(0, count);
+    const selected = drawQuestions(questionBank, count);
     const minutes = Math.ceil((count / FULL_EXAM_QUESTIONS) * FULL_EXAM_MINUTES);
     setExamQuestions(selected);
     setAnswers({});

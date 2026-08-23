@@ -1,11 +1,17 @@
 /**
- * Oracle 1Z0-071 — banque Q&R professionnelle
- * Sources : modules du site + documents OCA (1Z0-071 / SQL 2)
- * 238 questions — réponses vérifiées (Oracle SQL), multi-réponses type examen.
+ * Oracle 1Z0-071 — banque Q&R professionnelle francophone.
+ *
+ * Elle réunit deux ensembles :
+ *  - `baseQuizQuestions` — 238 questions rédigées à partir des modules du site ;
+ *  - `pdfSourcedQuestions` — 71 questions issues de l'exploitation des deux PDF
+ *    de `docs/` (voir `lib/quiz-data-pdf.ts` et `docs/ANALYSE-SOURCES-PEDAGOGIQUES.md`).
+ *
+ * Soit 309 questions, réponses vérifiées, multi-réponses au format examen.
  */
 import type { QuizQuestion } from "./types";
+import { pdfSourcedQuestions } from "./quiz-data-pdf";
 
-export const quizQuestions: QuizQuestion[] = [
+const baseQuizQuestions: QuizQuestion[] = [
   // ─── Module 1 — Fondamentaux ───────────────────────────────────────────
   {
     id: "q1",
@@ -2650,21 +2656,6 @@ export const quizQuestions: QuizQuestion[] = [
     difficulty: "medium",
   },
   {
-    id: "q167",
-    moduleId: "m17",
-    question: "Which statement is true about transactions?",
-    options: [
-      "A set of Data Manipulation Language (DML) statements executed in a sequence ending with a SAVEPOINT forms a single transaction.",
-      "Each Data Definition Language (DDL) statement executed forms a single transaction.",
-      "A set of DDL statements executed in a sequence ending with a COMMIT forms a single transaction.",
-      "A combination of DDL and DML statements executed in a sequence ending with a COMMIT forms a single transaction."
-    ],
-    correctIndexes: [1],
-    explanation: "Chaque DDL = une transaction.",
-    topic: "Transactions",
-    difficulty: "medium",
-  },
-  {
     id: "q168",
     moduleId: "m5",
     question: "Which two statements are true regarding the SQL GROUP BY clause?",
@@ -2678,37 +2669,6 @@ export const quizQuestions: QuizQuestion[] = [
     correctIndexes: [3, 4],
     explanation: "WHERE avant GROUP BY ; colonnes non agrégées dans GROUP BY.",
     topic: "GROUP BY",
-    difficulty: "medium",
-  },
-  {
-    id: "q169",
-    moduleId: "m3",
-    question: "Which statement is true regarding the default behavior of the ORDER BY clause?",
-    options: [
-      "In a character sort, the values are case-sensitive.",
-      "NULL values are not considered at all by the sort operation.",
-      "Only those columns that are specified in the SELECT list can be used in the ORDER BY clause.",
-      "Numeric values are displayed from the maximum to the minimum value if they have decimal positions."
-    ],
-    correctIndexes: [0],
-    explanation: "Tri caractère sensible à la casse.",
-    topic: "ORDER BY",
-    difficulty: "medium",
-  },
-  {
-    id: "q170",
-    moduleId: "m5",
-    question: "Which three statements are true regarding group functions? (Choose three.)",
-    options: [
-      "They can be used on columns or expressions.",
-      "They can be passed as an argument to another group function.",
-      "They can be used only with a SQL statement that has the GROUP BY clause.",
-      "They can be used on only one column in the SELECT clause of a SQL statement.",
-      "They can be used along with the single-row function in the SELECT clause of a SQL statement."
-    ],
-    correctIndexes: [0, 1, 4],
-    explanation: "Colonnes/expressions ; imbricables ; avec mono-ligne.",
-    topic: "Fonctions de groupe",
     difficulty: "medium",
   },
   {
@@ -3718,6 +3678,9 @@ export const quizQuestions: QuizQuestion[] = [
     difficulty: "medium",
   },
 ];
+
+/** Banque francophone complète : questions du site + questions issues des PDF de `docs/`. */
+export const quizQuestions: QuizQuestion[] = [...baseQuizQuestions, ...pdfSourcedQuestions];
 
 /** Nombre de questions à réponses multiples (examen type « choose two/three »). */
 export const multiAnswerCount = quizQuestions.filter(

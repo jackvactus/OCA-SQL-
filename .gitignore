@@ -36,4 +36,9 @@ yarn-error.log*
 next-env.d.ts
 
 # local exam source PDFs/DOCX (not published)
+# `/OCA/` ne couvrait que la racine : le dossier reel est docs/OCA/ et contenait
+# 59 fichiers, dont plusieurs recueils d'examen tiers (passleader, braindump2go,
+# examcollection, lead2pass, selftestengine). Voir docs/AUDIT-SYSTEME.md, LEG-01/04.
 /OCA/
+docs/OCA/
+docs/1Z0-071.pdf

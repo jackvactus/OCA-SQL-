@@ -11,9 +11,13 @@ const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mon
 const playfairDisplay = Playfair_Display({ subsets: ["latin"], variable: "--font-display" });
 
 export const metadata: Metadata = {
-  title: "OracleMaster — Certification 1Z0-071 Training Platform",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  title: {
+    default: "OracleMaster — Oracle Database certification training",
+    template: "%s — OracleMaster",
+  },
   description:
-    "Plateforme de formation premium pour la certification Oracle Database SQL 1Z0-071. Cours interactifs, simulateur d'examen, flashcards, sandbox SQL et plus.",
+    "Training platform for the Oracle Database certification path: SQL (1Z0-071), Administration I (1Z0-082) and Administration II (1Z0-083). Interactive courses, exam simulator, flashcards and SQL sandbox.",
   icons: {
     icon: "/favicon.png",
     shortcut: "/favicon.png",

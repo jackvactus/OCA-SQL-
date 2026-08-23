@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="Oracle Cloud Infrastructure">
+  <defs>
+    <linearGradient id="ocSky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#041220"/>
+      <stop offset="50%" stop-color="#0a2438"/>
+      <stop offset="100%" stop-color="#05121c"/>
+    </linearGradient>
+    <linearGradient id="ocCloud" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.30"/>
+      <stop offset="100%" stop-color="#0284c7" stop-opacity="0.06"/>
+    </linearGradient>
+    <linearGradient id="ocNode" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f04438"/>
+      <stop offset="100%" stop-color="#b42318"/>
+    </linearGradient>
+    <radialGradient id="ocHalo" cx="50%" cy="45%" r="52%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.24"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="ocGrid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M64 0H0V64" fill="none" stroke="#38bdf8" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#ocSky)"/>
+  <rect width="1600" height="900" fill="url(#ocGrid)"/>
+  <rect width="1600" height="900" fill="url(#ocHalo)"/>
+
+  <!-- nuage central -->
+  <g transform="translate(800 330)">
+    <path d="M-250 60c-46 0-84-37-84-83s38-84 84-84c9 0 18 2 26 5 22-54 75-92 137-92 71 0 131 51 145 118 10-4 20-6 31-6 46 0 84 38 84 84s-38 84-84 84Z"
+          fill="url(#ocCloud)" stroke="#7dd3fc" stroke-opacity="0.55" stroke-width="3"/>
+    <text x="0" y="18" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="46" font-weight="700" fill="#e0f2fe" fill-opacity="0.92" letter-spacing="6">ORACLE CLOUD</text>
+    <text x="0" y="58" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="22" fill="#7dd3fc" fill-opacity="0.85" letter-spacing="10">INFRASTRUCTURE</text>
+  </g>
+
+  <!-- liens vers les régions -->
+  <g stroke="#38bdf8" stroke-opacity="0.42" stroke-width="2.5" fill="none" stroke-dasharray="10 10">
+    <path d="M560 400 Q430 520 330 618"/>
+    <path d="M700 430 Q640 560 600 700"/>
+    <path d="M900 430 Q960 560 1000 700"/>
+    <path d="M1040 400 Q1170 520 1270 618"/>
+  </g>
+
+  <!-- noeuds régionaux (bases de données) -->
+  <g>
+    <g transform="translate(330 640)">
+      <ellipse cx="0" cy="66" rx="86" ry="18" fill="#000" fill-opacity="0.3"/>
+      <path d="M-62 -30a62 18 0 0 1 124 0v60a62 18 0 0 1-124 0Z" fill="url(#ocNode)"/>
+      <ellipse cx="0" cy="-30" rx="62" ry="18" fill="#fb7185"/>
+      <path d="M-62 0a62 18 0 0 0 124 0" fill="none" stroke="#fecdd3" stroke-opacity="0.4" stroke-width="2"/>
+      <text x="0" y="104" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="21" fill="#bae6fd" fill-opacity="0.85">Région A</text>
+    </g>
+    <g transform="translate(600 720)">
+      <ellipse cx="0" cy="66" rx="86" ry="18" fill="#000" fill-opacity="0.3"/>
+      <path d="M-62 -30a62 18 0 0 1 124 0v60a62 18 0 0 1-124 0Z" fill="url(#ocNode)"/>
+      <ellipse cx="0" cy="-30" rx="62" ry="18" fill="#fb7185"/>
+      <path d="M-62 0a62 18 0 0 0 124 0" fill="none" stroke="#fecdd3" stroke-opacity="0.4" stroke-width="2"/>
+      <text x="0" y="104" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="21" fill="#bae6fd" fill-opacity="0.85">Région B</text>
+    </g>
+    <g transform="translate(1000 720)">
+      <ellipse cx="0" cy="66" rx="86" ry="18" fill="#000" fill-opacity="0.3"/>
+      <path d="M-62 -30a62 18 0 0 1 124 0v60a62 18 0 0 1-124 0Z" fill="url(#ocNode)"/>
+      <ellipse cx="0" cy="-30" rx="62" ry="18" fill="#fb7185"/>
+      <path d="M-62 0a62 18 0 0 0 124 0" fill="none" stroke="#fecdd3" stroke-opacity="0.4" stroke-width="2"/>
+      <text x="0" y="104" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="21" fill="#bae6fd" fill-opacity="0.85">Région C</text>
+    </g>
+    <g transform="translate(1270 640)">
+      <ellipse cx="0" cy="66" rx="86" ry="18" fill="#000" fill-opacity="0.3"/>
+      <path d="M-62 -30a62 18 0 0 1 124 0v60a62 18 0 0 1-124 0Z" fill="url(#ocNode)"/>
+      <ellipse cx="0" cy="-30" rx="62" ry="18" fill="#fb7185"/>
+      <path d="M-62 0a62 18 0 0 0 124 0" fill="none" stroke="#fecdd3" stroke-opacity="0.4" stroke-width="2"/>
+      <text x="0" y="104" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="21" fill="#bae6fd" fill-opacity="0.85">Région D</text>
+    </g>
+  </g>
+
+  <!-- paquets en transit -->
+  <g fill="#7dd3fc">
+    <circle cx="470" cy="486" r="6"/><circle cx="668" cy="546" r="6"/>
+    <circle cx="936" cy="546" r="6"/><circle cx="1130" cy="486" r="6"/>
+  </g>
+</svg>

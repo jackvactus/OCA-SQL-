@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-label="Éditeur SQL Oracle et jeu de résultats">
+  <defs>
+    <linearGradient id="sqBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#04101a"/>
+      <stop offset="100%" stop-color="#071c2b"/>
+    </linearGradient>
+    <linearGradient id="sqPane" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b2131"/>
+      <stop offset="100%" stop-color="#071825"/>
+    </linearGradient>
+    <radialGradient id="sqHalo" cx="30%" cy="20%" r="70%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.20"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#sqBg)"/>
+  <rect width="1600" height="900" fill="url(#sqHalo)"/>
+
+  <!-- fenêtre éditeur -->
+  <g>
+    <rect x="120" y="96" width="1360" height="708" rx="22" fill="url(#sqPane)" stroke="#1d5573" stroke-width="2"/>
+    <!-- barre de titre -->
+    <path d="M120 118a22 22 0 0 1 22-22h1316a22 22 0 0 1 22 22v46H120Z" fill="#0d2a3d"/>
+    <path d="M120 164h1360" stroke="#1d5573" stroke-width="2"/>
+    <circle cx="160" cy="130" r="8" fill="#f04438"/>
+    <circle cx="188" cy="130" r="8" fill="#fbbf24"/>
+    <circle cx="216" cy="130" r="8" fill="#34d399"/>
+    <text x="256" y="138" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="20" fill="#7dd3fc" fill-opacity="0.85">query.sql — Oracle Database 19c</text>
+
+    <!-- gouttière de numéros de ligne -->
+    <rect x="120" y="164" width="72" height="640" fill="#08202f"/>
+    <path d="M192 164v640" stroke="#1d5573" stroke-width="1.5"/>
+    <g font-family="ui-monospace, Menlo, Consolas, monospace" font-size="19" fill="#3f7b9c" text-anchor="end">
+      <text x="172" y="218">1</text><text x="172" y="256">2</text><text x="172" y="294">3</text>
+      <text x="172" y="332">4</text><text x="172" y="370">5</text><text x="172" y="408">6</text>
+      <text x="172" y="446">7</text>
+    </g>
+
+    <!-- code SQL -->
+    <g font-family="ui-monospace, Menlo, Consolas, monospace" font-size="23">
+      <text x="224" y="218"><tspan fill="#f87171" font-weight="700">SELECT</tspan><tspan fill="#e2e8f0">  d.department_name,</tspan></text>
+      <text x="224" y="256"><tspan fill="#e2e8f0">         </tspan><tspan fill="#facc15">COUNT</tspan><tspan fill="#e2e8f0">(e.employee_id) </tspan><tspan fill="#f87171" font-weight="700">AS</tspan><tspan fill="#e2e8f0"> effectif,</tspan></text>
+      <text x="224" y="294"><tspan fill="#e2e8f0">         </tspan><tspan fill="#facc15">ROUND</tspan><tspan fill="#e2e8f0">(</tspan><tspan fill="#facc15">AVG</tspan><tspan fill="#e2e8f0">(e.salary)) </tspan><tspan fill="#f87171" font-weight="700">AS</tspan><tspan fill="#e2e8f0"> salaire_moyen</tspan></text>
+      <text x="224" y="332"><tspan fill="#f87171" font-weight="700">FROM</tspan><tspan fill="#e2e8f0">    departments d</tspan></text>
+      <text x="224" y="370"><tspan fill="#7dd3fc" font-weight="700">LEFT JOIN</tspan><tspan fill="#e2e8f0"> employees e </tspan><tspan fill="#f87171" font-weight="700">ON</tspan><tspan fill="#e2e8f0"> e.department_id = d.department_id</tspan></text>
+      <text x="224" y="408"><tspan fill="#f87171" font-weight="700">GROUP BY</tspan><tspan fill="#e2e8f0"> d.department_name</tspan></text>
+      <text x="224" y="446"><tspan fill="#f87171" font-weight="700">ORDER BY</tspan><tspan fill="#e2e8f0"> effectif </tspan><tspan fill="#f87171" font-weight="700">DESC</tspan><tspan fill="#e2e8f0"> </tspan><tspan fill="#a78bfa" font-weight="700">FETCH FIRST</tspan><tspan fill="#e2e8f0"> </tspan><tspan fill="#4ade80">5</tspan><tspan fill="#e2e8f0"> </tspan><tspan fill="#a78bfa" font-weight="700">ROWS ONLY</tspan><tspan fill="#e2e8f0">;</tspan></text>
+    </g>
+
+    <!-- séparateur -->
+    <path d="M192 490h1288" stroke="#1d5573" stroke-width="2"/>
+    <rect x="224" y="508" width="176" height="34" rx="17" fill="#34d399" fill-opacity="0.15" stroke="#34d399" stroke-opacity="0.5" stroke-width="1.5"/>
+    <circle cx="248" cy="525" r="5" fill="#34d399"/>
+    <text x="266" y="532" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="17" fill="#6ee7b7">5 lignes · 4 ms</text>
+
+    <!-- grille de résultats -->
+    <g>
+      <rect x="224" y="566" width="1216" height="46" rx="8" fill="#0d2a3d"/>
+      <g font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="19" font-weight="600" fill="#7dd3fc">
+        <text x="252" y="596">DEPARTMENT_NAME</text>
+        <text x="812" y="596">EFFECTIF</text>
+        <text x="1092" y="596">SALAIRE_MOYEN</text>
+      </g>
+      <g font-family="ui-monospace, Menlo, Consolas, monospace" font-size="19" fill="#cbd5e1">
+        <text x="252" y="648">Shipping</text><text x="812" y="648">45</text><text x="1092" y="648">3 476</text>
+        <text x="252" y="692">Sales</text><text x="812" y="692">34</text><text x="1092" y="692">8 956</text>
+        <text x="252" y="736">Finance</text><text x="812" y="736">6</text><text x="1092" y="736">8 601</text>
+        <text x="252" y="780">IT</text><text x="812" y="780">5</text><text x="1092" y="780">5 760</text>
+      </g>
+      <g stroke="#1d5573" stroke-opacity="0.55" stroke-width="1.5">
+        <path d="M224 666h1216"/><path d="M224 710h1216"/><path d="M224 754h1216"/>
+      </g>
+    </g>
+  </g>
+</svg>

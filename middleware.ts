@@ -10,8 +10,10 @@ export async function middleware(request: NextRequest) {
 
   const isPublicOnlyPath = PUBLIC_ONLY_PATHS.includes(pathname);
 
+  // Après connexion, le point d'entrée est le choix du parcours de
+  // certification (OCA SQL / OCP I / OCP II), pas directement le tableau de bord.
   if (session && isPublicOnlyPath) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/tracks", request.url));
   }
 
   if (!session && !isPublicOnlyPath) {

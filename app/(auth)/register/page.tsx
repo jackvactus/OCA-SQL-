@@ -39,7 +39,7 @@ export default function RegisterPage() {
         return;
       }
       toast.success(t.auth.toastRegisterSuccess);
-      router.push("/dashboard");
+      router.push("/tracks");
       router.refresh();
     } catch {
       toast.error(t.auth.toastNetworkError);

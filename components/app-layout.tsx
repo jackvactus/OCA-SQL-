@@ -21,6 +21,8 @@ import {
   Trophy,
   Layers,
   History,
+  Route,
+  ListOrdered,
   LogOut,
   ShieldCheck,
   UserCircle2,
@@ -37,7 +39,9 @@ import { LanguageToggle } from "@/components/language-toggle";
 function useNavItems() {
   const { t } = useLanguage();
   const navItems = [
+    { href: "/tracks", label: t.nav.tracks, icon: Route },
     { href: "/dashboard", label: t.nav.dashboard, icon: LayoutDashboard },
+    { href: "/curriculum", label: t.nav.curriculum, icon: ListOrdered },
     { href: "/courses", label: t.nav.courses, icon: BookOpen },
     { href: "/quiz", label: t.nav.quiz, icon: Brain },
     { href: "/exam", label: t.nav.exam, icon: GraduationCap },

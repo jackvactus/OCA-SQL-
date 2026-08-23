@@ -39,6 +39,7 @@ import { getLocalizedModules } from "@/lib/content-i18n";
 // since that file doesn't export them.
 const EXAM_PASS_THRESHOLD = 63;
 const EXAM_DURATION_MINUTES = 120;
+const EXAM_FULL_QUESTIONS = 63;
 
 function buildHeroStats(t: Dictionary, questionCount: number) {
   return [
@@ -99,6 +100,18 @@ export default function LandingPage() {
   const chips = buildChips(t);
   const features = buildFeatures(t, locale, questionBank.length);
 
+  // Barres du panneau héros : nombre réel de questions par module, normalisé
+  // sur le module le mieux couvert. Aucune valeur n’est inventée.
+  const perModule = localizedModules.map(
+    (module) => questionBank.filter((question) => question.moduleId === module.id).length,
+  );
+  const maxPerModule = Math.max(1, ...perModule);
+  const totalLessons = localizedModules.reduce((sum, module) => sum + module.lessons.length, 0);
+  const multiAnswerShare = Math.round(
+    (questionBank.filter((question) => question.correctIndexes.length > 1).length / questionBank.length) * 100,
+  );
+  const coverageBars = perModule.map((count) => Math.round((count / maxPerModule) * 100));
+
   const difficultyCounts = { easy: 0, medium: 0, hard: 0 };
   for (const q of questionBank) difficultyCounts[q.difficulty] += 1;
   const difficultyData = [
@@ -112,10 +125,12 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border/60 bg-slate-100 dark:bg-[#04090b]">
         <Image
-          src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1920&auto=format&fit=crop"
-          alt="Oracle Database server infrastructure"
+          src="/art/oracle-datacenter.svg"
+          alt=""
+          aria-hidden="true"
           fill
           priority
+          sizes="100vw"
           className="object-cover opacity-25 dark:opacity-60"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-slate-50/95 via-slate-50/85 to-background dark:from-[#04090b]/80 dark:via-[#04090b]/55 dark:to-background" />
@@ -125,7 +140,7 @@ export default function LandingPage() {
           <div className="space-y-10">
           <div className="relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] px-3 py-5 text-center lg:px-8 lg:py-8">
             <Image
-              src="https://images.unsplash.com/photo-1554306274-f23873d9a26c?q=80&w=1400&auto=format&fit=crop"
+              src="/art/oracle-sql.svg"
               alt=""
               fill
               aria-hidden="true"
@@ -169,34 +184,52 @@ export default function LandingPage() {
           <div className="relative mx-auto min-h-[300px] w-full max-w-5xl lg:-translate-y-2 lg:min-h-[390px]">
             <div className="absolute inset-0 overflow-hidden rounded-[2rem] border border-white/20 bg-slate-950/70 shadow-2xl shadow-sky-950/30 backdrop-blur">
               <Image
-                src="https://images.unsplash.com/photo-1560732488-6b0df240254a?q=80&w=1200&auto=format&fit=crop"
-                alt="Oracle Database operations center"
+                src="/art/oracle-datacenter.svg"
+                alt=""
+                aria-hidden="true"
                 fill
+                sizes="(max-width: 1024px) 100vw, 64rem"
                 className="object-cover opacity-35"
               />
               <div className="absolute inset-0 bg-gradient-to-br from-sky-950/70 via-slate-950/50 to-slate-950/90" />
-              <div className="relative flex h-full flex-col justify-between p-6">
+              <div className="relative flex h-full flex-col justify-between gap-4 p-6">
                 <div className="flex items-center justify-between text-white">
-                  <div className="flex items-center gap-2 text-sm font-semibold"><Activity className="h-4 w-4 text-emerald-400" /> {locale === "en" ? "Oracle Database Monitor" : "Moniteur Oracle Database"}</div>
-                  <span className="flex items-center gap-1.5 text-xs text-emerald-300"><span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" /> {locale === "en" ? "Live" : "En direct"}</span>
+                  <div className="flex items-center gap-2 text-sm font-semibold">
+                    <GraduationCap className="h-4 w-4 text-primary" />
+                    {locale === "en" ? "1Z0-071 exam simulator" : "Simulateur d’examen 1Z0-071"}
+                  </div>
+                  <span className="rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-xs text-white/70">
+                    {locale === "en" ? "Real exam format" : "Format réel"}
+                  </span>
                 </div>
+
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    ["99.98%", locale === "en" ? "Availability" : "Disponibilité", "text-emerald-300"],
-                    ["1.24 ms", locale === "en" ? "Query latency" : "Latence SQL", "text-sky-300"],
-                    ["24/7", locale === "en" ? "Monitoring" : "Surveillance", "text-amber-300"],
-                    ["100%", locale === "en" ? "SQL readiness" : "Préparation SQL", "text-white"],
-                  ].map(([value, label, color]) => (
-                    <div key={label} className="rounded-xl border border-white/10 bg-white/10 p-3 backdrop-blur">
-                      <p className={`text-xl font-bold ${color}`}>{value}</p>
-                      <p className="mt-1 text-xs text-white/60">{label}</p>
+                    { value: `${EXAM_FULL_QUESTIONS}`, label: locale === "en" ? "Questions per session" : "Questions par session", tone: "text-white" },
+                    { value: `${EXAM_DURATION_MINUTES} min`, label: locale === "en" ? "Timed duration" : "Durée chronométrée", tone: "text-sky-300" },
+                    { value: `${EXAM_PASS_THRESHOLD}%`, label: locale === "en" ? "Pass threshold" : "Seuil de réussite", tone: "text-emerald-300" },
+                    { value: `${questionBank.length}`, label: locale === "en" ? "Questions available" : "Questions disponibles", tone: "text-amber-300" },
+                  ].map((item) => (
+                    <div key={item.label} className="rounded-xl border border-white/10 bg-white/10 p-3 backdrop-blur">
+                      <p className={`text-xl font-bold tabular-nums ${item.tone}`}>{item.value}</p>
+                      <p className="mt-1 text-xs text-white/60">{item.label}</p>
                     </div>
                   ))}
                 </div>
+
                 <div className="rounded-xl border border-white/10 bg-slate-950/60 p-3">
-                  <div className="mb-2 flex items-center justify-between text-xs text-white/60"><span>{locale === "en" ? "SQL workload" : "Charge SQL"}</span><span className="text-emerald-300">+18.4%</span></div>
-                  <div className="flex h-10 items-end gap-1.5">
-                    {[35, 48, 42, 62, 55, 76, 68, 92, 81, 96, 88, 100].map((height, index) => <span key={index} className="flex-1 rounded-t bg-gradient-to-t from-sky-500 to-emerald-300" style={{ height: `${height}%` }} />)}
+                  <div className="mb-2 flex items-center justify-between text-xs text-white/60">
+                    <span>{locale === "en" ? "Questions per module" : "Questions par module"}</span>
+                    <span className="text-sky-300">{localizedModules.length} {locale === "en" ? "modules" : "modules"}</span>
+                  </div>
+                  <div className="flex h-10 items-end gap-1.5" role="img" aria-label={locale === "en" ? "Distribution of questions across modules" : "Répartition des questions par module"}>
+                    {coverageBars.map((height, index) => (
+                      <span
+                        key={index}
+                        className="flex-1 rounded-t bg-gradient-to-t from-sky-500 to-emerald-300"
+                        style={{ height: `${Math.max(height, 8)}%` }}
+                      />
+                    ))}
                   </div>
                 </div>
               </div>
@@ -228,10 +261,10 @@ export default function LandingPage() {
       <section id="platform" className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { icon: Gauge, value: "99.98%", label: locale === "en" ? "Platform availability" : "Disponibilité plateforme", tone: "text-emerald-500" },
-            { icon: BarChart3, value: `${questionBank.length}+`, label: locale === "en" ? "Exam questions" : "Questions d'examen", tone: "text-sky-500" },
+            { icon: BarChart3, value: `${questionBank.length}`, label: locale === "en" ? "Exam-style questions" : "Questions de type examen", tone: "text-sky-500" },
             { icon: Server, value: `${localizedModules.length}`, label: locale === "en" ? "Oracle SQL modules" : "Modules Oracle SQL", tone: "text-amber-500" },
-            { icon: Activity, value: "24/7", label: locale === "en" ? "Progress monitoring" : "Suivi de progression", tone: "text-red-500" },
+            { icon: Layers, value: `${totalLessons}`, label: locale === "en" ? "Structured lessons" : "Leçons structurées", tone: "text-emerald-500" },
+            { icon: Gauge, value: `${multiAnswerShare}%`, label: locale === "en" ? "Multi-answer questions" : "Questions à réponses multiples", tone: "text-red-500" },
           ].map((item) => (
             <div key={item.label} className="flex items-center gap-4 rounded-2xl border border-border/70 bg-card p-5 shadow-sm">
               <item.icon className={`h-7 w-7 ${item.tone}`} />
@@ -254,30 +287,33 @@ export default function LandingPage() {
         <div className="grid gap-4 md:grid-cols-[1.2fr_0.8fr]">
           <div className="relative min-h-[260px] overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
             <Image
-              src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1400&auto=format&fit=crop"
-              alt="Oracle Database data center servers"
+              src="/art/oracle-datacenter.svg"
+              alt={locale === "en" ? "Oracle Database infrastructure" : "Infrastructure Oracle Database"}
               fill
+              sizes="(max-width: 768px) 100vw, 60vw"
               className="object-cover transition-transform duration-700 hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-            <Image src="/oracle-logo.svg" alt="Oracle" width={150} height={40} className="absolute bottom-5 left-5 h-auto w-28 opacity-95" />
+            <Image src="/oracle-logo.svg" alt="" aria-hidden="true" width={150} height={40} className="absolute bottom-5 left-5 h-auto w-28 opacity-95" />
           </div>
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1">
             <div className="relative min-h-[124px] overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
               <Image
-                src="https://images.unsplash.com/photo-1560732488-6b0df240254a?q=80&w=900&auto=format&fit=crop"
-                alt="Database monitoring screens"
+                src="/art/oracle-sql.svg"
+                alt={locale === "en" ? "Oracle SQL editor and result set" : "Éditeur SQL Oracle et jeu de résultats"}
                 fill
+                sizes="(max-width: 768px) 100vw, 30vw"
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-slate-950/35" />
-              <Image src="/oracle-db-icon.svg" alt="Oracle Database" width={56} height={56} className="absolute bottom-4 left-4 h-12 w-12 rounded-xl" />
+              <Image src="/oracle-db-icon.svg" alt="" aria-hidden="true" width={56} height={56} className="absolute bottom-4 left-4 h-12 w-12 rounded-xl" />
             </div>
             <div className="relative min-h-[124px] overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
               <Image
-                src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=900&auto=format&fit=crop"
-                alt="SQL and database technology"
+                src="/art/oracle-cloud.svg"
+                alt={locale === "en" ? "Oracle Cloud Infrastructure topology" : "Topologie Oracle Cloud Infrastructure"}
                 fill
+                sizes="(max-width: 768px) 100vw, 30vw"
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-sky-950/35" />
@@ -308,7 +344,7 @@ export default function LandingPage() {
         <div className="grid gap-4 md:grid-cols-3">
           {[
             {
-              src: "/logo-image.png",
+              src: "/art/oracle-database.svg",
               alt: locale === "en" ? "Oracle Database logo and server illustration" : "Logo Oracle Database et illustration serveur",
               label: locale === "en" ? "Oracle Database" : "Oracle Database",
               icon: Server,
@@ -320,7 +356,7 @@ export default function LandingPage() {
               icon: Code2,
             },
             {
-              src: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop",
+              src: "/art/oracle-cloud.svg",
               alt: locale === "en" ? "Cloud infrastructure and data network" : "Infrastructure cloud et réseau de données",
               label: locale === "en" ? "Oracle Cloud Infrastructure" : "Oracle Cloud Infrastructure",
               icon: Cloud,
@@ -331,9 +367,10 @@ export default function LandingPage() {
               className="group relative min-h-[230px] overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm animate-slide-up"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div className="absolute inset-0 flex items-center justify-center bg-white p-8 transition-transform duration-700 group-hover:scale-105">
-                <Image src={visual.src} alt={visual.alt} fill className="object-contain p-8" />
+              <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-105">
+                <Image src={visual.src} alt={visual.alt} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
               </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/15 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 flex items-center gap-2 bg-slate-950/80 p-5 text-white backdrop-blur-sm">
                 <visual.icon className="h-4 w-4 text-red-300" />
                 <span className="text-sm font-semibold">{visual.label}</span>
@@ -355,9 +392,11 @@ export default function LandingPage() {
             <p className="mt-3 text-muted-foreground">{t.marketing.liveSectionDesc}</p>
             <div className="relative mt-6 h-40 overflow-hidden rounded-xl border border-border/70">
               <Image
-                src="https://images.unsplash.com/photo-1554306274-f23873d9a26c?q=80&w=1200&auto=format&fit=crop"
-                alt="Oracle Database operations room"
+                src="/art/oracle-datacenter.svg"
+                alt=""
+                aria-hidden="true"
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#04090b]/80 via-[#04090b]/10 to-transparent" />
@@ -513,7 +552,7 @@ export default function LandingPage() {
       <section className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="relative overflow-hidden rounded-2xl bg-[#04090b] p-8 text-center lg:p-14">
           <Image
-            src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1600&auto=format&fit=crop"
+            src="/art/oracle-cloud.svg"
             alt=""
             fill
             className="object-cover"

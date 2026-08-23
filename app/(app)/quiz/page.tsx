@@ -40,21 +40,13 @@ import {
 } from "@/lib/quiz-data";
 import { workbookQuizQuestions } from "@/lib/quiz-data-en-workbook";
 import { getLocalizedModules } from "@/lib/content-i18n";
+import { drawQuestions } from "@/lib/quiz-shuffle";
 import { useProgress } from "@/hooks/use-progress";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/language-provider";
 
 type Difficulty = "all" | "easy" | "medium" | "hard";
 type Phase = "setup" | "question" | "feedback" | "results";
-
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
 
 const difficultyConfig: Record<
   "easy" | "medium" | "hard",
@@ -113,7 +105,7 @@ export default function QuizPage() {
   }, [questionBank, selectedModule, selectedDifficulty]);
 
   const startQuiz = useCallback(() => {
-    const filtered = shuffle(
+    const filtered = drawQuestions(
       questionBank.filter((q) => {
         if (selectedModule !== "all" && q.moduleId !== selectedModule)
           return false;
