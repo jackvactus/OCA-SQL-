@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 440" width="1400" height="440" role="img" aria-label="Ordre d'exécution des clauses SQL : FROM, WHERE, GROUP BY, HAVING, SELECT, ORDER BY">
+  <defs>
+    <linearGradient id="qpBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#04121c"/>
+      <stop offset="100%" stop-color="#0a2231"/>
+    </linearGradient>
+    <linearGradient id="qpFill" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.30"/>
+      <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.12"/>
+    </linearGradient>
+    <linearGradient id="qpFillHot" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f04438" stop-opacity="0.34"/>
+      <stop offset="100%" stop-color="#f04438" stop-opacity="0.14"/>
+    </linearGradient>
+    <pattern id="qpGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#38bdf8" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1400" height="440" fill="url(#qpBg)"/>
+  <rect width="1400" height="440" fill="url(#qpGrid)"/>
+
+  <text x="700" y="72" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#e2e8f0">
+    Ordre d’exécution réel des clauses
+  </text>
+  <text x="700" y="104" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#94a3b8">
+    ce n’est pas l’ordre dans lequel vous les écrivez
+  </text>
+
+  <!-- 6 chevrons -->
+  <g font-family="ui-monospace, Menlo, Consolas, monospace">
+    <!-- 1 FROM -->
+    <g transform="translate(70 170)">
+      <path d="M0 0h190l34 46-34 46H0l34-46Z" fill="url(#qpFill)" stroke="#38bdf8" stroke-opacity="0.5" stroke-width="2"/>
+      <text x="118" y="54" text-anchor="middle" font-size="24" font-weight="700" fill="#7dd3fc">FROM</text>
+      <text x="118" y="132" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#94a3b8">tables et jointures</text>
+      <circle cx="20" cy="-24" r="15" fill="#0ea5e9"/>
+      <text x="20" y="-19" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#04121c">1</text>
+    </g>
+    <!-- 2 WHERE -->
+    <g transform="translate(288 170)">
+      <path d="M0 0h190l34 46-34 46H0l34-46Z" fill="url(#qpFill)" stroke="#38bdf8" stroke-opacity="0.5" stroke-width="2"/>
+      <text x="118" y="54" text-anchor="middle" font-size="24" font-weight="700" fill="#7dd3fc">WHERE</text>
+      <text x="118" y="132" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#94a3b8">filtre les lignes</text>
+      <circle cx="20" cy="-24" r="15" fill="#0ea5e9"/>
+      <text x="20" y="-19" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#04121c">2</text>
+    </g>
+    <!-- 3 GROUP BY -->
+    <g transform="translate(506 170)">
+      <path d="M0 0h190l34 46-34 46H0l34-46Z" fill="url(#qpFill)" stroke="#38bdf8" stroke-opacity="0.5" stroke-width="2"/>
+      <text x="118" y="54" text-anchor="middle" font-size="21" font-weight="700" fill="#7dd3fc">GROUP BY</text>
+      <text x="118" y="132" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#94a3b8">regroupe</text>
+      <circle cx="20" cy="-24" r="15" fill="#0ea5e9"/>
+      <text x="20" y="-19" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#04121c">3</text>
+    </g>
+    <!-- 4 HAVING -->
+    <g transform="translate(724 170)">
+      <path d="M0 0h190l34 46-34 46H0l34-46Z" fill="url(#qpFill)" stroke="#38bdf8" stroke-opacity="0.5" stroke-width="2"/>
+      <text x="118" y="54" text-anchor="middle" font-size="24" font-weight="700" fill="#7dd3fc">HAVING</text>
+      <text x="118" y="132" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#94a3b8">filtre les groupes</text>
+      <circle cx="20" cy="-24" r="15" fill="#0ea5e9"/>
+      <text x="20" y="-19" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#04121c">4</text>
+    </g>
+    <!-- 5 SELECT (mis en avant) -->
+    <g transform="translate(942 170)">
+      <path d="M0 0h190l34 46-34 46H0l34-46Z" fill="url(#qpFillHot)" stroke="#f04438" stroke-opacity="0.7" stroke-width="2.5"/>
+      <text x="118" y="54" text-anchor="middle" font-size="24" font-weight="700" fill="#fca5a5">SELECT</text>
+      <text x="118" y="132" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#fca5a5" fill-opacity="0.85">les alias naissent ici</text>
+      <circle cx="20" cy="-24" r="15" fill="#f04438"/>
+      <text x="20" y="-19" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#fff">5</text>
+    </g>
+    <!-- 6 ORDER BY -->
+    <g transform="translate(1160 170)">
+      <path d="M0 0h156l34 46-34 46H0l34-46Z" fill="url(#qpFill)" stroke="#38bdf8" stroke-opacity="0.5" stroke-width="2"/>
+      <text x="101" y="54" text-anchor="middle" font-size="20" font-weight="700" fill="#7dd3fc">ORDER BY</text>
+      <text x="101" y="132" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14" fill="#94a3b8">tri final</text>
+      <circle cx="20" cy="-24" r="15" fill="#0ea5e9"/>
+      <text x="20" y="-19" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" font-weight="700" fill="#04121c">6</text>
+    </g>
+  </g>
+
+  <!-- conséquence -->
+  <g>
+    <rect x="330" y="360" width="740" height="48" rx="12" fill="#f04438" fill-opacity="0.10" stroke="#f04438" stroke-opacity="0.35" stroke-width="1.5"/>
+    <text x="700" y="390" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="16" fill="#fca5a5">
+      Un alias du SELECT fonctionne dans ORDER BY (étape 6) mais jamais dans WHERE (étape 2)
+    </text>
+  </g>
+</svg>

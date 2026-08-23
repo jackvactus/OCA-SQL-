@@ -124,72 +124,74 @@ export default function LandingPage() {
     <div className="space-y-24 pb-24 lg:space-y-32">
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border/60 bg-slate-100 dark:bg-[#04090b]">
+        {/* Fond : l'illustration reste tres en retrait et floutee, elle ne doit
+            jamais concurrencer le texte. Un seul voile, pas quatre. */}
         <Image
-          src="/art/oracle-datacenter.svg"
+          src="/art/oracle-mesh.svg"
           alt=""
           aria-hidden="true"
           fill
           priority
           sizes="100vw"
-          className="object-cover opacity-25 dark:opacity-60"
+          className="scale-110 object-cover opacity-70 dark:opacity-90"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-50/95 via-slate-50/85 to-background dark:from-[#04090b]/80 dark:via-[#04090b]/55 dark:to-background" />
-        <div className="bg-grid absolute inset-0 opacity-40 dark:opacity-10" />
+        <div className="bg-grid absolute inset-0 opacity-30 dark:opacity-[0.07]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/60 to-background" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-0 h-[34rem] w-[64rem] -translate-x-1/2 -translate-y-1/3 rounded-full bg-primary/10 blur-3xl dark:bg-primary/15"
+        />
 
         <div className="relative mx-auto max-w-7xl px-4 py-16 lg:px-8 lg:py-24">
           <div className="space-y-10">
-          <div className="relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] px-3 py-5 text-center lg:px-8 lg:py-8">
-            <Image
-              src="/art/oracle-sql.svg"
-              alt=""
-              fill
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-30 dark:opacity-45"
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-slate-100/92 via-slate-100/78 to-slate-100/48 dark:from-slate-950/85 dark:via-slate-950/60 dark:to-slate-950/45" />
-            <Image
-              src="/oracle-db-icon.svg"
-              alt=""
-              width={360}
-              height={360}
-              aria-hidden="true"
-              className="pointer-events-none absolute left-1/2 top-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 opacity-[0.08] mix-blend-multiply dark:opacity-20 dark:mix-blend-screen"
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-slate-50/20 via-slate-50/60 to-slate-50/20 dark:from-slate-950/10 dark:via-slate-950/35 dark:to-slate-950/10" />
-            <div className="relative z-10">
-            <Badge variant="secondary" className="gap-1.5 border-primary/20 bg-background/80 text-foreground backdrop-blur dark:border-white/10 dark:bg-white/10 dark:text-white">
+          {/* Bloc de tete : entierement centre, sur fond neutre.
+              Plus aucune image derriere le texte. */}
+          <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
+            <Badge
+              variant="secondary"
+              className="gap-1.5 border-primary/25 bg-background/85 text-foreground shadow-sm backdrop-blur"
+            >
               <Database className="h-3 w-3 text-primary" />
               {t.marketing.heroBadge}
             </Badge>
-            <h1 className="mx-auto mt-5 max-w-5xl font-display text-5xl font-bold leading-[1.04] text-foreground lg:text-7xl dark:text-white">
-              {t.marketing.heroTitle1} <span className="text-primary">{t.marketing.heroTitleHighlight}</span>
+
+            <h1 className="text-balance mt-6 font-display text-4xl font-bold leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+              {t.marketing.heroTitle1}{" "}
+              <span className="text-primary">{t.marketing.heroTitleHighlight}</span>
             </h1>
-            <p className="mt-5 max-w-2xl text-lg text-muted-foreground dark:text-white/60">{t.marketing.heroSubtitle}</p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link href="/register">
-                <Button size="lg" className="gap-2">
+
+            <p className="text-pretty mx-auto mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+              {t.marketing.heroSubtitle}
+            </p>
+
+            <div className="mt-8 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row">
+              <Link href="/register" className="w-full sm:w-auto">
+                <Button size="lg" className="w-full gap-2 shadow-sm sm:w-auto">
                   {t.marketing.heroCtaPrimary}
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
-              <Link href="/login">
-                <Button size="lg" variant="outline" className="border-border bg-background/70 text-foreground hover:bg-background dark:border-white/20 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:hover:text-white">
+              <Link href="/login" className="w-full sm:w-auto">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full border-border bg-background/80 backdrop-blur hover:bg-background sm:w-auto"
+                >
                   {t.marketing.heroCtaSecondary}
                 </Button>
               </Link>
-            </div>
             </div>
           </div>
 
           <div className="relative mx-auto min-h-[300px] w-full max-w-5xl lg:-translate-y-2 lg:min-h-[390px]">
             <div className="absolute inset-0 overflow-hidden rounded-[2rem] border border-white/20 bg-slate-950/70 shadow-2xl shadow-sky-950/30 backdrop-blur">
               <Image
-                src="/art/oracle-datacenter.svg"
+                src="/art/oracle-mesh.svg"
                 alt=""
                 aria-hidden="true"
                 fill
                 sizes="(max-width: 1024px) 100vw, 64rem"
-                className="object-cover opacity-35"
+                className="object-cover opacity-60"
               />
               <div className="absolute inset-0 bg-gradient-to-br from-sky-950/70 via-slate-950/50 to-slate-950/90" />
               <div className="relative flex h-full flex-col justify-between gap-4 p-6">
@@ -287,8 +289,10 @@ export default function LandingPage() {
         <div className="grid gap-4 md:grid-cols-[1.2fr_0.8fr]">
           <div className="relative min-h-[260px] overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
             <Image
-              src="/art/oracle-datacenter.svg"
-              alt={locale === "en" ? "Oracle Database infrastructure" : "Infrastructure Oracle Database"}
+              src="/art/oracle-erd.svg"
+              alt={locale === "en"
+                ? "Relational model: EMPLOYEES, DEPARTMENTS and JOBS with their keys"
+                : "Modèle relationnel : EMPLOYEES, DEPARTMENTS et JOBS avec leurs clés"}
               fill
               sizes="(max-width: 768px) 100vw, 60vw"
               className="object-cover transition-transform duration-700 hover:scale-105"
@@ -344,20 +348,26 @@ export default function LandingPage() {
         <div className="grid gap-4 md:grid-cols-3">
           {[
             {
-              src: "/art/oracle-database.svg",
-              alt: locale === "en" ? "Oracle Database logo and server illustration" : "Logo Oracle Database et illustration serveur",
-              label: locale === "en" ? "Oracle Database" : "Oracle Database",
+              src: "/art/oracle-datacenter.svg",
+              alt: locale === "en"
+                ? "Oracle Database server racks and storage"
+                : "Baies de serveurs et stockage Oracle Database",
+              label: locale === "en" ? "Infrastructure" : "Infrastructure",
               icon: Server,
             },
             {
-              src: "/oracle-db-icon.svg",
-              alt: locale === "en" ? "Oracle Database 19c technology icon" : "Icône technologie Oracle Database 19c",
-              label: locale === "en" ? "Oracle Database 19c" : "Oracle Database 19c",
+              src: "/art/oracle-database.svg",
+              alt: locale === "en"
+                ? "Oracle Database objects: tables, indexes and views"
+                : "Objets Oracle Database : tables, index et vues",
+              label: locale === "en" ? "Schema objects" : "Objets de schéma",
               icon: Code2,
             },
             {
               src: "/art/oracle-cloud.svg",
-              alt: locale === "en" ? "Cloud infrastructure and data network" : "Infrastructure cloud et réseau de données",
+              alt: locale === "en"
+                ? "Oracle Cloud Infrastructure regions and data flows"
+                : "Régions et flux Oracle Cloud Infrastructure",
               label: locale === "en" ? "Oracle Cloud Infrastructure" : "Oracle Cloud Infrastructure",
               icon: Cloud,
             },
@@ -390,20 +400,25 @@ export default function LandingPage() {
             </Badge>
             <h2 className="mt-4 text-2xl font-bold lg:text-3xl">{t.marketing.liveSectionTitle}</h2>
             <p className="mt-3 text-muted-foreground">{t.marketing.liveSectionDesc}</p>
-            <div className="relative mt-6 h-40 overflow-hidden rounded-xl border border-border/70">
-              <Image
-                src="/art/oracle-datacenter.svg"
-                alt=""
-                aria-hidden="true"
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#04090b]/80 via-[#04090b]/10 to-transparent" />
-              <p className="absolute bottom-3 left-4 text-sm font-medium text-white/90">
-                {t.marketing.imageCaption}
-              </p>
-            </div>
+            <figure className="mt-6">
+              <div className="overflow-hidden rounded-xl border border-border/70 bg-[#04121c]">
+                <Image
+                  src="/art/oracle-query-pipeline.svg"
+                  alt={locale === "en"
+                    ? "SQL clause execution order, from FROM to ORDER BY"
+                    : "Ordre d’exécution des clauses SQL, de FROM à ORDER BY"}
+                  width={1400}
+                  height={440}
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="h-auto w-full"
+                />
+              </div>
+              <figcaption className="mt-2 text-xs text-muted-foreground">
+                {locale === "en"
+                  ? "Straight from Session 2 of the curriculum — the order that explains the alias trap."
+                  : "Tiré de la session 2 du cursus — l’ordre qui explique le piège des alias."}
+              </figcaption>
+            </figure>
             <div className="mt-6 grid grid-cols-2 gap-3">
               {chips.map((chip) => (
                 <div
@@ -529,7 +544,22 @@ export default function LandingPage() {
             <h2 className="mt-4 text-2xl font-bold text-foreground lg:text-3xl dark:text-white">{t.marketing.certificationTitle}</h2>
             <p className="mt-3 text-muted-foreground dark:text-white/60">{t.marketing.certificationDesc}</p>
           </div>
-          <div className="mx-auto mt-10 grid max-w-5xl grid-cols-1 gap-4 md:grid-cols-3">
+          <figure className="mx-auto mt-10 max-w-5xl">
+            <div className="overflow-hidden rounded-2xl border border-border/70 bg-[#04121c] shadow-sm dark:border-white/10">
+              <Image
+                src="/art/oracle-certification-path.svg"
+                alt={locale === "en"
+                  ? "Oracle Database certification path: 1Z0-071, then 1Z0-082 and 1Z0-083"
+                  : "Parcours de certification Oracle Database : 1Z0-071, puis 1Z0-082 et 1Z0-083"}
+                width={1400}
+                height={520}
+                sizes="(max-width: 1024px) 100vw, 64rem"
+                className="h-auto w-full"
+              />
+            </div>
+          </figure>
+
+          <div className="mx-auto mt-6 grid max-w-5xl grid-cols-1 gap-4 md:grid-cols-3">
             {[
               { icon: Database, title: t.marketing.certificationSqlTitle, description: t.marketing.certificationSqlDesc, active: true },
               { icon: GraduationCap, title: t.marketing.certificationJavaTitle, description: t.marketing.certificationJavaDesc, active: false },
@@ -552,10 +582,12 @@ export default function LandingPage() {
       <section className="mx-auto max-w-7xl px-4 lg:px-8">
         <div className="relative overflow-hidden rounded-2xl bg-[#04090b] p-8 text-center lg:p-14">
           <Image
-            src="/art/oracle-cloud.svg"
+            src="/art/oracle-mesh.svg"
             alt=""
+            aria-hidden="true"
             fill
-            className="object-cover"
+            sizes="(max-width: 1024px) 100vw, 80rem"
+            className="object-cover opacity-80"
           />
           <div className="absolute inset-0 bg-gradient-to-br from-[#04090b]/85 via-[#04090b]/45 to-[#04090b]/85" />
           <div className="relative">

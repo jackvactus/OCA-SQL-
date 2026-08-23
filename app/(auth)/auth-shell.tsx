@@ -29,11 +29,13 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
       {/* Left — dark hero panel */}
       <div className="relative hidden overflow-hidden bg-[#0a1418] lg:block">
         <Image
-          src="/art/oracle-datacenter.svg"
-          alt="Oracle Database server infrastructure"
+          src="/art/oracle-mesh.svg"
+          alt=""
+          aria-hidden="true"
           fill
           priority
-          className="object-cover"
+          sizes="50vw"
+          className="object-cover opacity-90"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#04090b]/90 via-[#0a1418]/50 to-[#04090b]/90" />
         <div className="bg-grid absolute inset-0 opacity-10" />
