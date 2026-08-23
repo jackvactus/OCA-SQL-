@@ -7,10 +7,11 @@ import { CourseBlockView } from "@/components/course-blocks";
 import { getSessionUser } from "@/lib/auth/session";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { dictionary } from "@/lib/i18n/dictionary";
-import { courseSessions, getSession, tr } from "@/lib/course-oca-sql";
+import { tr } from "@/lib/course-oca-sql";
+import { allSessionIds, findSession } from "@/lib/curricula";
 
 export function generateStaticParams() {
-  return courseSessions.map((session) => ({ sessionId: session.id }));
+  return allSessionIds.map((sessionId) => ({ sessionId }));
 }
 
 export default async function CurriculumSessionPage({
@@ -21,12 +22,13 @@ export default async function CurriculumSessionPage({
   const user = await getSessionUser();
   if (!user) return null;
 
-  const session = getSession(params.sessionId);
-  if (!session) notFound();
+  const found = findSession(params.sessionId);
+  if (!found) notFound();
+  const { curriculum, session, index } = found;
+  const courseSessions = curriculum.sessions;
 
   const locale = getLocale();
   const t = dictionary[locale];
-  const index = courseSessions.findIndex((s) => s.id === session.id);
   const previous = index > 0 ? courseSessions[index - 1] : null;
   const next = index < courseSessions.length - 1 ? courseSessions[index + 1] : null;
 
@@ -45,6 +47,9 @@ export default async function CurriculumSessionPage({
           {/* En-tête de session */}
           <header className="border-b border-border pb-6">
             <div className="flex flex-wrap items-center gap-2">
+              <Badge variant="outline" className="font-mono text-xs">
+                {curriculum.examCode} · {curriculum.shortLabel}
+              </Badge>
               <Badge variant="secondary">
                 {t.curriculum.sessionLabel} {session.number} / {courseSessions.length}
               </Badge>

@@ -18,7 +18,9 @@ import { Progress } from "@/components/ui/progress";
 import { getSessionUser } from "@/lib/auth/session";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { dictionary } from "@/lib/i18n/dictionary";
-import { certificationTracks, getTrack, pick, trackCoverage } from "@/lib/certification-tracks";
+import { certificationTracks, getTrack, isDomainCovered, pick, trackCoverage } from "@/lib/certification-tracks";
+import { curricula, findSession } from "@/lib/curricula";
+import { tr } from "@/lib/course-oca-sql";
 import { getLocalizedModules } from "@/lib/content-i18n";
 import { quizQuestions } from "@/lib/quiz-data";
 import { workbookQuizQuestions } from "@/lib/quiz-data-en-workbook";
@@ -43,9 +45,8 @@ export default async function TrackDetailPage({ params }: { params: { trackId: s
   const coverage = trackCoverage(track);
   const available = track.status === "available";
 
-  const uncovered = track.groups
-    .flatMap((group) => group.domains)
-    .filter((domain) => domain.moduleIds.length === 0);
+  const uncovered = track.groups.flatMap((group) => group.domains).filter((d) => !isDomainCovered(d));
+  const curriculum = curricula.find((c) => c.id === track.id);
 
   const linkedModuleIds = Array.from(
     new Set(track.groups.flatMap((group) => group.domains.flatMap((domain) => domain.moduleIds))),
@@ -110,8 +111,16 @@ export default async function TrackDetailPage({ params }: { params: { trackId: s
           <Progress value={coverage.percent} className="h-2.5" />
           {available && (
             <div className="flex flex-wrap gap-2">
+              {curriculum && curriculum.sessions.length > 0 && (
+                <Link href={`/curriculum/${curriculum.sessions[0].id}`}>
+                  <Button size="sm" className="gap-1.5">
+                    <BookOpen className="h-3.5 w-3.5" />
+                    {t.curriculum.startSession} 1
+                  </Button>
+                </Link>
+              )}
               <Link href="/curriculum">
-                <Button size="sm" className="gap-1.5">
+                <Button size="sm" variant="outline" className="gap-1.5">
                   <BookOpen className="h-3.5 w-3.5" />
                   {t.curriculum.badge}
                 </Button>
@@ -157,7 +166,7 @@ export default async function TrackDetailPage({ params }: { params: { trackId: s
             <CardContent className="p-0">
               <ul className="divide-y divide-border">
                 {group.domains.map((domain) => {
-                  const covered = domain.moduleIds.length > 0;
+                  const covered = isDomainCovered(domain);
                   return (
                     <li
                       key={domain.title}
@@ -182,6 +191,23 @@ export default async function TrackDetailPage({ params }: { params: { trackId: s
                       </div>
                       {covered ? (
                         <div className="flex flex-wrap gap-1.5">
+                          {(domain.sessionIds ?? []).map((sessionId) => {
+                            const found = findSession(sessionId);
+                            if (!found) return null;
+                            return (
+                              <Link
+                                key={sessionId}
+                                href={`/curriculum/${sessionId}`}
+                                title={`${t.curriculum.startSession} — ${tr(found.session.title, locale)}`}
+                                className="inline-flex max-w-[16rem] items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/[0.06] px-2.5 py-1 text-xs font-medium text-primary transition-colors hover:border-primary/60"
+                              >
+                                <BookOpen className="h-3 w-3 shrink-0" />
+                                <span className="truncate">
+                                  {t.curriculum.sessionLabel} {found.session.number} — {tr(found.session.title, locale)}
+                                </span>
+                              </Link>
+                            );
+                          })}
                           {domain.moduleIds.map((moduleId) => {
                             const module = moduleById.get(moduleId);
                             if (!module) return null;

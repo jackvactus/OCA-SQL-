@@ -1,14 +1,5 @@
 import Link from "next/link";
-import {
-  ArrowRight,
-  BookOpen,
-  Clock,
-  GraduationCap,
-  Layers,
-  ListOrdered,
-  Monitor,
-  Target,
-} from "lucide-react";
+import { ArrowRight, BookOpen, Clock, GraduationCap, Layers, ListOrdered, Monitor, Target } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,20 +7,32 @@ import { CourseBlockView } from "@/components/course-blocks";
 import { getSessionUser } from "@/lib/auth/session";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { dictionary } from "@/lib/i18n/dictionary";
-import {
-  courseMeta,
-  courseSessions,
-  examTraps,
-  executionOrder,
-  keyPoints,
-  totalMinutes,
-  totalTopics,
-  tr,
-} from "@/lib/course-oca-sql";
+import { courseMeta, examTraps, executionOrder, keyPoints, tr } from "@/lib/course-oca-sql";
+import { curricula, curriculumStats } from "@/lib/curricula";
+import { cn } from "@/lib/utils";
 
 export const metadata = {
-  title: "Complete Oracle SQL curriculum",
-  description: "Six progressive sessions covering the whole Oracle Database SQL 1Z0-071 syllabus.",
+  title: "Curricula",
+  description:
+    "Three complete curricula: Oracle Database SQL (1Z0-071), Administration I (1Z0-082) and Administration II (1Z0-083).",
+};
+
+const ACCENT: Record<string, { badge: string; num: string; ring: string }> = {
+  primary: {
+    badge: "bg-primary/10 text-primary border-primary/25",
+    num: "bg-primary/10 text-primary",
+    ring: "hover:border-primary/50",
+  },
+  sky: {
+    badge: "bg-sky-500/10 text-sky-600 border-sky-500/25 dark:text-sky-300",
+    num: "bg-sky-500/10 text-sky-600 dark:text-sky-300",
+    ring: "hover:border-sky-500/50",
+  },
+  amber: {
+    badge: "bg-amber-500/10 text-amber-600 border-amber-500/25 dark:text-amber-300",
+    num: "bg-amber-500/10 text-amber-600 dark:text-amber-300",
+    ring: "hover:border-amber-500/50",
+  },
 };
 
 export default async function CurriculumPage() {
@@ -38,26 +41,40 @@ export default async function CurriculumPage() {
 
   const locale = getLocale();
   const t = dictionary[locale];
-  const hours = Math.round((totalMinutes() / 60) * 10) / 10;
+
+  const totals = curricula.reduce(
+    (acc, curriculum) => {
+      const stats = curriculumStats(curriculum);
+      return {
+        sessions: acc.sessions + stats.sessions,
+        topics: acc.topics + stats.topics,
+        hours: Math.round((acc.hours + stats.hours) * 10) / 10,
+      };
+    },
+    { sessions: 0, topics: 0, hours: 0 },
+  );
 
   return (
-    <div className="mx-auto max-w-5xl space-y-10 p-4 lg:p-8">
-      {/* En-tête */}
+    <div className="mx-auto max-w-5xl space-y-12 p-4 lg:p-8">
       <header>
         <Badge variant="secondary" className="gap-1.5">
           <ListOrdered className="h-3 w-3 text-primary" />
           {t.curriculum.badge}
         </Badge>
         <h1 className="mt-4 font-display text-3xl font-bold tracking-tight lg:text-4xl">
-          {tr(courseMeta.title, locale)}
+          {locale === "en" ? "Oracle Database curricula" : "Cursus Oracle Database"}
         </h1>
-        <p className="mt-3 max-w-2xl text-muted-foreground">{tr(courseMeta.subtitle, locale)}</p>
+        <p className="text-pretty mt-3 max-w-2xl text-muted-foreground">
+          {locale === "en"
+            ? "Three complete curricula, each following the order of the official Oracle University course the exam is built from."
+            : "Trois cursus complets, chacun suivant l’ordre du cours officiel Oracle University dont l’examen est issu."}
+        </p>
 
         <dl className="mt-6 grid grid-cols-3 gap-3 sm:max-w-md">
           {[
-            { icon: Layers, value: String(courseSessions.length), label: t.curriculum.sessions },
-            { icon: BookOpen, value: String(totalTopics()), label: t.curriculum.topics },
-            { icon: Clock, value: String(hours), label: t.curriculum.hours },
+            { icon: Layers, value: String(totals.sessions), label: t.curriculum.sessions },
+            { icon: BookOpen, value: String(totals.topics), label: t.curriculum.topics },
+            { icon: Clock, value: String(totals.hours), label: t.curriculum.hours },
           ].map((stat) => (
             <div key={stat.label} className="rounded-xl border border-border/70 bg-card p-3 text-center">
               <stat.icon className="mx-auto h-4 w-4 text-primary" />
@@ -68,10 +85,80 @@ export default async function CurriculumPage() {
         </dl>
       </header>
 
-      {/* Introduction générale */}
+      {/* Les trois cursus */}
+      {curricula.map((curriculum) => {
+        const accent = ACCENT[curriculum.accent] ?? ACCENT.primary;
+        const stats = curriculumStats(curriculum);
+
+        return (
+          <section key={curriculum.id} className="space-y-4">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <Badge variant="outline" className={cn("font-mono text-xs", accent.badge)}>
+                  {curriculum.examCode} · {curriculum.shortLabel}
+                </Badge>
+                <h2 className="mt-2 text-2xl font-bold">{tr(curriculum.title, locale)}</h2>
+                <p className="text-pretty mt-1.5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                  {tr(curriculum.subtitle, locale)}
+                </p>
+              </div>
+              <p className="shrink-0 text-xs text-muted-foreground">
+                {stats.sessions} {t.curriculum.sessions} · {stats.topics} {t.curriculum.topics} ·{" "}
+                {stats.hours} {t.curriculum.hours}
+              </p>
+            </div>
+
+            <ol className="space-y-3">
+              {curriculum.sessions.map((session) => (
+                <li key={session.id}>
+                  <Link
+                    href={`/curriculum/${session.id}`}
+                    className={cn(
+                      "group block rounded-2xl border border-border/70 bg-card p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg sm:p-5",
+                      accent.ring,
+                    )}
+                  >
+                    <div className="flex items-start gap-4">
+                      <span
+                        className={cn(
+                          "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-base font-bold",
+                          accent.num,
+                        )}
+                      >
+                        {String(session.number).padStart(2, "0")}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-bold leading-tight">{tr(session.title, locale)}</h3>
+                        <p className="text-pretty mt-1 text-sm leading-relaxed text-muted-foreground">
+                          {tr(session.summary, locale)}
+                        </p>
+                        <ol className="mt-2.5 flex flex-wrap gap-1.5">
+                          {session.topics.map((topic) => (
+                            <li
+                              key={topic.id}
+                              className="rounded-lg border border-border/70 bg-muted/40 px-2 py-0.5 text-[11px] text-muted-foreground"
+                            >
+                              <span className="font-mono font-semibold">{topic.number}</span>{" "}
+                              {tr(topic.title, locale)}
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
+                      <ArrowRight className="mt-1 h-5 w-5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ol>
+          </section>
+        );
+      })}
+
+      {/* Introduction générale OCA */}
       <Card className="border-primary/20 bg-primary/[0.03]">
         <CardHeader className="pb-3">
           <CardTitle className="text-base">{t.curriculum.intro}</CardTitle>
+          <CardDescription>1Z0-071</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-2">
           <div>
@@ -105,50 +192,7 @@ export default async function CurriculumPage() {
         </CardContent>
       </Card>
 
-      {/* Les six sessions, dans l'ordre */}
-      <section className="space-y-4">
-        {courseSessions.map((session) => (
-          <Link
-            key={session.id}
-            href={`/curriculum/${session.id}`}
-            className="group block rounded-2xl border border-border/70 bg-card p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-lg"
-          >
-            <div className="flex items-start gap-4">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-lg font-bold text-primary">
-                {String(session.number).padStart(2, "0")}
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                    {t.curriculum.sessionLabel} {session.number}
-                  </p>
-                  <span className="text-xs text-muted-foreground">
-                    · {session.topics.length} {t.curriculum.topics} · {Math.round(session.estimatedMinutes / 60 * 10) / 10} {t.curriculum.hours}
-                  </span>
-                </div>
-                <h2 className="mt-1 text-lg font-bold">{tr(session.title, locale)}</h2>
-                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                  {tr(session.summary, locale)}
-                </p>
-                <ol className="mt-3 flex flex-wrap gap-1.5">
-                  {session.topics.map((topic) => (
-                    <li
-                      key={topic.id}
-                      className="rounded-lg border border-border/70 bg-muted/40 px-2 py-0.5 text-[11px] text-muted-foreground"
-                    >
-                      <span className="font-mono font-semibold">{topic.number}</span>{" "}
-                      {tr(topic.title, locale)}
-                    </li>
-                  ))}
-                </ol>
-              </div>
-              <ArrowRight className="mt-1 h-5 w-5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
-            </div>
-          </Link>
-        ))}
-      </section>
-
-      {/* Synthèse */}
+      {/* Synthèse d'examen */}
       <section className="space-y-5">
         <h2 className="flex items-center gap-2 text-xl font-bold">
           <GraduationCap className="h-5 w-5 text-primary" />
@@ -215,14 +259,13 @@ export default async function CurriculumPage() {
       </section>
 
       <div className="flex flex-wrap gap-2">
-        <Link href="/curriculum/session-1">
-          <Button className="gap-2">
-            {t.curriculum.startSession} 1
-            <ArrowRight className="h-4 w-4" />
+        <Link href="/tracks">
+          <Button variant="outline" className="gap-2">
+            {t.tracks.backToTracks}
           </Button>
         </Link>
         <Link href="/quiz">
-          <Button variant="outline" className="gap-2">
+          <Button className="gap-2">
             <BookOpen className="h-4 w-4" />
             {t.tracks.startQuiz}
           </Button>

@@ -20,8 +20,15 @@ export type TrackStatus = "available" | "syllabus";
 export interface TrackDomain {
   /** Libellé officiel du domaine d'examen (anglais, tel qu'imprimé par Oracle). */
   title: string;
-  /** Modules du site couvrant ce domaine. Vide ⇒ domaine non couvert. */
+  /** Modules du site couvrant ce domaine. */
   moduleIds: string[];
+  /** Sessions du cursus couvrant ce domaine (`lib/curricula.ts`). */
+  sessionIds?: string[];
+}
+
+/** Un domaine est couvert dès qu'un module OU une session le traite. */
+export function isDomainCovered(domain: TrackDomain): boolean {
+  return domain.moduleIds.length > 0 || (domain.sessionIds?.length ?? 0) > 0;
 }
 
 export interface TrackGroup {
@@ -138,7 +145,7 @@ export const certificationTracks: CertificationTrack[] = [
     questions: 72,
     durationMinutes: 120,
     passScorePercent: 60,
-    status: "syllabus",
+    status: "available",
     accent: "sky",
     officialExamUrl: "https://education.oracle.com/oracle-database-administration-i/pexam_1Z0-082",
     officialLearningUrl: "https://mylearn.oracle.com/ou/course/oracle-database-19c-administration-workshop/102757",
@@ -163,9 +170,9 @@ export const certificationTracks: CertificationTrack[] = [
           { title: "Managing Sequences, Synonyms, Indexes", moduleIds: ["m13"] },
           { title: "Managing Schema Objects", moduleIds: ["m10", "m13"] },
           { title: "Managing Data in Different Time Zones", moduleIds: ["m4"] },
-          { title: "Managing Users, Roles and Privileges", moduleIds: ["m16"] },
-          { title: "Managing Undo", moduleIds: ["m17"] },
-          { title: "Accessing an Oracle Database with Oracle supplied Tools", moduleIds: ["m15"] },
+          { title: "Managing Users, Roles and Privileges", moduleIds: ["m16"], sessionIds: ["ocp1-session-3"] },
+          { title: "Managing Undo", moduleIds: ["m17"], sessionIds: ["ocp1-session-4"] },
+          { title: "Accessing an Oracle Database with Oracle supplied Tools", moduleIds: ["m15"], sessionIds: ["ocp1-session-2"] },
         ],
       },
       {
@@ -174,12 +181,12 @@ export const certificationTracks: CertificationTrack[] = [
           en: "Administration half — to prepare on Oracle resources",
         },
         domains: [
-          { title: "Understanding Oracle Database Architecture", moduleIds: [] },
-          { title: "Managing Database Instances", moduleIds: [] },
-          { title: "Managing Storage", moduleIds: [] },
-          { title: "Managing Tablespaces and Datafiles", moduleIds: [] },
-          { title: "Configuring Oracle Net Services", moduleIds: [] },
-          { title: "Moving Data", moduleIds: [] },
+          { title: "Understanding Oracle Database Architecture", moduleIds: [], sessionIds: ["ocp1-session-1"] },
+          { title: "Managing Database Instances", moduleIds: [], sessionIds: ["ocp1-session-2"] },
+          { title: "Managing Storage", moduleIds: [], sessionIds: ["ocp1-session-4"] },
+          { title: "Managing Tablespaces and Datafiles", moduleIds: [], sessionIds: ["ocp1-session-4"] },
+          { title: "Configuring Oracle Net Services", moduleIds: [], sessionIds: ["ocp1-session-5"] },
+          { title: "Moving Data", moduleIds: [], sessionIds: ["ocp1-session-6"] },
         ],
       },
     ],
@@ -205,7 +212,7 @@ export const certificationTracks: CertificationTrack[] = [
     questions: 68,
     durationMinutes: 120,
     passScorePercent: 57,
-    status: "syllabus",
+    status: "available",
     accent: "amber",
     officialExamUrl: "https://education.oracle.com/oracle-database-administration-ii/pexam_1Z0-083",
     officialLearningUrl: "https://mylearn.oracle.com/ou/course/oracle-database-19c-managing-multitenant-architecture/102756",
@@ -213,40 +220,40 @@ export const certificationTracks: CertificationTrack[] = [
       {
         label: { fr: "Architecture multitenant", en: "Multitenant architecture" },
         domains: [
-          { title: "Creating CDBs and Regular PDBs", moduleIds: [] },
-          { title: "Manage CDBs and PDBs", moduleIds: [] },
-          { title: "Manage Application PDBs", moduleIds: [] },
-          { title: "Manage Security in Multitenant databases", moduleIds: [] },
-          { title: "Upgrading and Transporting CDBs and Regular PDBs", moduleIds: [] },
+          { title: "Creating CDBs and Regular PDBs", moduleIds: [], sessionIds: ["ocp2-session-2"] },
+          { title: "Manage CDBs and PDBs", moduleIds: [], sessionIds: ["ocp2-session-2"] },
+          { title: "Manage Application PDBs", moduleIds: [], sessionIds: ["ocp2-session-2"] },
+          { title: "Manage Security in Multitenant databases", moduleIds: [], sessionIds: ["ocp2-session-3"] },
+          { title: "Upgrading and Transporting CDBs and Regular PDBs", moduleIds: [], sessionIds: ["ocp2-session-8"] },
         ],
       },
       {
         label: { fr: "Sauvegarde, restauration et Flashback", en: "Backup, recovery and Flashback" },
         domains: [
-          { title: "Backup Strategies and Terminology", moduleIds: [] },
-          { title: "Restore and Recovery Concepts", moduleIds: [] },
-          { title: "Configuring and Using RMAN", moduleIds: [] },
-          { title: "Backup and Duplicate", moduleIds: [] },
-          { title: "Diagnosing Failures", moduleIds: [] },
-          { title: "Performing Recovery", moduleIds: [] },
-          { title: "Recovery and Flashback", moduleIds: [] },
-          { title: "Using Flashback Technologies", moduleIds: [] },
-          { title: "Duplicating a Database", moduleIds: [] },
-          { title: "RMAN Troubleshooting and Tuning", moduleIds: [] },
+          { title: "Backup Strategies and Terminology", moduleIds: [], sessionIds: ["ocp2-session-4"] },
+          { title: "Restore and Recovery Concepts", moduleIds: [], sessionIds: ["ocp2-session-5"] },
+          { title: "Configuring and Using RMAN", moduleIds: [], sessionIds: ["ocp2-session-4"] },
+          { title: "Backup and Duplicate", moduleIds: [], sessionIds: ["ocp2-session-4"] },
+          { title: "Diagnosing Failures", moduleIds: [], sessionIds: ["ocp2-session-5"] },
+          { title: "Performing Recovery", moduleIds: [], sessionIds: ["ocp2-session-5"] },
+          { title: "Recovery and Flashback", moduleIds: [], sessionIds: ["ocp2-session-6"] },
+          { title: "Using Flashback Technologies", moduleIds: [], sessionIds: ["ocp2-session-6"] },
+          { title: "Duplicating a Database", moduleIds: [], sessionIds: ["ocp2-session-7"] },
+          { title: "RMAN Troubleshooting and Tuning", moduleIds: [], sessionIds: ["ocp2-session-5"] },
         ],
       },
       {
         label: { fr: "Installation, mise à niveau et exploitation", en: "Installation, upgrade and operations" },
         domains: [
-          { title: "Install Grid Infrastructure and Oracle Database", moduleIds: [] },
-          { title: "Patching Grid Infrastructure and Oracle Database", moduleIds: [] },
-          { title: "Upgrading to Oracle Grid Infrastructure", moduleIds: [] },
-          { title: "Creating an Oracle Database by using DBCA", moduleIds: [] },
-          { title: "Upgrade the Oracle Database", moduleIds: [] },
-          { title: "Oracle Restart", moduleIds: [] },
-          { title: "Transporting Data", moduleIds: [] },
-          { title: "Monitoring and Tuning Database Performance", moduleIds: [] },
-          { title: "Tuning SQL Statements", moduleIds: ["m11"] },
+          { title: "Install Grid Infrastructure and Oracle Database", moduleIds: [], sessionIds: ["ocp2-session-8"] },
+          { title: "Patching Grid Infrastructure and Oracle Database", moduleIds: [], sessionIds: ["ocp2-session-8"] },
+          { title: "Upgrading to Oracle Grid Infrastructure", moduleIds: [], sessionIds: ["ocp2-session-8"] },
+          { title: "Creating an Oracle Database by using DBCA", moduleIds: [], sessionIds: ["ocp2-session-8"] },
+          { title: "Upgrade the Oracle Database", moduleIds: [], sessionIds: ["ocp2-session-8"] },
+          { title: "Oracle Restart", moduleIds: [], sessionIds: ["ocp2-session-8"] },
+          { title: "Transporting Data", moduleIds: [], sessionIds: ["ocp2-session-7"] },
+          { title: "Monitoring and Tuning Database Performance", moduleIds: [], sessionIds: ["ocp2-session-9"] },
+          { title: "Tuning SQL Statements", moduleIds: ["m11"], sessionIds: ["ocp2-session-9"] },
         ],
       },
     ],
@@ -268,7 +275,7 @@ export function trackCoverage(track: CertificationTrack): {
   percent: number;
 } {
   const domains = allDomains(track);
-  const covered = domains.filter((domain) => domain.moduleIds.length > 0).length;
+  const covered = domains.filter(isDomainCovered).length;
   return {
     covered,
     total: domains.length,
