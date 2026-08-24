@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useCallback, useContext, useState } from "react";
-import { useRouter } from "next/navigation";
 import { dictionary, type Dictionary } from "@/lib/i18n/dictionary";
 import { LOCALE_COOKIE, type Locale } from "@/lib/i18n/locale";
 
@@ -20,19 +19,22 @@ export function LanguageProvider({
   locale: Locale;
   children: React.ReactNode;
 }) {
-  const router = useRouter();
   const [locale, setLocaleState] = useState<Locale>(initialLocale);
 
-  const setLocale = useCallback(
-    (next: Locale) => {
-      // One year, readable by both client (for this toggle) and server
-      // (getLocale() in server components) — same cookie, no API route.
-      document.cookie = `${LOCALE_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`;
-      setLocaleState(next);
-      router.refresh();
-    },
-    [router],
-  );
+  const setLocale = useCallback((next: Locale) => {
+    // One year, readable by both client (for this toggle) and server
+    // (getLocale() in server components) — same cookie, no API route.
+    document.cookie = `${LOCALE_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`;
+    setLocaleState(next);
+    // A full reload, not router.refresh(): every page on this site reads the
+    // locale server-side via cookies() in several independent layouts/pages
+    // (marketing layout, marketing page, app layout...). router.refresh()
+    // only re-renders the current route's server tree and was unreliable
+    // here — some sections kept the old language until a manual reload.
+    // Reloading guarantees every server-rendered string reflects the new
+    // cookie immediately.
+    window.location.reload();
+  }, []);
 
   return (
     <LanguageContext.Provider value={{ locale, t: dictionary[locale], setLocale }}>

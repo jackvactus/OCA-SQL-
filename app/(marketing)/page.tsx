@@ -34,6 +34,7 @@ import { LiveStats } from "./live-stats";
 import { DifficultyChart } from "./difficulty-chart";
 import { SandboxPreview } from "./sandbox-preview";
 import { getLocalizedModules } from "@/lib/content-i18n";
+import { certificationTracks, pick } from "@/lib/certification-tracks";
 
 // Mirrors the constants in app/(app)/exam/page.tsx — kept in sync manually
 // since that file doesn't export them.
@@ -339,7 +340,7 @@ export default function LandingPage() {
           <div>
             <Badge variant="secondary" className="gap-1.5">
               <Server className="h-3 w-3 text-primary" />
-              Oracle technology
+              {locale === "en" ? "Oracle technology" : "Technologie Oracle"}
             </Badge>
             <h2 className="mt-4 text-2xl font-bold lg:text-3xl">
               {locale === "en" ? "See the world behind the queries" : "Découvrez l'univers derrière vos requêtes"}
@@ -568,20 +569,92 @@ export default function LandingPage() {
 
           <div className="mx-auto mt-6 grid max-w-5xl grid-cols-1 gap-4 md:grid-cols-3">
             {[
-              { icon: Database, title: t.marketing.certificationSqlTitle, description: t.marketing.certificationSqlDesc, active: true },
-              { icon: GraduationCap, title: t.marketing.certificationJavaTitle, description: t.marketing.certificationJavaDesc, active: false },
-              { icon: Cloud, title: t.marketing.certificationOciTitle, description: t.marketing.certificationOciDesc, active: false },
-            ].map((path) => (
-              <div
-                key={path.title}
-                  className={`flex flex-col gap-3 rounded-xl border p-5 backdrop-blur ${path.active ? "border-primary/60 bg-primary/10" : "border-border/70 bg-background/70 dark:border-white/10 dark:bg-white/5"}`}
+              { track: certificationTracks[0], icon: Database },
+              { track: certificationTracks[1], icon: GraduationCap },
+              { track: certificationTracks[2], icon: ShieldCheck },
+            ].map(({ track, icon: Icon }) => (
+              <Link
+                key={track.id}
+                href={`/tracks/${track.id}`}
+                className="group flex flex-col gap-3 rounded-xl border border-primary/60 bg-primary/10 p-5 backdrop-blur transition-colors hover:border-primary hover:bg-primary/15 dark:bg-white/5 dark:hover:bg-white/10"
               >
-                <path.icon className="h-6 w-6 text-primary" />
-                <p className="font-semibold text-foreground dark:text-white">{path.title}</p>
-                <p className="text-sm leading-relaxed text-muted-foreground dark:text-white/60">{path.description}</p>
-              </div>
+                <div className="flex items-center justify-between">
+                  <Icon className="h-6 w-6 text-primary" />
+                  <span className="rounded-full border border-primary/30 bg-background/60 px-2.5 py-0.5 text-xs font-semibold text-primary dark:bg-white/10">
+                    {track.examCode}
+                  </span>
+                </div>
+                <p className="font-semibold text-foreground dark:text-white">{pick(track.title, locale)}</p>
+                <p className="text-sm leading-relaxed text-muted-foreground dark:text-white/60">{pick(track.summary, locale)}</p>
+                <span className="mt-auto flex items-center gap-1 text-sm font-medium text-primary">
+                  {locale === "en" ? "Explore this track" : "Découvrir ce parcours"}
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                </span>
+              </Link>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Oracle Database Administration gallery — OCP I / OCP II preview */}
+      <section className="mx-auto max-w-7xl px-4 lg:px-8">
+        <div className="mb-8 max-w-2xl">
+          <Badge variant="secondary" className="gap-1.5">
+            <ShieldCheck className="h-3 w-3 text-primary" />
+            OCP I &amp; OCP II
+          </Badge>
+          <h2 className="mt-4 text-2xl font-bold lg:text-3xl">
+            {locale === "en" ? "Inside Oracle Database administration" : "Dans les coulisses de l'administration Oracle Database"}
+          </h2>
+          <p className="mt-2 max-w-2xl text-muted-foreground">
+            {locale === "en"
+              ? "A preview of the topics covered by the two Professional exams: instance architecture, user security, and RMAN backup and recovery."
+              : "Un aperçu des thèmes couverts par les deux examens Professional : architecture de l'instance, sécurité des utilisateurs, et sauvegarde-restauration RMAN."}
+          </p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          {[
+            {
+              src: "/art/oracle-instance.svg",
+              alt: locale === "en"
+                ? "Oracle instance architecture: SGA, background processes and redo logs"
+                : "Architecture de l'instance Oracle : SGA, processus d'arrière-plan et redo logs",
+              label: locale === "en" ? "Instance architecture" : "Architecture de l'instance",
+              track: "ocp-dba-i",
+            },
+            {
+              src: "/art/oracle-security-privileges.svg",
+              alt: locale === "en"
+                ? "Oracle users, roles and privileges"
+                : "Utilisateurs, rôles et privilèges Oracle",
+              label: locale === "en" ? "Users & privileges" : "Utilisateurs & privilèges",
+              track: "ocp-dba-i",
+            },
+            {
+              src: "/art/oracle-backup-rman.svg",
+              alt: locale === "en"
+                ? "RMAN backup and recovery cycle"
+                : "Cycle de sauvegarde et restauration RMAN",
+              label: locale === "en" ? "RMAN backup & recovery" : "Sauvegarde & restauration RMAN",
+              track: "ocp-dba-ii",
+            },
+          ].map((visual, index) => (
+            <Link
+              key={visual.label}
+              href={`/tracks/${visual.track}`}
+              className="group relative block min-h-[230px] overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm animate-slide-up"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-105">
+                <Image src={visual.src} alt={visual.alt} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/15 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-slate-950/80 p-5 text-white backdrop-blur-sm">
+                <span className="text-sm font-semibold">{visual.label}</span>
+                <ArrowRight className="h-4 w-4 shrink-0 text-white/70 transition-transform group-hover:translate-x-1 group-hover:text-white" />
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 

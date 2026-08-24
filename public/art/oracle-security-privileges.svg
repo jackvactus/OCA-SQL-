@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" role="img" aria-label="Oracle users, roles and privileges">
+  <defs>
+    <linearGradient id="osBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#05121d"/>
+      <stop offset="100%" stop-color="#0a2334"/>
+    </linearGradient>
+    <linearGradient id="osShield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f04438"/>
+      <stop offset="100%" stop-color="#a4180f"/>
+    </linearGradient>
+    <radialGradient id="osHalo" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#f04438" stop-opacity="0.20"/>
+      <stop offset="100%" stop-color="#f04438" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="osGrid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#38bdf8" stroke-opacity="0.09" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="800" fill="url(#osBg)"/>
+  <rect width="1200" height="800" fill="url(#osGrid)"/>
+  <rect width="1200" height="800" fill="url(#osHalo)"/>
+
+  <!-- Central shield -->
+  <g transform="translate(600 360)">
+    <path d="M0 -160 L140 -104 V20 C140 130 70 196 0 220 C-70 196 -140 130 -140 20 V-104 Z" fill="url(#osShield)" stroke="#fecdd3" stroke-opacity="0.5" stroke-width="3"/>
+    <path d="M-46 8 L-14 44 L52 -36" fill="none" stroke="#fff1f2" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Role badges around the shield -->
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif">
+    <g transform="translate(260 220)">
+      <rect x="-90" y="-34" width="180" height="68" rx="16" fill="#0d2a3f" stroke="#38bdf8" stroke-opacity="0.5" stroke-width="2"/>
+      <text x="0" y="6" text-anchor="middle" font-size="20" font-weight="700" fill="#bae6fd">DBA role</text>
+    </g>
+    <g transform="translate(940 220)">
+      <rect x="-90" y="-34" width="180" height="68" rx="16" fill="#0d2a3f" stroke="#38bdf8" stroke-opacity="0.5" stroke-width="2"/>
+      <text x="0" y="6" text-anchor="middle" font-size="20" font-weight="700" fill="#bae6fd">App role</text>
+    </g>
+    <g transform="translate(200 470)">
+      <rect x="-96" y="-34" width="192" height="68" rx="16" fill="#123249" stroke="#38bdf8" stroke-opacity="0.4" stroke-width="2"/>
+      <text x="0" y="0" text-anchor="middle" font-size="16" fill="#e2f4ff">GRANT SELECT</text>
+      <text x="0" y="20" text-anchor="middle" font-size="14" fill="#93c5fd" opacity="0.8">ON schema objects</text>
+    </g>
+    <g transform="translate(1000 470)">
+      <rect x="-96" y="-34" width="192" height="68" rx="16" fill="#123249" stroke="#38bdf8" stroke-opacity="0.4" stroke-width="2"/>
+      <text x="0" y="0" text-anchor="middle" font-size="16" fill="#e2f4ff">REVOKE</text>
+      <text x="0" y="20" text-anchor="middle" font-size="14" fill="#93c5fd" opacity="0.8">system privileges</text>
+    </g>
+    <g transform="translate(600 640)">
+      <rect x="-140" y="-34" width="280" height="68" rx="16" fill="#123249" stroke="#38bdf8" stroke-opacity="0.4" stroke-width="2"/>
+      <text x="0" y="0" text-anchor="middle" font-size="16" fill="#e2f4ff">PROFILE · password &amp; resource limits</text>
+      <text x="0" y="20" text-anchor="middle" font-size="14" fill="#93c5fd" opacity="0.8">CREATE PROFILE ... LIMIT</text>
+    </g>
+  </g>
+
+  <!-- User dots -->
+  <g fill="#7dd3fc">
+    <circle cx="150" cy="180" r="8"/>
+    <circle cx="1050" cy="180" r="8"/>
+    <circle cx="110" cy="470" r="8"/>
+    <circle cx="1090" cy="470" r="8"/>
+  </g>
+
+  <!-- Connectors -->
+  <g stroke="#7dd3fc" stroke-opacity="0.45" stroke-width="2.5" fill="none">
+    <path d="M350 210 L470 260"/>
+    <path d="M850 210 L730 260"/>
+    <path d="M296 470 L460 400"/>
+    <path d="M904 470 L740 400"/>
+    <path d="M600 580 L600 470"/>
+  </g>
+
+  <text x="600" y="90" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="30" font-weight="700" fill="#e2f4ff">Users · Roles · Privileges</text>
+  <text x="600" y="760" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="18" fill="#93c5fd" opacity="0.75">Controlling access with the principle of least privilege — Oracle Database Security</text>
+</svg>

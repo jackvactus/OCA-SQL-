@@ -220,13 +220,7 @@ const fr = {
     certificationBadge: "Parcours de certification Oracle",
     certificationTitle: "Choisissez votre spécialité Oracle",
     certificationDesc:
-      "Commencez par le parcours Oracle Database SQL 1Z0-071, puis explorez les certifications Oracle qui correspondent à votre projet professionnel.",
-    certificationSqlTitle: "Oracle Database SQL",
-    certificationSqlDesc: "Le parcours actif : SQL, modélisation relationnelle, fonctions Oracle et préparation complète au 1Z0-071.",
-    certificationJavaTitle: "Oracle Java",
-    certificationJavaDesc: "Une voie de certification pour valider vos compétences de développement Java avec Oracle.",
-    certificationOciTitle: "Oracle Cloud Infrastructure",
-    certificationOciDesc: "Des certifications cloud pour progresser vers l'administration et l'architecture OCI.",
+      "Trois certifications Oracle Database, un seul objectif : de vos premières requêtes SQL jusqu'à l'administration complète de la base.",
     ctaTitle: "Prêt à commencer ?",
     ctaDesc:
       "Créez votre compte en quelques secondes et retrouvez votre tableau de bord, votre progression et l'historique complet de vos activités à chaque connexion.",
@@ -616,13 +610,7 @@ const en: typeof fr = {
     certificationBadge: "Oracle certification paths",
     certificationTitle: "Choose your Oracle specialty",
     certificationDesc:
-      "Start with the Oracle Database SQL 1Z0-071 path, then explore Oracle certifications that match your professional goals.",
-    certificationSqlTitle: "Oracle Database SQL",
-    certificationSqlDesc: "The active path: SQL, relational modeling, Oracle functions, and complete 1Z0-071 preparation.",
-    certificationJavaTitle: "Oracle Java",
-    certificationJavaDesc: "A certification path for validating your Java development skills with Oracle.",
-    certificationOciTitle: "Oracle Cloud Infrastructure",
-    certificationOciDesc: "Cloud certifications to progress toward OCI administration and architecture.",
+      "Three Oracle Database certifications, one path: from your first SQL queries to full database administration.",
     ctaTitle: "Ready to get started?",
     ctaDesc:
       "Create your account in seconds and pick up your dashboard, your progress, and your full activity history every time you log in.",
