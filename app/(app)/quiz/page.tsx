@@ -73,7 +73,7 @@ const difficultyConfig: Record<
 
 export default function QuizPage() {
   const { progress, loaded, recordQuiz } = useProgress();
-  const { locale } = useLanguage();
+  const { locale, t } = useLanguage();
   const modules = getLocalizedModules(locale);
 
   const [selectedTrack, setSelectedTrack] = useState<TrackId>("oca-sql");
@@ -223,15 +223,15 @@ export default function QuizPage() {
             <Brain className="h-8 w-8 text-primary" />
           </div>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            <span className="gradient-text">Questions / Réponses</span>
+            <span className="gradient-text">{t.quizPage.title}</span>
           </h1>
           <p className="mt-2 text-muted-foreground">
-            Entraînement Oracle SQL 1Z0-071 — feedback immédiat et explications
+            {t.quizPage.subtitle}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            {questionBank.length} questions · dont{" "}
+            {questionBank.length} {t.quizPage.stats}{" "}
             {questionBank.filter((q) => q.correctIndexes.length > 1).length}{" "}
-            multi-réponses (type examen)
+            {t.quizPage.statsMulti}
           </p>
         </div>
 
@@ -240,13 +240,13 @@ export default function QuizPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
                 <Target className="h-5 w-5 text-primary" />
-                Configurer le quiz
+                {t.quizPage.configure}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label className="text-sm font-medium">
-                  {locale === "en" ? "Certification track" : "Parcours de certification"}
+                  {t.quizPage.track}
                 </Label>
                 <Select
                   value={selectedTrack}
@@ -270,22 +270,18 @@ export default function QuizPage() {
 
               <div className="space-y-2">
                 <Label className="text-sm font-medium">
-                  {selectedTrack === "oca-sql"
-                    ? "Module"
-                    : locale === "en"
-                      ? "Session"
-                      : "Session"}
+                  {selectedTrack === "oca-sql" ? t.quizPage.module : t.quizPage.session}
                 </Label>
                 <Select
                   value={selectedModule}
                   onValueChange={setSelectedModule}
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Choisir un module" />
+                    <SelectValue placeholder={t.quizPage.module} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">
-                      {locale === "en" ? "All" : "Tout"}
+                      {t.quizPage.scopeAll}
                     </SelectItem>
                     {scopeOptions.map((option) => (
                       <SelectItem key={option.id} value={option.id}>
@@ -297,7 +293,7 @@ export default function QuizPage() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-medium">Difficulté</Label>
+                <Label className="text-sm font-medium">{t.quizPage.difficulty}</Label>
                 <Select
                   value={selectedDifficulty}
                   onValueChange={(v) =>
@@ -305,13 +301,13 @@ export default function QuizPage() {
                   }
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Choisir une difficulté" />
+                    <SelectValue placeholder={t.quizPage.difficulty} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Toutes les difficultés</SelectItem>
-                    <SelectItem value="easy">Facile</SelectItem>
-                    <SelectItem value="medium">Moyen</SelectItem>
-                    <SelectItem value="hard">Difficile</SelectItem>
+                    <SelectItem value="all">{t.quizPage.difficultyAll}</SelectItem>
+                    <SelectItem value="easy">{t.quizPage.easy}</SelectItem>
+                    <SelectItem value="medium">{t.quizPage.medium}</SelectItem>
+                    <SelectItem value="hard">{t.quizPage.hard}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -353,12 +349,12 @@ export default function QuizPage() {
                   className="w-full sm:w-auto"
                 >
                   <Brain className="mr-2 h-4 w-4" />
-                  Démarrer
+                  {t.quizPage.start}
                 </Button>
               </div>
               {availableCount === 0 && (
                 <p className="text-center text-sm text-destructive">
-                  Aucune question ne correspond à ces filtres.
+                  {t.quizPage.noMatch}
                 </p>
               )}
             </CardContent>
@@ -397,7 +393,7 @@ export default function QuizPage() {
                   </Badge>
                   {isMulti && (
                     <Badge variant="outline" className="border-primary/40 text-primary">
-                      Choisir {needCount} réponses
+                      {t.quizPage.selectPrompt} {needCount} {t.quizPage.answers}
                     </Badge>
                   )}
                 </div>
@@ -562,7 +558,7 @@ export default function QuizPage() {
                       onClick={handleNext}
                     >
                       {currentIndex + 1 >= questions.length
-                        ? "Voir les résultats"
+                        ? "{t.quizPage.seeResults}"
                         : "Question suivante"}
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
@@ -595,7 +591,7 @@ export default function QuizPage() {
               <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
                 <Trophy className="h-10 w-10 text-primary" />
               </div>
-              <CardTitle className="text-2xl">Quiz terminé !</CardTitle>
+              <CardTitle className="text-2xl">{t.quizPage.finished}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="text-center">
@@ -625,10 +621,10 @@ export default function QuizPage() {
                 )}
               >
                 {scorePercent >= 80
-                  ? "Excellent — vous êtes prêt pour l'examen."
+                  ? "{t.quizPage.verdictHigh}"
                   : scorePercent >= 63
-                    ? "Bon niveau (seuil examen 63 %). Relisez les thèmes manqués."
-                    : "Continuez : révisez les modules concernés puis recommencez."}
+                    ? "{t.quizPage.verdictMid}"
+                    : "{t.quizPage.verdictLow}"}
               </div>
 
               {loaded && (
@@ -641,7 +637,7 @@ export default function QuizPage() {
               )}
 
               <div className="space-y-2">
-                <p className="text-sm font-medium">Détail des réponses</p>
+                <p className="text-sm font-medium">{t.quizPage.detail}</p>
                 <div className="flex flex-wrap gap-2">
                   {answers.map((a, idx) => (
                     <div
@@ -672,7 +668,7 @@ export default function QuizPage() {
                 </Button>
                 <Button size="lg" className="w-full" onClick={startQuiz}>
                   <RotateCcw className="mr-2 h-4 w-4" />
-                  Rejouer (mêmes filtres)
+                  {t.quizPage.replay}
                 </Button>
               </div>
             </CardContent>

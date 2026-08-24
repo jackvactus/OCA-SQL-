@@ -90,7 +90,8 @@ function colorForCategory(category: string): string {
 }
 
 // Small reusable copy button used next to code examples.
-function CopyButton({ value, label = "Copier" }: { value: string; label?: string }) {
+function CopyButton({ value, label }: { value: string; label?: string }) {
+  const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(async () => {
@@ -110,12 +111,12 @@ function CopyButton({ value, label = "Copier" }: { value: string; label?: string
       size="sm"
       onClick={handleCopy}
       className="h-7 gap-1.5 px-2 text-xs text-muted-foreground hover:text-foreground"
-      aria-label={label}
+      aria-label={label ?? t.referencePage.copy}
     >
       {copied ? (
         <>
           <CheckCircle2 className="h-3.5 w-3.5 text-success" />
-          Copié
+          {t.referencePage.copied}
         </>
       ) : (
         <>
@@ -137,11 +138,12 @@ function CategoryFilter({
   active: string;
   onSelect: (category: string) => void;
 }) {
+  const { t } = useLanguage();
   return (
     <div className="flex flex-wrap items-center gap-2">
       <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
         <Filter className="h-3.5 w-3.5" />
-        Catégories
+        {t.referencePage.categories}
       </div>
       <button
         type="button"
@@ -153,7 +155,7 @@ function CategoryFilter({
             : "border-border bg-card text-muted-foreground hover:border-primary/50 hover:text-foreground",
         )}
       >
-        Toutes
+        {t.referencePage.all}
       </button>
       <Separator orientation="vertical" className="h-5" />
       <div className="flex flex-wrap gap-2">
@@ -181,7 +183,7 @@ function CategoryFilter({
 }
 
 export default function ReferencePage() {
-  const { locale } = useLanguage();
+  const { locale, t } = useLanguage();
   const activeGlossary = getLocalizedGlossary(locale);
   const activeFunctions = getLocalizedFunctions(locale);
   const activeGlossaryCategories = Array.from(new Set(activeGlossary.map((item) => item.category)));
@@ -237,19 +239,19 @@ export default function ReferencePage() {
           <div className="flex items-center gap-2">
             <Badge variant="secondary" className="gap-1">
               <Library className="h-3 w-3" />
-              Référence
+              {t.referencePage.badge}
             </Badge>
             <Badge variant="outline" className="text-muted-foreground">
               {activeGlossary.length} {locale === "en" ? "terms" : "termes"} · {activeFunctions.length} {locale === "en" ? "functions" : "fonctions"}
             </Badge>
           </div>
           <h1 className="text-2xl font-bold tracking-tight lg:text-3xl">
-            Glossaire &amp; Fonctions Oracle
+            {locale === "en" ? "Oracle glossary & functions" : "Glossaire & fonctions Oracle"}
           </h1>
-          <p className="max-w-2xl text-sm text-muted-foreground">
-            Recherchez rapidement parmi les termes SQL et les fonctions Oracle
-            couverts par la certification 1Z0-071. Filtrez par catégorie et
-            copiez les exemples d&apos;un seul clic.
+          <p className="text-pretty max-w-2xl text-sm text-muted-foreground">
+            {locale === "en"
+              ? "Search the SQL terms and Oracle functions covered by the 1Z0-071 certification. Filter by category and copy any example in one click."
+              : "Recherchez parmi les termes SQL et les fonctions Oracle couverts par la certification 1Z0-071. Filtrez par catégorie et copiez les exemples d’un seul clic."}
           </p>
         </div>
       </header>
@@ -276,7 +278,7 @@ export default function ReferencePage() {
               <Input
                 value={glossarySearch}
                 onChange={(e) => setGlossarySearch(e.target.value)}
-                placeholder="Rechercher un terme ou une définition..."
+                placeholder={t.referencePage.searchGlossary}
                 className="pl-9"
                 aria-label="Rechercher dans le glossaire"
               />
@@ -288,7 +290,7 @@ export default function ReferencePage() {
             />
             <p className="text-xs text-muted-foreground">
               {filteredGlossary.length} {locale === "en" ? "term" : "terme"}
-              {filteredGlossary.length > 1 ? "s" : ""} {locale === "en" ? "found" : "trouvé"}
+              {filteredGlossary.length > 1 ? "s" : ""} {filteredGlossary.length > 1 ? t.referencePage.results : t.referencePage.result}
               {filteredGlossary.length > 1 ? "s" : ""}
             </p>
           </div>
@@ -298,9 +300,9 @@ export default function ReferencePage() {
             <Card>
               <CardContent className="flex flex-col items-center justify-center gap-2 py-16 text-center">
                 <Library className="h-10 w-10 text-muted-foreground/50" />
-                <p className="text-sm font-medium">Aucun terme trouvé</p>
+                <p className="text-sm font-medium">{t.referencePage.noTerm}</p>
                 <p className="text-xs text-muted-foreground">
-                  Essayez un autre mot-clé ou réinitialisez les filtres.
+                  {t.referencePage.tryAgain}
                 </p>
               </CardContent>
             </Card>
@@ -362,7 +364,7 @@ export default function ReferencePage() {
               <Input
                 value={functionSearch}
                 onChange={(e) => setFunctionSearch(e.target.value)}
-                placeholder="Rechercher une fonction, une syntaxe, un exemple..."
+                placeholder={t.referencePage.searchFunctions}
                 className="pl-9"
                 aria-label="Rechercher dans les fonctions Oracle"
               />
@@ -374,7 +376,7 @@ export default function ReferencePage() {
             />
             <p className="text-xs text-muted-foreground">
               {filteredFunctions.length} fonction
-              {filteredFunctions.length > 1 ? "s" : ""} trouvé
+              {" "}{filteredFunctions.length > 1 ? t.referencePage.results : t.referencePage.result}
               {filteredFunctions.length > 1 ? "s" : ""}
             </p>
           </div>
@@ -384,9 +386,9 @@ export default function ReferencePage() {
             <Card>
               <CardContent className="flex flex-col items-center justify-center gap-2 py-16 text-center">
                 <FunctionSquare className="h-10 w-10 text-muted-foreground/50" />
-                <p className="text-sm font-medium">Aucune fonction trouvée</p>
+                <p className="text-sm font-medium">{t.referencePage.noFunction}</p>
                 <p className="text-xs text-muted-foreground">
-                  Essayez un autre mot-clé ou réinitialisez les filtres.
+                  {t.referencePage.tryAgain}
                 </p>
               </CardContent>
             </Card>
@@ -463,7 +465,7 @@ export default function ReferencePage() {
                         <div className="space-y-1">
                           <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
                             <CheckCircle2 className="h-3.5 w-3.5 text-success" />
-                            Résultat
+                            {t.referencePage.result}
                           </div>
                           <p className="rounded-lg border border-success/20 bg-success/5 px-2.5 py-2 text-xs font-medium text-success">
                             {fn.result}
@@ -477,7 +479,7 @@ export default function ReferencePage() {
                           onClick={() => toggleExpanded(fn.name)}
                           className="h-7 w-full justify-center text-xs text-muted-foreground hover:text-foreground"
                         >
-                          {isOpen ? "Réduire" : "Voir plus de détails"}
+                          {isOpen ? (locale === "en" ? "Collapse" : "Réduire") : t.referencePage.moreDetail}
                         </Button>
 
                         {isOpen && (
@@ -492,14 +494,14 @@ export default function ReferencePage() {
                             </div>
                             <div>
                               <span className="font-semibold text-foreground">
-                                Catégorie :
+                                {t.referencePage.category} :
                               </span>{" "}
                               {fn.category}
                             </div>
                             <Separator />
                             <div>
                               <span className="font-semibold text-foreground">
-                                Syntaxe complète :
+                                {t.referencePage.fullSyntax} :
                               </span>
                               <pre className="mt-1 overflow-x-auto">
                                 <code className="font-mono text-muted-foreground">

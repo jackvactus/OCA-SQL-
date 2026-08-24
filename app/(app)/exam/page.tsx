@@ -55,7 +55,7 @@ function formatTime(seconds: number): string {
 
 export default function ExamPage() {
   const { recordExam } = useProgress();
-  const { locale } = useLanguage();
+  const { locale, t } = useLanguage();
   const [selectedTrack, setSelectedTrack] = useState<TrackId>("oca-sql");
   const questionBank = getQuestionBank(selectedTrack, locale);
   const activeTrack = certificationTracks.find((track) => track.id === selectedTrack);
@@ -581,7 +581,7 @@ export default function ExamPage() {
                 <CardContent>
                   {requiredAnswerCount(currentQ) > 1 && (
                     <p className="mb-3 text-sm text-primary font-medium">
-                      Choisir {requiredAnswerCount(currentQ)} réponses
+                      {t.quizPage.selectPrompt} {requiredAnswerCount(currentQ)} {t.quizPage.answers}
                       {(answers[currentIndex]?.length ?? 0) > 0 &&
                         ` (${answers[currentIndex].length}/${requiredAnswerCount(currentQ)})`}
                     </p>
@@ -830,12 +830,12 @@ export default function ExamPage() {
                         </div>
                         <div className="text-xs text-muted-foreground shrink-0">
                           {answered
-                            ? `Réponse : ${(answers[i] ?? [])
+                            ? `${locale === "en" ? "Answer" : "Réponse"} : ${(answers[i] ?? [])
                                 .slice()
                                 .sort((a, b) => a - b)
                                 .map((n) => String.fromCharCode(65 + n))
                                 .join(", ")}`
-                            : "Sans réponse"}
+                            : locale === "en" ? "Not answered" : "Sans réponse"}
                         </div>
                       </button>
                     );
@@ -1001,7 +1001,7 @@ export default function ExamPage() {
                               </Badge>
                               {q.correctIndexes.length > 1 && (
                                 <Badge variant="outline" className="text-xs">
-                                  {q.correctIndexes.length} réponses
+                                  {q.correctIndexes.length} {t.quizPage.answers}
                                 </Badge>
                               )}
                             </div>

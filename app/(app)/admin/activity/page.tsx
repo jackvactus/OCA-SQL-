@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { requireAdmin } from "@/lib/auth/session";
 import { listAllActivity } from "@/lib/admin";
-import { ACTIVITY_ACTION_LABELS, type ActivityAction } from "@/lib/activity-types";
+import { activityLabel, type ActivityAction } from "@/lib/activity-types";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { dictionary } from "@/lib/i18n/dictionary";
 
@@ -55,7 +55,7 @@ export default async function AdminActivityPage({
                 <li key={entry.id} className="flex items-center justify-between gap-3 py-3 text-sm">
                   <div className="min-w-0">
                     <p className="font-medium">
-                      {ACTIVITY_ACTION_LABELS[entry.action as ActivityAction] ?? entry.action}
+                      {activityLabel(entry.action, locale)}
                     </p>
                     <Link
                       href={`/admin/users/${entry.user_id}`}

@@ -36,7 +36,7 @@ import { Badge } from "@/components/ui/badge";
 import { getLocalizedModules } from "@/lib/content-i18n";
 import { quizQuestions } from "@/lib/quiz-data";
 import { useProgress } from "@/hooks/use-progress";
-import { ACTIVITY_ACTION_LABELS, type ActivityAction } from "@/lib/activity-types";
+import { activityLabel, type ActivityAction } from "@/lib/activity-types";
 import { useLanguage } from "@/components/language-provider";
 import {
   PieChart,
@@ -432,7 +432,7 @@ export default function DashboardPage() {
               {recentActivity.map((entry) => (
                 <li key={entry.id} className="flex items-center justify-between gap-3 py-2.5 text-sm">
                   <span className="font-medium">
-                    {ACTIVITY_ACTION_LABELS[entry.action as ActivityAction] ?? entry.action}
+                    {activityLabel(entry.action, locale)}
                   </span>
                   <span className="whitespace-nowrap text-xs text-muted-foreground">
                     {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true, locale: fr })}

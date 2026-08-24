@@ -38,6 +38,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/language-provider";
 
 /* ------------------------------------------------------------------ */
 /*  HR Schema (simulated Oracle HR sample schema)                     */
@@ -896,6 +897,7 @@ type HistoryEntry = {
 };
 
 export default function SandboxPage() {
+  const { t } = useLanguage();
   const [query, setQuery] = useState<string>(
     "SELECT * FROM employees ORDER BY salary DESC FETCH FIRST 5 ROWS ONLY;"
   );
@@ -1017,7 +1019,7 @@ export default function SandboxPage() {
               </Badge>
               <Badge variant="outline" className="gap-1.5">
                 <Code2 className="h-3 w-3" />
-                Mode pratique
+                {t.sandboxPage.mode}
               </Badge>
             </div>
           </div>
@@ -1033,12 +1035,12 @@ export default function SandboxPage() {
               <div className="border-b border-border/60 bg-gradient-to-r from-primary/10 via-background to-background px-4 py-3">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <p className="text-sm font-semibold">Conseil du jour</p>
+                    <p className="text-sm font-semibold">{t.sandboxPage.tipTitle}</p>
                     <p className="text-sm text-muted-foreground">
-                      Combinez WHERE, ORDER BY et FETCH FIRST pour répondre aux exercices Oracle les plus fréquents.
+                      {t.sandboxPage.tipBody}
                     </p>
                   </div>
-                  <Badge variant="secondary">Prêt pour l’examen</Badge>
+                  <Badge variant="secondary">{t.sandboxPage.examReady}</Badge>
                 </div>
               </div>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-border/60 bg-muted/30 py-3">
@@ -1065,7 +1067,7 @@ export default function SandboxPage() {
                     ) : (
                       <Copy className="h-3.5 w-3.5" />
                     )}
-                    {copied ? "Copied" : "Copy"}
+                    {copied ? t.sandboxPage.copied : t.sandboxPage.copy}
                   </Button>
                   <Button
                     variant="ghost"

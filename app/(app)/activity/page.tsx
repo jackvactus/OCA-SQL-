@@ -21,7 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { getSessionUser } from "@/lib/auth/session";
 import { listActivity } from "@/lib/activity";
-import { ACTIVITY_ACTION_LABELS, type ActivityAction } from "@/lib/activity-types";
+import { activityLabel, type ActivityAction } from "@/lib/activity-types";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { dictionary } from "@/lib/i18n/dictionary";
 
@@ -44,10 +44,15 @@ const ACTION_ICONS: Record<ActivityAction, typeof History> = {
   admin_user_deactivated: ShieldX,
 };
 
-function describeMetadata(action: ActivityAction, metadata: Record<string, unknown>): string | null {
+function describeMetadata(
+  action: ActivityAction,
+  metadata: Record<string, unknown>,
+  locale: "fr" | "en",
+): string | null {
+  const en = locale === "en";
   switch (action) {
     case "lesson_completed":
-      return typeof metadata.lessonId === "string" ? `Leçon : ${metadata.lessonId}` : null;
+      return typeof metadata.lessonId === "string" ? `${en ? "Lesson" : "Leçon"} : ${metadata.lessonId}` : null;
     case "quiz_completed":
       return typeof metadata.correct === "number" && typeof metadata.total === "number"
         ? `Score : ${metadata.correct}/${metadata.total}`
@@ -57,14 +62,14 @@ function describeMetadata(action: ActivityAction, metadata: Record<string, unkno
         ? `Score : ${metadata.score}/${metadata.total}`
         : null;
     case "flashcard_reviewed":
-      return typeof metadata.cardId === "string" ? `Carte : ${metadata.cardId}` : null;
+      return typeof metadata.cardId === "string" ? `${en ? "Card" : "Carte"} : ${metadata.cardId}` : null;
     case "sandbox_query_executed":
       return typeof metadata.query === "string" ? metadata.query : null;
     case "admin_role_changed":
-      return typeof metadata.newRole === "string" ? `Nouveau rôle : ${metadata.newRole}` : null;
+      return typeof metadata.newRole === "string" ? `${en ? "New role" : "Nouveau rôle"} : ${metadata.newRole}` : null;
     case "admin_user_activated":
     case "admin_user_deactivated":
-      return typeof metadata.changedBy === "string" ? `Par : ${metadata.changedBy}` : null;
+      return typeof metadata.changedBy === "string" ? `${en ? "By" : "Par"} : ${metadata.changedBy}` : null;
     default:
       return null;
   }
@@ -110,8 +115,8 @@ export default async function ActivityPage({
               {page.map((entry) => {
                 const action = entry.action as ActivityAction;
                 const Icon = ACTION_ICONS[action] ?? History;
-                const label = ACTIVITY_ACTION_LABELS[action] ?? entry.action;
-                const detail = describeMetadata(action, entry.metadata ?? {});
+                const label = activityLabel(action, locale);
+                const detail = describeMetadata(action, entry.metadata ?? {}, locale);
                 return (
                   <li key={entry.id} className="flex items-start gap-3 py-3">
                     <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">

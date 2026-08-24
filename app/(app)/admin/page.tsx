@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { requireAdmin } from "@/lib/auth/session";
 import { getAdminOverviewStats, listUsers } from "@/lib/admin";
 import { modules } from "@/lib/modules-data";
-import { ACTIVITY_ACTION_LABELS, type ActivityAction } from "@/lib/activity-types";
+import { activityLabel, type ActivityAction } from "@/lib/activity-types";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { dictionary } from "@/lib/i18n/dictionary";
 import { AdminOverviewChart } from "./overview-chart";
@@ -17,7 +17,8 @@ export default async function AdminOverviewPage() {
   const admin = await requireAdmin();
   if (!admin) redirect("/dashboard");
 
-  const t = dictionary[getLocale()];
+  const locale = getLocale();
+  const t = dictionary[locale];
   const [stats, users] = await Promise.all([getAdminOverviewStats(), listUsers()]);
   const totalLessons = modules.reduce((total, module) => total + module.lessons.length, 0);
 
@@ -143,7 +144,7 @@ export default async function AdminOverviewPage() {
               stats.topActions.map((item) => (
                 <div key={item.action} className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">
-                    {ACTIVITY_ACTION_LABELS[item.action as ActivityAction] ?? item.action}
+                    {activityLabel(item.action, locale)}
                   </span>
                   <span className="font-semibold">{item.count}</span>
                 </div>
