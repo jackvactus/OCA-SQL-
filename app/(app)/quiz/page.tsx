@@ -558,8 +558,8 @@ export default function QuizPage() {
                       onClick={handleNext}
                     >
                       {currentIndex + 1 >= questions.length
-                        ? "{t.quizPage.seeResults}"
-                        : "Question suivante"}
+                        ? t.quizPage.seeResults
+                        : locale === "en" ? "Next question" : "Question suivante"}
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
@@ -621,10 +621,10 @@ export default function QuizPage() {
                 )}
               >
                 {scorePercent >= 80
-                  ? "{t.quizPage.verdictHigh}"
+                  ? t.quizPage.verdictHigh
                   : scorePercent >= 63
-                    ? "{t.quizPage.verdictMid}"
-                    : "{t.quizPage.verdictLow}"}
+                    ? t.quizPage.verdictMid
+                    : t.quizPage.verdictLow}
               </div>
 
               {loaded && (
