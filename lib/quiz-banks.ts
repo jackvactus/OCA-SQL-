@@ -4,7 +4,12 @@ import type { Locale } from "./i18n/locale";
 import { quizQuestions } from "./quiz-data";
 import { workbookQuizQuestions } from "./quiz-data-en-workbook";
 import { ocp1Questions } from "./quiz-data-ocp1";
+import { ocp1QuestionsB } from "./quiz-data-ocp1-b";
 import { ocp2Questions } from "./quiz-data-ocp2";
+import { ocp2QuestionsB } from "./quiz-data-ocp2-b";
+
+const ocp1All = [...ocp1Questions, ...ocp1QuestionsB];
+const ocp2All = [...ocp2Questions, ...ocp2QuestionsB];
 
 /**
  * Registre des banques de questions, par parcours de certification.
@@ -16,9 +21,9 @@ import { ocp2Questions } from "./quiz-data-ocp2";
 export function getQuestionBank(track: TrackId, locale: Locale): QuizQuestion[] {
   switch (track) {
     case "ocp-dba-i":
-      return ocp1Questions;
+      return ocp1All;
     case "ocp-dba-ii":
-      return ocp2Questions;
+      return ocp2All;
     default:
       return locale === "en" ? workbookQuizQuestions : quizQuestions;
   }
@@ -28,8 +33,8 @@ export function getQuestionBank(track: TrackId, locale: Locale): QuizQuestion[] 
 export const allQuestions: QuizQuestion[] = [
   ...quizQuestions,
   ...workbookQuizQuestions,
-  ...ocp1Questions,
-  ...ocp2Questions,
+  ...ocp1All,
+  ...ocp2All,
 ];
 
 /** Identifiants valides, pour la validation côté serveur. */
