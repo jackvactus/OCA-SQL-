@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth/session";
 import { applyRecordQuiz, updateProgress } from "@/lib/progress";
 import { logActivity } from "@/lib/activity";
-import { allQuestionIds } from "@/lib/quiz-banks";
-
-const quizIds = allQuestionIds;
+import { isValidQuizId } from "@/lib/quiz-banks";
 
 export async function POST(request: NextRequest) {
   const user = await getSessionUser();
@@ -14,7 +12,7 @@ export async function POST(request: NextRequest) {
   const { quizId, correct, total } = body ?? {};
   if (
     typeof quizId !== "string" ||
-    !quizIds.has(quizId) ||
+    !isValidQuizId(quizId) ||
     !Number.isInteger(correct) ||
     !Number.isInteger(total) ||
     total <= 0 ||

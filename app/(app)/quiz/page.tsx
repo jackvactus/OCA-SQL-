@@ -179,10 +179,7 @@ export default function QuizPage() {
 
   useEffect(() => {
     if (phase === "results" && !recorded && loaded) {
-      const quizId =
-        selectedModule === "all"
-          ? `quiz-all-${selectedDifficulty}`
-          : `quiz-${selectedModule}-${selectedDifficulty}`;
+      const quizId = `quiz-${selectedTrack}-${selectedModule}-${selectedDifficulty}`;
       recordQuiz(quizId, score, questions.length);
       setRecorded(true);
     }
@@ -193,6 +190,7 @@ export default function QuizPage() {
     recordQuiz,
     score,
     questions.length,
+    selectedTrack,
     selectedModule,
     selectedDifficulty,
   ]);

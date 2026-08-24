@@ -1,5 +1,5 @@
 import type { QuizQuestion } from "./types";
-import type { TrackId } from "./certification-tracks";
+import { certificationTracks, type TrackId } from "./certification-tracks";
 import type { Locale } from "./i18n/locale";
 import { quizQuestions } from "./quiz-data";
 import { workbookQuizQuestions } from "./quiz-data-en-workbook";
@@ -7,6 +7,8 @@ import { ocp1Questions } from "./quiz-data-ocp1";
 import { ocp1QuestionsB } from "./quiz-data-ocp1-b";
 import { ocp2Questions } from "./quiz-data-ocp2";
 import { ocp2QuestionsB } from "./quiz-data-ocp2-b";
+import { modules } from "./modules-data";
+import { curricula } from "./curricula";
 
 const ocp1All = [...ocp1Questions, ...ocp1QuestionsB];
 const ocp2All = [...ocp2Questions, ...ocp2QuestionsB];
@@ -39,6 +41,38 @@ export const allQuestions: QuizQuestion[] = [
 
 /** Identifiants valides, pour la validation côté serveur. */
 export const allQuestionIds = new Set(allQuestions.map((question) => question.id));
+
+const trackIds: TrackId[] = certificationTracks.map((track) => track.id);
+const quizDifficulties = ["all", "easy", "medium", "hard"];
+
+/** Portées valides (module OCA SQL ou session OCP) par parcours, pour la validation. */
+const scopeIdsByTrack: Record<TrackId, Set<string>> = {
+  "oca-sql": new Set(modules.map((module) => module.id)),
+  "ocp-dba-i": new Set(curricula.find((c) => c.id === "ocp-dba-i")?.sessions.map((s) => s.id) ?? []),
+  "ocp-dba-ii": new Set(curricula.find((c) => c.id === "ocp-dba-ii")?.sessions.map((s) => s.id) ?? []),
+};
+
+/**
+ * Session quiz IDs are composite, built client-side from a track/scope/difficulty
+ * triple (e.g. "quiz-oca-sql-all-medium", "quiz-ocp-dba-i-ocp1-session-3-hard") —
+ * not individual question IDs — so validate the structure per track rather than
+ * checking membership in `allQuestionIds`, which would reject every quiz result.
+ */
+export function isValidQuizId(quizId: string): boolean {
+  if (!quizId.startsWith("quiz-")) return false;
+  const rest = quizId.slice("quiz-".length);
+  for (const trackId of trackIds) {
+    if (!rest.startsWith(`${trackId}-`)) continue;
+    const remainder = rest.slice(trackId.length + 1);
+    const sep = remainder.lastIndexOf("-");
+    if (sep === -1) continue;
+    const scopeId = remainder.slice(0, sep);
+    const difficulty = remainder.slice(sep + 1);
+    if (!quizDifficulties.includes(difficulty)) continue;
+    if (scopeId === "all" || scopeIdsByTrack[trackId].has(scopeId)) return true;
+  }
+  return false;
+}
 
 /** Nombre de questions disponibles pour un parcours, dans une langue donnée. */
 export function bankSize(track: TrackId, locale: Locale): number {
