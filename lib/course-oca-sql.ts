@@ -42,6 +42,20 @@ export interface SelfCheck {
   answer: Bilingual;
 }
 
+/** Travail pratique : ce que l'apprenant fait lui-même pour ancrer la session. */
+export interface Lab {
+  title: Bilingual;
+  /** Ce que l'exercice doit permettre de constater. */
+  objective: Bilingual;
+  steps: Bilingual[];
+  /** Le résultat attendu, pour s'auto-évaluer. */
+  expected: Bilingual;
+  /** Commandes de départ, identiques dans les deux langues. */
+  code?: string;
+  /** Durée indicative, en minutes. */
+  minutes: number;
+}
+
 export interface CourseSession {
   id: string;
   number: number;
@@ -53,6 +67,8 @@ export interface CourseSession {
   keyTakeaways?: Bilingual[];
   /** Questions de contrôle, réponse masquée jusqu'au clic. */
   selfCheck?: SelfCheck[];
+  /** Travaux pratiques à réaliser sur une instance réelle. */
+  labs?: Lab[];
 }
 
 export function tr(value: Bilingual, locale: Locale): string {

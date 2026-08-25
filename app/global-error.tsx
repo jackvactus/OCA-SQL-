@@ -5,6 +5,8 @@
  * lui-même, là où `app/error.tsx` n'est plus monté. Doit rendre ses propres
  * balises <html> et <body>.
  */
+import { useEffect, useState } from "react";
+
 export default function GlobalError({
   error,
   reset,
@@ -12,8 +14,11 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const [en, setEn] = useState(false);
+  useEffect(() => setEn(document.cookie.includes("locale=en")), []);
+
   return (
-    <html lang="fr">
+    <html lang={en ? "en" : "fr"}>
       <body
         style={{
           fontFamily: "system-ui, -apple-system, Segoe UI, sans-serif",
@@ -35,9 +40,9 @@ export default function GlobalError({
             textAlign: "center",
           }}
         >
-          <h1 style={{ margin: 0, fontSize: "1.25rem" }}>Erreur critique</h1>
+          <h1 style={{ margin: 0, fontSize: "1.25rem" }}>{en ? "Critical error" : "Erreur critique"}</h1>
           <p style={{ color: "#64748b", fontSize: "0.875rem" }}>
-            L’application n’a pas pu démarrer.
+            {en ? "The application failed to start." : "L’application n’a pas pu démarrer."}
           </p>
           <pre
             style={{
@@ -53,7 +58,7 @@ export default function GlobalError({
             }}
           >
             {error.message}
-            {error.digest ? `\n\nRéférence : ${error.digest}` : ""}
+            {error.digest ? "\n\n" + (en ? "Reference" : "Référence") + " : " + error.digest : ""}
           </pre>
           <button
             onClick={reset}
@@ -67,7 +72,7 @@ export default function GlobalError({
               cursor: "pointer",
             }}
           >
-            Réessayer
+            {en ? "Retry" : "Réessayer"}
           </button>
         </div>
       </body>

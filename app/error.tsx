@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AlertTriangle, Home, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -20,9 +20,13 @@ export default function AppError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  // La frontière d'erreur est montée hors du LanguageProvider : on lit donc
+  // directement le cookie de langue plutôt que le contexte.
+  const [en, setEn] = useState(false);
   useEffect(() => {
+    setEn(document.cookie.includes("locale=en"));
     // eslint-disable-next-line no-console
-    console.error("[OracleMaster] Erreur non gérée :", error);
+    console.error("[OracleMaster] Unhandled error:", error);
   }, [error]);
 
   return (
@@ -32,25 +36,27 @@ export default function AppError({
           <AlertTriangle className="h-6 w-6 text-destructive" />
         </div>
 
-        <h1 className="mt-4 text-xl font-bold">Une erreur est survenue</h1>
+        <h1 className="mt-4 text-xl font-bold">{en ? "Something went wrong" : "Une erreur est survenue"}</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Cette page n’a pas pu être affichée. Vous pouvez réessayer sans perdre votre progression.
+          {en
+            ? "This page could not be displayed. You can retry without losing your progress."
+            : "Cette page n’a pas pu être affichée. Vous pouvez réessayer sans perdre votre progression."}
         </p>
 
         <pre className="mt-4 max-h-40 overflow-auto rounded-lg border border-border/70 bg-muted/50 p-3 text-left text-xs leading-relaxed text-muted-foreground">
-          {error.message || "Erreur inconnue"}
+          {error.message || (en ? "Unknown error" : "Erreur inconnue")}
           {error.digest ? `\n\nRéférence : ${error.digest}` : ""}
         </pre>
 
         <div className="mt-5 flex flex-wrap justify-center gap-2">
           <Button onClick={reset} className="gap-2">
             <RotateCcw className="h-4 w-4" />
-            Réessayer
+            {en ? "Retry" : "Réessayer"}
           </Button>
           <a href="/dashboard">
             <Button variant="outline" className="gap-2">
               <Home className="h-4 w-4" />
-              Tableau de bord
+              {en ? "Dashboard" : "Tableau de bord"}
             </Button>
           </a>
         </div>

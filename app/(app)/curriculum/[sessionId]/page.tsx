@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CourseBlockView } from "@/components/course-blocks";
 import { SessionReview } from "@/components/session-review";
+import { SessionLabs } from "@/components/session-labs";
 import { getSessionUser } from "@/lib/auth/session";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { dictionary } from "@/lib/i18n/dictionary";
@@ -103,6 +104,10 @@ export default async function CurriculumSessionPage({
               </section>
             ))}
           </div>
+
+          {session.labs && session.labs.length > 0 && (
+            <SessionLabs labs={session.labs} locale={locale} />
+          )}
 
           <SessionReview
             sessionId={session.id}

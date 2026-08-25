@@ -4,14 +4,19 @@ import { ocp1Sessions } from "./course-ocp1";
 import { ocp2Sessions } from "./course-ocp2";
 import type { TrackId } from "./certification-tracks";
 import { sessionExtras } from "./course-extras";
+import { sessionLabs } from "./course-labs";
 
 /** Rattache à chaque session ses points à retenir et ses questions de contrôle. */
 function withExtras(sessions: CourseSession[]): CourseSession[] {
   return sessions.map((session) => {
     const extras = sessionExtras[session.id];
-    return extras
-      ? { ...session, keyTakeaways: extras.keyTakeaways, selfCheck: extras.selfCheck }
-      : session;
+    const labs = sessionLabs[session.id];
+    if (!extras && !labs) return session;
+    return {
+      ...session,
+      ...(extras ? { keyTakeaways: extras.keyTakeaways, selfCheck: extras.selfCheck } : {}),
+      ...(labs ? { labs } : {}),
+    };
   });
 }
 
@@ -92,11 +97,18 @@ export function curriculumStats(curriculum: Curriculum) {
     (sum, session) => sum + session.topics.reduce((n, topic) => n + topic.blocks.length, 0),
     0,
   );
+  const labs = curriculum.sessions.reduce((sum, session) => sum + (session.labs?.length ?? 0), 0);
+  const labMinutes = curriculum.sessions.reduce(
+    (sum, session) => sum + (session.labs ?? []).reduce((n, lab) => n + lab.minutes, 0),
+    0,
+  );
   return {
     sessions: curriculum.sessions.length,
     topics,
     blocks,
+    labs,
     hours: Math.round((minutes / 60) * 10) / 10,
+    labHours: Math.round((labMinutes / 60) * 10) / 10,
   };
 }
 

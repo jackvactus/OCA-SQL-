@@ -209,19 +209,19 @@ export default async function TrackDetailPage({ params }: { params: { trackId: s
                             );
                           })}
                           {domain.moduleIds.map((moduleId) => {
-                            const module = moduleById.get(moduleId);
-                            if (!module) return null;
+                            const courseModule = moduleById.get(moduleId);
+                            if (!courseModule) return null;
                             return (
                               <Link
                                 key={moduleId}
                                 href={`/courses/${moduleId}`}
-                                title={`${t.tracks.openModule} — ${module.title}`}
+                                title={`${t.tracks.openModule} — ${courseModule.title}`}
                                 className="inline-flex max-w-[15rem] items-center gap-1.5 rounded-lg border border-border/70 bg-card px-2.5 py-1 text-xs font-medium transition-colors hover:border-primary/60 hover:text-primary"
                               >
                                 <span className="shrink-0 text-muted-foreground">
-                                  {String(module.number).padStart(2, "0")}
+                                  {String(courseModule.number).padStart(2, "0")}
                                 </span>
-                                <span className="truncate">{module.title}</span>
+                                <span className="truncate">{courseModule.title}</span>
                                 <ArrowRight className="h-3 w-3 shrink-0" />
                               </Link>
                             );

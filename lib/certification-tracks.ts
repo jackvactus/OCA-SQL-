@@ -51,6 +51,10 @@ export interface CertificationTrack {
   questions: number;
   durationMinutes: number;
   passScorePercent: number;
+  /** Tarif public de l'épreuve, en dollars américains. */
+  priceUsd: number;
+  /** Prérequis officiels. Oracle a supprimé l'obligation de passer l'OCA. */
+  prerequisite?: { fr: string; en: string };
   status: TrackStatus;
   accent: string;
   officialExamUrl: string;
@@ -80,8 +84,13 @@ export const certificationTracks: CertificationTrack[] = [
     questions: 63,
     durationMinutes: 120,
     passScorePercent: 63,
+    priceUsd: 245,
     status: "available",
     accent: "primary",
+    prerequisite: {
+      fr: "Aucun. C'est le point d'entrée recommandé de la filière Oracle Database.",
+      en: "None. This is the recommended entry point into the Oracle Database path.",
+    },
     officialExamUrl: "https://education.oracle.com/oracle-database-sql/pexam_1Z0-071",
     officialLearningUrl: "https://mylearn.oracle.com/ou/learning-path/oracle-database-sql/117252",
     groups: [
@@ -128,7 +137,7 @@ export const certificationTracks: CertificationTrack[] = [
     id: "ocp-dba-i",
     shortLabel: "OCP I",
     examCode: "1Z0-082",
-    certification: "Oracle Database Administration 2019 Certified Professional",
+    certification: "Oracle Database Administration Certified Professional",
     examTitle: "Oracle Database Administration I",
     title: {
       fr: "Administration Oracle Database I",
@@ -143,10 +152,15 @@ export const certificationTracks: CertificationTrack[] = [
       en: "Junior database administrators and developers broadening their scope.",
     },
     questions: 72,
-    durationMinutes: 120,
+    durationMinutes: 150,
     passScorePercent: 60,
+    priceUsd: 245,
     status: "available",
     accent: "sky",
+    prerequisite: {
+      fr: "Aucun. Oracle a supprimé l'obligation de détenir la certification Associate au préalable.",
+      en: "None. Oracle removed the requirement to hold the Associate certification first.",
+    },
     officialExamUrl: "https://education.oracle.com/oracle-database-administration-i/pexam_1Z0-082",
     officialLearningUrl: "https://mylearn.oracle.com/ou/course/oracle-database-19c-administration-workshop/102757",
     groups: [
@@ -195,7 +209,7 @@ export const certificationTracks: CertificationTrack[] = [
     id: "ocp-dba-ii",
     shortLabel: "OCP II",
     examCode: "1Z0-083",
-    certification: "Oracle Database Administration 2019 Certified Professional",
+    certification: "Oracle Database Administration Certified Professional",
     examTitle: "Oracle Database Administration II",
     title: {
       fr: "Administration Oracle Database II",
@@ -210,10 +224,15 @@ export const certificationTracks: CertificationTrack[] = [
       en: "Experienced administrators aiming for the full Professional certification.",
     },
     questions: 68,
-    durationMinutes: 120,
-    passScorePercent: 57,
+    durationMinutes: 150,
+    passScorePercent: 60,
+    priceUsd: 245,
     status: "available",
     accent: "amber",
+    prerequisite: {
+      fr: "Aucun formellement, mais l'examen suppose acquis le programme de l'Administration I.",
+      en: "None formally, but the exam assumes the Administration I syllabus is already mastered.",
+    },
     officialExamUrl: "https://education.oracle.com/oracle-database-administration-ii/pexam_1Z0-083",
     officialLearningUrl: "https://mylearn.oracle.com/ou/course/oracle-database-19c-managing-multitenant-architecture/102756",
     groups: [
