@@ -9,6 +9,9 @@ import { ocp2Questions } from "./quiz-data-ocp2";
 import { ocp2QuestionsB } from "./quiz-data-ocp2-b";
 import { modules } from "./modules-data";
 import { curricula } from "./curricula";
+import { ocp1English } from "./quiz-en-ocp1";
+import { ocp2English } from "./quiz-en-ocp2";
+import { localizeBank, translationCoverage } from "./quiz-i18n";
 
 const ocp1All = [...ocp1Questions, ...ocp1QuestionsB];
 const ocp2All = [...ocp2Questions, ...ocp2QuestionsB];
@@ -23,9 +26,9 @@ const ocp2All = [...ocp2Questions, ...ocp2QuestionsB];
 export function getQuestionBank(track: TrackId, locale: Locale): QuizQuestion[] {
   switch (track) {
     case "ocp-dba-i":
-      return ocp1All;
+      return localizeBank(ocp1All, locale, ocp1English);
     case "ocp-dba-ii":
-      return ocp2All;
+      return localizeBank(ocp2All, locale, ocp2English);
     default:
       return locale === "en" ? workbookQuizQuestions : quizQuestions;
   }
@@ -80,3 +83,9 @@ export function bankSize(track: TrackId, locale: Locale): number {
 }
 
 export const tracksWithBank: TrackId[] = ["oca-sql", "ocp-dba-i", "ocp-dba-ii"];
+
+/** Taux de traduction anglaise des banques OCP, pour le suivi qualité. */
+export const ocpTranslationStatus = {
+  "ocp-dba-i": translationCoverage(ocp1All, ocp1English),
+  "ocp-dba-ii": translationCoverage(ocp2All, ocp2English),
+};

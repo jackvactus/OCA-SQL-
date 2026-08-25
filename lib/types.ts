@@ -64,6 +64,14 @@ export interface QuizQuestion {
   difficulty: "easy" | "medium" | "hard";
 }
 
+/** Traduction anglaise d'une question, appliquee a l'execution selon la locale. */
+export interface QuizQuestionTranslation {
+  question: string;
+  options: string[];
+  explanation: string;
+  topic?: string;
+}
+
 export interface GlossaryTerm {
   term: string;
   definition: string;
