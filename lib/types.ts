@@ -52,7 +52,13 @@ export interface QuizQuestion {
    * Parcours auquel la question appartient. Absent ⇒ "oca-sql", pour rester
    * compatible avec les banques historiques.
    */
-  track?: "oca-sql" | "ocp-dba-i" | "ocp-dba-ii";
+  track?:
+    | "oca-sql"
+    | "ocp-dba-i"
+    | "ocp-dba-ii"
+    | "ocp-tuning"
+    | "ocp-dataguard"
+    | "ocp-rac";
   /** Module du site (m1…m18) ou session de cursus (`ocp1-session-3`…). */
   moduleId: string;
   question: string;

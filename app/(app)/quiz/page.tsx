@@ -80,7 +80,7 @@ export default function QuizPage() {
   const questionBank = getQuestionBank(selectedTrack, locale);
 
   // Le filtre « module » liste les modules du site pour OCA SQL, et les
-  // sessions du cursus correspondant pour les deux parcours OCP.
+  // sessions du cursus correspondant pour les cinq parcours d administration.
   const scopeOptions =
     selectedTrack === "oca-sql"
       ? modules.map((m) => ({ id: m.id, label: `${m.number}. ${m.title}` }))

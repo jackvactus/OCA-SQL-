@@ -10,17 +10,20 @@ import {
   Clock,
   Cloud,
   Code2,
+  Copy,
   Database,
   Gauge,
   GraduationCap,
   History,
   Layers,
   Library,
+  Network,
   Radar,
   Server,
   ShieldCheck,
   Target,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +38,7 @@ import { DifficultyChart } from "./difficulty-chart";
 import { SandboxPreview } from "./sandbox-preview";
 import { getLocalizedModules } from "@/lib/content-i18n";
 import { certificationTracks, pick } from "@/lib/certification-tracks";
+import type { TrackId } from "@/lib/certification-tracks";
 
 // Mirrors the constants in app/(app)/exam/page.tsx — kept in sync manually
 // since that file doesn't export them.
@@ -91,6 +95,16 @@ function buildFeatures(t: Dictionary, locale: Locale, questionCount: number) {
     { icon: Library, title: t.marketing.feature6Title, description: t.marketing.feature6Desc },
   ];
 }
+
+/** Une icone par parcours, dans l'ordre de progression professionnelle. */
+const TRACK_ICON: Record<TrackId, LucideIcon> = {
+  "oca-sql": Database,
+  "ocp-dba-i": GraduationCap,
+  "ocp-dba-ii": ShieldCheck,
+  "ocp-tuning": Gauge,
+  "ocp-dataguard": Copy,
+  "ocp-rac": Network,
+};
 
 export default function LandingPage() {
   const locale = getLocale();
@@ -557,10 +571,10 @@ export default function LandingPage() {
               <Image
                 src="/art/oracle-certification-path.svg"
                 alt={locale === "en"
-                  ? "Oracle Database certification path: 1Z0-071, then 1Z0-082 and 1Z0-083"
-                  : "Parcours de certification Oracle Database : 1Z0-071, puis 1Z0-082 et 1Z0-083"}
+                  ? "Oracle Database certification path: 1Z0-071, then 1Z0-082 and 1Z0-083, then the 1Z0-084, 1Z0-076 and 1Z0-078 specialisations"
+                  : "Parcours de certification Oracle Database : 1Z0-071, puis 1Z0-082 et 1Z0-083, puis les spécialisations 1Z0-084, 1Z0-076 et 1Z0-078"}
                 width={1400}
-                height={520}
+                height={620}
                 sizes="(max-width: 1024px) 100vw, 64rem"
                 className="h-auto w-full"
               />
@@ -568,11 +582,9 @@ export default function LandingPage() {
           </figure>
 
           <div className="mx-auto mt-6 grid max-w-5xl grid-cols-1 gap-4 md:grid-cols-3">
-            {[
-              { track: certificationTracks[0], icon: Database },
-              { track: certificationTracks[1], icon: GraduationCap },
-              { track: certificationTracks[2], icon: ShieldCheck },
-            ].map(({ track, icon: Icon }) => (
+            {certificationTracks.map((track) => {
+              const Icon = TRACK_ICON[track.id] ?? Database;
+              return (
               <Link
                 key={track.id}
                 href={`/tracks/${track.id}`}
@@ -591,7 +603,8 @@ export default function LandingPage() {
                   <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                 </span>
               </Link>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -601,15 +614,15 @@ export default function LandingPage() {
         <div className="mb-8 max-w-2xl">
           <Badge variant="secondary" className="gap-1.5">
             <ShieldCheck className="h-3 w-3 text-primary" />
-            OCP I &amp; OCP II
+            {locale === "en" ? "Administration & specialisations" : "Administration & spécialisations"}
           </Badge>
           <h2 className="mt-4 text-2xl font-bold lg:text-3xl">
             {locale === "en" ? "Inside Oracle Database administration" : "Dans les coulisses de l'administration Oracle Database"}
           </h2>
           <p className="mt-2 max-w-2xl text-muted-foreground">
             {locale === "en"
-              ? "A preview of the topics covered by the two Professional exams: instance architecture, user security, and RMAN backup and recovery."
-              : "Un aperçu des thèmes couverts par les deux examens Professional : architecture de l'instance, sécurité des utilisateurs, et sauvegarde-restauration RMAN."}
+              ? "A preview of the six exam tracks: instance architecture, user security, RMAN backup and recovery, then performance tuning, Data Guard and Real Application Clusters."
+              : "Un aperçu des six parcours d'examen : architecture de l'instance, sécurité des utilisateurs, sauvegarde-restauration RMAN, puis optimisation, Data Guard et Real Application Clusters."}
           </p>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
@@ -637,6 +650,30 @@ export default function LandingPage() {
                 : "Cycle de sauvegarde et restauration RMAN",
               label: locale === "en" ? "RMAN backup & recovery" : "Sauvegarde & restauration RMAN",
               track: "ocp-dba-ii",
+            },
+            {
+              src: "/art/oracle-tuning-awr.svg",
+              alt: locale === "en"
+                ? "Oracle performance tuning: time model, wait classes, AWR, ASH and ADDM"
+                : "Optimisation Oracle : modèle de temps, classes d'attente, AWR, ASH et ADDM",
+              label: locale === "en" ? "Performance & tuning" : "Performance & optimisation",
+              track: "ocp-tuning",
+            },
+            {
+              src: "/art/oracle-dataguard.svg",
+              alt: locale === "en"
+                ? "Oracle Data Guard: primary, Far Sync instance and physical standby"
+                : "Oracle Data Guard : base principale, instance Far Sync et base de secours physique",
+              label: locale === "en" ? "Data Guard & failover" : "Data Guard & bascule",
+              track: "ocp-dataguard",
+            },
+            {
+              src: "/art/oracle-rac-cluster.svg",
+              alt: locale === "en"
+                ? "Oracle RAC: two instances, Cache Fusion interconnect and shared ASM storage"
+                : "Oracle RAC : deux instances, interconnexion Cache Fusion et stockage ASM partagé",
+              label: locale === "en" ? "RAC, ASM & Grid" : "RAC, ASM & Grid",
+              track: "ocp-rac",
             },
           ].map((visual, index) => (
             <Link

@@ -35,6 +35,25 @@ const ACCENTS: Record<string, { ring: string; chip: string; icon: string; bar: s
     icon: "bg-amber-500/10 text-amber-600 dark:text-amber-300",
     bar: "[&>div]:bg-amber-500",
   },
+
+  rose: {
+    ring: "hover:border-rose-500/60 focus-visible:ring-rose-500/40",
+    chip: "bg-rose-500/10 text-rose-600 border-rose-500/25 dark:text-rose-300",
+    icon: "bg-rose-500/10 text-rose-600 dark:text-rose-300",
+    bar: "[&>div]:bg-rose-500",
+  },
+  violet: {
+    ring: "hover:border-violet-500/60 focus-visible:ring-violet-500/40",
+    chip: "bg-violet-500/10 text-violet-600 border-violet-500/25 dark:text-violet-300",
+    icon: "bg-violet-500/10 text-violet-600 dark:text-violet-300",
+    bar: "[&>div]:bg-violet-500",
+  },
+  teal: {
+    ring: "hover:border-teal-500/60 focus-visible:ring-teal-500/40",
+    chip: "bg-teal-500/10 text-teal-600 border-teal-500/25 dark:text-teal-300",
+    icon: "bg-teal-500/10 text-teal-600 dark:text-teal-300",
+    bar: "[&>div]:bg-teal-500",
+  },
 };
 
 export default async function TracksPage() {

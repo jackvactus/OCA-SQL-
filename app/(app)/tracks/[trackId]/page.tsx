@@ -6,6 +6,7 @@ import {
   BookOpen,
   Brain,
   Check,
+  ChevronRight,
   ExternalLink,
   GraduationCap,
   Info,
@@ -18,7 +19,15 @@ import { Progress } from "@/components/ui/progress";
 import { getSessionUser } from "@/lib/auth/session";
 import { getLocale } from "@/lib/i18n/get-locale";
 import { dictionary } from "@/lib/i18n/dictionary";
-import { certificationTracks, getTrack, isDomainCovered, pick, trackCoverage } from "@/lib/certification-tracks";
+import {
+  certificationTracks,
+  domainObjectives,
+  getTrack,
+  isDomainCovered,
+  objectiveCount,
+  pick,
+  trackCoverage,
+} from "@/lib/certification-tracks";
 import { curricula, findSession } from "@/lib/curricula";
 import { tr } from "@/lib/course-oca-sql";
 import { getLocalizedModules } from "@/lib/content-i18n";
@@ -151,7 +160,14 @@ export default async function TrackDetailPage({ params }: { params: { trackId: s
       {/* Programme officiel */}
       <section className="space-y-5">
         <div>
-          <h2 className="text-xl font-bold">{t.tracks.domainsTitle}</h2>
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="text-xl font-bold">{t.tracks.domainsTitle}</h2>
+            {objectiveCount(track) > 0 ? (
+              <Badge variant="outline" className="font-mono text-xs">
+                {objectiveCount(track)} {t.tracks.objectivesTotal}
+              </Badge>
+            ) : null}
+          </div>
           <p className="mt-1.5 flex items-start gap-2 text-sm text-muted-foreground">
             <Info className="mt-0.5 h-4 w-4 shrink-0" />
             {t.tracks.domainsNote}
@@ -167,11 +183,10 @@ export default async function TrackDetailPage({ params }: { params: { trackId: s
               <ul className="divide-y divide-border">
                 {group.domains.map((domain) => {
                   const covered = isDomainCovered(domain);
+                  const official = domainObjectives(track, domain);
                   return (
-                    <li
-                      key={domain.title}
-                      className="flex flex-wrap items-center justify-between gap-3 px-6 py-3"
-                    >
+                    <li key={domain.title} className="px-6 py-3">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
                       <div className="flex min-w-0 items-center gap-3">
                         <span
                           className={cn(
@@ -184,7 +199,14 @@ export default async function TrackDetailPage({ params }: { params: { trackId: s
                         >
                           {covered ? <Check className="h-3.5 w-3.5" /> : <Minus className="h-3.5 w-3.5" />}
                         </span>
-                        <span className="min-w-0 text-sm font-medium">{domain.title}</span>
+                        <span className="min-w-0">
+                          <span className="block text-sm font-medium">{domain.title}</span>
+                          {locale !== "en" && official?.titleFr ? (
+                            <span className="block text-xs text-muted-foreground">
+                              {official.titleFr}
+                            </span>
+                          ) : null}
+                        </span>
                         <span className="sr-only">
                           {covered ? t.tracks.covered : t.tracks.notCovered}
                         </span>
@@ -232,6 +254,29 @@ export default async function TrackDetailPage({ params }: { params: { trackId: s
                           {t.tracks.notCovered}
                         </span>
                       )}
+                    </div>
+                    {official ? (
+                      <details className="group/obj mt-2">
+                        <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 rounded-md px-1 py-0.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+                          <ChevronRight className="h-3.5 w-3.5 transition-transform group-open/obj:rotate-90" />
+                          {t.tracks.objectivesLabel}
+                          <span className="font-mono">({official.objectives.length})</span>
+                        </summary>
+                        <ul className="ml-5 mt-2 space-y-1.5 border-l border-border pl-4">
+                          {official.objectives.map((objective) => (
+                            <li key={objective.en} className="text-xs leading-relaxed">
+                              <span className="text-foreground">{objective.en}</span>
+                              {locale !== "en" ? (
+                                <span className="block text-muted-foreground">{objective.fr}</span>
+                              ) : null}
+                            </li>
+                          ))}
+                        </ul>
+                        <p className="ml-5 mt-2 pl-4 text-[11px] text-muted-foreground">
+                          {t.tracks.objectivesSource} : {official.source}
+                        </p>
+                      </details>
+                    ) : null}
                     </li>
                   );
                 })}

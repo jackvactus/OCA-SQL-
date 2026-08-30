@@ -34,6 +34,22 @@ const ACCENT: Record<string, { badge: string; num: string; ring: string }> = {
     num: "bg-amber-500/10 text-amber-600 dark:text-amber-300",
     ring: "hover:border-amber-500/50",
   },
+
+  rose: {
+    badge: "bg-rose-500/10 text-rose-600 border-rose-500/25 dark:text-rose-300",
+    num: "bg-rose-500/10 text-rose-600 dark:text-rose-300",
+    ring: "hover:border-rose-500/50",
+  },
+  violet: {
+    badge: "bg-violet-500/10 text-violet-600 border-violet-500/25 dark:text-violet-300",
+    num: "bg-violet-500/10 text-violet-600 dark:text-violet-300",
+    ring: "hover:border-violet-500/50",
+  },
+  teal: {
+    badge: "bg-teal-500/10 text-teal-600 border-teal-500/25 dark:text-teal-300",
+    num: "bg-teal-500/10 text-teal-600 dark:text-teal-300",
+    ring: "hover:border-teal-500/50",
+  },
 };
 
 export default async function CurriculumPage() {

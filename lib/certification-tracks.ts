@@ -1,4 +1,6 @@
 import type { Locale } from "./i18n/locale";
+import { advancedTracks } from "./certification-tracks-advanced";
+import { objectivesFor, type DomainObjectives } from "./exam-objectives";
 
 /**
  * Parcours de certification Oracle Database proposés par la plateforme.
@@ -14,7 +16,13 @@ import type { Locale } from "./i18n/locale";
  * explicitement plutôt que de laisser croire à une couverture complète.
  */
 
-export type TrackId = "oca-sql" | "ocp-dba-i" | "ocp-dba-ii";
+export type TrackId =
+  | "oca-sql"
+  | "ocp-dba-i"
+  | "ocp-dba-ii"
+  | "ocp-tuning"
+  | "ocp-dataguard"
+  | "ocp-rac";
 export type TrackStatus = "available" | "syllabus";
 
 export interface TrackDomain {
@@ -62,7 +70,7 @@ export interface CertificationTrack {
   groups: TrackGroup[];
 }
 
-export const certificationTracks: CertificationTrack[] = [
+const foundationTracks: CertificationTrack[] = [
   {
     id: "oca-sql",
     shortLabel: "OCA SQL",
@@ -137,7 +145,7 @@ export const certificationTracks: CertificationTrack[] = [
     id: "ocp-dba-i",
     shortLabel: "OCP I",
     examCode: "1Z0-082",
-    certification: "Oracle Database Administration Certified Professional",
+    certification: "Oracle Database Administration 2019 Certified Professional",
     examTitle: "Oracle Database Administration I",
     title: {
       fr: "Administration Oracle Database I",
@@ -152,7 +160,7 @@ export const certificationTracks: CertificationTrack[] = [
       en: "Junior database administrators and developers broadening their scope.",
     },
     questions: 72,
-    durationMinutes: 150,
+    durationMinutes: 120,
     passScorePercent: 60,
     priceUsd: 245,
     status: "available",
@@ -209,7 +217,7 @@ export const certificationTracks: CertificationTrack[] = [
     id: "ocp-dba-ii",
     shortLabel: "OCP II",
     examCode: "1Z0-083",
-    certification: "Oracle Database Administration Certified Professional",
+    certification: "Oracle Database Administration 2019 Certified Professional",
     examTitle: "Oracle Database Administration II",
     title: {
       fr: "Administration Oracle Database II",
@@ -224,8 +232,8 @@ export const certificationTracks: CertificationTrack[] = [
       en: "Experienced administrators aiming for the full Professional certification.",
     },
     questions: 68,
-    durationMinutes: 150,
-    passScorePercent: 60,
+    durationMinutes: 120,
+    passScorePercent: 57,
     priceUsd: 245,
     status: "available",
     accent: "amber",
@@ -275,6 +283,16 @@ export const certificationTracks: CertificationTrack[] = [
           { title: "Tuning SQL Statements", moduleIds: ["m11"], sessionIds: ["ocp2-session-9"] },
         ],
       },
+      {
+        label: { fr: "Nouveautes 18c / 19c", en: "18c / 19c new features" },
+        domains: [
+          { title: "Oracle Database 18c: New Features", moduleIds: [], sessionIds: ["ocp2-session-8"] },
+          { title: "Installing Grid Infrastructure for a Standalone server", moduleIds: [], sessionIds: ["ocp2-session-8"] },
+          { title: "General Database Enhancements", moduleIds: [], sessionIds: ["ocp2-session-8"] },
+          { title: "Using Availability Enhancements", moduleIds: [], sessionIds: ["ocp2-session-6"] },
+          { title: "Using Diagnosability Enhancements", moduleIds: [], sessionIds: ["ocp2-session-5"] },
+        ],
+      },
     ],
   },
 ];
@@ -285,6 +303,25 @@ export function getTrack(id: string): CertificationTrack | undefined {
 
 export function allDomains(track: CertificationTrack): TrackDomain[] {
   return track.groups.flatMap((group) => group.domains);
+}
+
+/**
+ * Objectifs d'examen officiels rattaches a un domaine, s'ils sont publies par
+ * Oracle pour cette epreuve (`lib/exam-objectives.ts`).
+ */
+export function domainObjectives(
+  track: CertificationTrack,
+  domain: TrackDomain,
+): DomainObjectives | undefined {
+  return objectivesFor(track.examCode, domain.title);
+}
+
+/** Nombre total d'objectifs officiels detailles publies pour un parcours. */
+export function objectiveCount(track: CertificationTrack): number {
+  return allDomains(track).reduce(
+    (sum, domain) => sum + (domainObjectives(track, domain)?.objectives.length ?? 0),
+    0,
+  );
 }
 
 /** Part des domaines d'examen effectivement couverts par des modules du site. */
@@ -305,3 +342,12 @@ export function trackCoverage(track: CertificationTrack): {
 export function pick(value: { fr: string; en: string }, locale: Locale): string {
   return locale === "en" ? value.en : value.fr;
 }
+
+/**
+ * Les six parcours, dans l'ordre de progression professionnelle :
+ * SQL → administration → administration avancée → spécialisations.
+ */
+export const certificationTracks: CertificationTrack[] = [
+  ...foundationTracks,
+  ...advancedTracks,
+];

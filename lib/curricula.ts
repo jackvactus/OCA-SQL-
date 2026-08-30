@@ -2,15 +2,24 @@ import type { Bilingual, CourseSession } from "./course-oca-sql";
 import { courseSessions as ocaSessions, courseMeta as ocaMeta } from "./course-oca-sql";
 import { ocp1Sessions } from "./course-ocp1";
 import { ocp2Sessions } from "./course-ocp2";
+import { tuningSessions } from "./course-tuning";
+import { dataGuardSessions } from "./course-dataguard";
+import { racSessions } from "./course-rac";
 import type { TrackId } from "./certification-tracks";
 import { sessionExtras } from "./course-extras";
 import { sessionLabs } from "./course-labs";
+import { advancedSessionExtras } from "./course-extras-advanced";
+import { advancedSessionLabs } from "./course-labs-advanced";
+
+/** Extras et TP de tous les cursus, fondamentaux et specialisations confondus. */
+const allExtras = { ...sessionExtras, ...advancedSessionExtras };
+const allLabs = { ...sessionLabs, ...advancedSessionLabs };
 
 /** Rattache à chaque session ses points à retenir et ses questions de contrôle. */
 function withExtras(sessions: CourseSession[]): CourseSession[] {
   return sessions.map((session) => {
-    const extras = sessionExtras[session.id];
-    const labs = sessionLabs[session.id];
+    const extras = allExtras[session.id];
+    const labs = allLabs[session.id];
     if (!extras && !labs) return session;
     return {
       ...session,
@@ -20,14 +29,17 @@ function withExtras(sessions: CourseSession[]): CourseSession[] {
   });
 }
 
-/** Registre des trois cursus de la plateforme. */
+/** Couleur d'accent d'un cursus, alignee sur `certificationTracks`. */
+export type CurriculumAccent = "primary" | "sky" | "amber" | "rose" | "violet" | "teal";
+
+/** Registre des six cursus de la plateforme. */
 export interface Curriculum {
   id: TrackId;
   examCode: string;
   shortLabel: string;
   title: Bilingual;
   subtitle: Bilingual;
-  accent: "primary" | "sky" | "amber";
+  accent: CurriculumAccent;
   sessions: CourseSession[];
 }
 
@@ -70,6 +82,51 @@ export const curricula: Curriculum[] = [
     },
     accent: "amber",
     sessions: withExtras(ocp2Sessions),
+  },
+  {
+    id: "ocp-tuning",
+    examCode: "1Z0-084",
+    shortLabel: "Tuning",
+    title: {
+      fr: "Gestion et optimisation des performances Oracle 19c",
+      en: "Oracle Database 19c performance management and tuning",
+    },
+    subtitle: {
+      fr: "Methodologie, modele de temps, AWR, ASH, ADDM, plans d'execution, statistiques, conseillers, memoire, Statspack et In-Memory — l'integralite du 1Z0-084.",
+      en: "Methodology, time model, AWR, ASH, ADDM, execution plans, statistics, advisors, memory, Statspack and In-Memory — the whole of 1Z0-084.",
+    },
+    accent: "rose",
+    sessions: withExtras(tuningSessions),
+  },
+  {
+    id: "ocp-dataguard",
+    examCode: "1Z0-076",
+    shortLabel: "Data Guard",
+    title: {
+      fr: "Administration Oracle Data Guard 19c",
+      en: "Oracle Data Guard 19c administration",
+    },
+    subtitle: {
+      fr: "Architecture, creation d'une base de secours, modes de protection, Active Data Guard, Far Sync, Broker, transitions de role, Flashback et continuite applicative — l'integralite du 1Z0-076.",
+      en: "Architecture, standby creation, protection modes, Active Data Guard, Far Sync, the Broker, role transitions, Flashback and application continuity — the whole of 1Z0-076.",
+    },
+    accent: "violet",
+    sessions: withExtras(dataGuardSessions),
+  },
+  {
+    id: "ocp-rac",
+    examCode: "1Z0-078",
+    shortLabel: "RAC & Grid",
+    title: {
+      fr: "Clusterware, ASM et Real Application Clusters 19c",
+      en: "Clusterware, ASM and Real Application Clusters 19c",
+    },
+    subtitle: {
+      fr: "Grid Infrastructure, CRSCTL et SRVCTL, OCR et voting disks, ASM, ACFS, Cache Fusion, services, SCAN, correctifs progressifs et depannage — l'integralite du 1Z0-078.",
+      en: "Grid Infrastructure, CRSCTL and SRVCTL, OCR and voting disks, ASM, ACFS, Cache Fusion, services, SCAN, rolling patches and troubleshooting — the whole of 1Z0-078.",
+    },
+    accent: "teal",
+    sessions: withExtras(racSessions),
   },
 ];
 
