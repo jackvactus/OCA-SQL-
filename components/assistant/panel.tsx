@@ -67,14 +67,24 @@ export function AssistantPanel({
       role="dialog"
       aria-modal="false"
       aria-label={s.title}
-      // `hidden` plutôt qu'un démontage : le fil de discussion et la position
-      // du défilement survivent à une fermeture.
-      hidden={!open}
+      // Le panneau reste monté — le fil de discussion et la position du
+      // défilement survivent à une fermeture — mais l'affichage est piloté par
+      // un style en ligne, PAS par l'attribut `hidden`.
+      //
+      // L'attribut seul ne suffisait pas : `[hidden] { display: none }` vient
+      // de la feuille du navigateur, et la classe utilitaire `flex` est une
+      // règle d'auteur, donc prioritaire. Le panneau restait affiché en
+      // permanence et son calque interceptait les clics dans tout le coin
+      // inférieur droit de chaque page.
+      aria-hidden={!open}
       className={cn(
-        "flex w-[min(24rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-border",
+        "w-[min(24rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-border",
         "bg-card shadow-2xl shadow-black/20 animate-scale-in",
       )}
-      style={{ maxHeight: "min(32rem, calc(100vh - 8rem))" }}
+      style={{
+        display: open ? "flex" : "none",
+        maxHeight: "min(32rem, calc(100vh - 8rem))",
+      }}
     >
       {/* En-tête */}
       <div className="flex items-start justify-between gap-2 border-b border-border bg-gradient-to-br from-primary/10 to-transparent px-4 py-3">

@@ -166,16 +166,16 @@ export default async function TracksPage() {
             </div>
           </div>
           <div className="flex shrink-0 flex-wrap gap-2">
-            <a
-              href="https://education.oracle.com/oracle-certification-path/pFamily_32"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button variant="outline" size="sm" className="gap-1.5">
-                <ExternalLink className="h-3.5 w-3.5" />
+            <Button asChild variant="outline" size="sm" className="gap-1.5">
+              <a
+                href="https://education.oracle.com/oracle-certification-path/pFamily_32"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <ExternalLink className="h-3.5 w-3.5" aria-hidden />
                 Oracle University
-              </Button>
-            </a>
+              </a>
+            </Button>
             <Button asChild size="sm" variant="ghost" className="gap-1.5">
               <Link href="/courses">
                 <BookOpen className="h-3.5 w-3.5" />

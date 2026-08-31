@@ -45,6 +45,7 @@ import { PRACTICE_RESOURCES } from "@/lib/external-resources";
 // à faire dans un composant d'interface.
 import { runQuery, schema, type QueryResult } from "@/lib/sql-sandbox";
 import { sampleQueries, pickSample } from "@/lib/sql-sandbox/samples";
+import { VoiceSql } from "@/components/voice/voice-sql";
 
 /* ------------------------------------------------------------------ */
 /*  Sample queries                                                     */
@@ -202,6 +203,21 @@ export default function SandboxPage() {
     setResult(null);
     requestAnimationFrame(() => textareaRef.current?.focus());
   };
+
+  /**
+   * Charge une requête dans l'éditeur **et l'exécute**.
+   *
+   * Utilisée par la dictée vocale : la requête traduite est déjà vérifiée par
+   * `voiceToSql`, et voir immédiatement le résultat est ce qui fait le lien
+   * entre la phrase prononcée et le SQL correspondant.
+   */
+  const chargerRequete = useCallback(
+    (sql: string) => {
+      setQuery(sql);
+      executerRequete(sql);
+    },
+    [executerRequete],
+  );
 
   const copyQuery = async () => {
     try {
@@ -390,6 +406,11 @@ export default function SandboxPage() {
                       className="relative h-64 w-full resize-y bg-transparent py-4 pl-4 pr-4 font-mono text-sm leading-relaxed text-white/90 caret-sky-400 outline-none placeholder:text-white/30"
                     />
                   </div>
+                </div>
+
+                {/* Commande vocale : parler, voir la traduction, exécuter. */}
+                <div className="border-t border-border/60 bg-muted/20 p-3">
+                  <VoiceSql onQuery={chargerRequete} />
                 </div>
               </CardContent>
             </Card>

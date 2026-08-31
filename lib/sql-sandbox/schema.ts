@@ -12,6 +12,18 @@ export type SchemaTable = {
 };
 
 export const schema: Record<string, SchemaTable> = {
+  /**
+   * Table à une ligne et une colonne d'Oracle.
+   *
+   * Elle manquait, et trente-deux exemples du cours échouaient dessus :
+   * `SELECT SYSDATE FROM dual`, `SELECT 1 FROM dual`, toute évaluation d'une
+   * expression sans table passe par elle. Sa définition est celle d'Oracle —
+   * une colonne `DUMMY` de type VARCHAR2(1) contenant « X ».
+   */
+  dual: {
+    columns: ["DUMMY"],
+    data: [["X"]],
+  },
   employees: {
     columns: [
       "EMPLOYEE_ID",

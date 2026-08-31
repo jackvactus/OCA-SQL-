@@ -80,7 +80,9 @@ export function Assistant() {
 
   return (
     <div className="pointer-events-none fixed bottom-4 right-4 z-40 flex flex-col items-end gap-3">
-      <div className="pointer-events-auto">
+      {/* Panneau fermé : le calque ne doit capter aucun clic, sans quoi il
+          neutralise tout ce qui se trouve sous lui dans le coin de la page. */}
+      <div className={open ? "pointer-events-auto" : "pointer-events-none"}>
         <AssistantPanel
           id={panelId}
           open={open}

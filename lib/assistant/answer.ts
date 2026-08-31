@@ -1,100 +1,146 @@
-import type { AssistantAnswer, AssistantContext } from "./types";
+import { runQuery } from "../sql-sandbox";
+import { chercher } from "./search";
+import type { AssistantAnswer, AssistantContext, AssistantSource, AssistantSql } from "./types";
 
 /**
- * ═══════════════════════════════════════════════════════════════════════════
- *  POINT D'EXTENSION — c'est ici que se branche la logique de réponse.
- * ═══════════════════════════════════════════════════════════════════════════
+ * Production de la réponse.
  *
- * Tout le reste est fourni : le point lumineux, le panneau, le rendu du SQL
- * avec exécution dans le bac à sable, la transcription persistée, l'audit et
- * la limitation de débit. Il ne manque que la production de la réponse.
+ * L'assistant **cite le cours** : il cherche les passages qui traitent de la
+ * question dans les 57 sessions, les 792 questions corrigées, les 455 objectifs
+ * officiels et la référence, puis restitue le meilleur avec ses sources.
  *
- * ---------------------------------------------------------------------------
- * COMMENT LA BRANCHER
- * ---------------------------------------------------------------------------
- *
- * Remplacez le corps de `answerQuestion` ci-dessous. La fonction s'exécute
- * **côté serveur** (appelée depuis `app/api/assistant/ask/route.ts`) : une clé
- * d'API lue dans `process.env` n'atteint jamais le navigateur.
- *
- *   export async function answerQuestion(
- *     question: string,
- *     context: AssistantContext,
- *   ): Promise<AssistantAnswer> {
- *     const reponse = await fetch("https://…", {
- *       method: "POST",
- *       headers: {
- *         "content-type": "application/json",
- *         authorization: `Bearer ${process.env.ASSISTANT_API_KEY}`,
- *       },
- *       body: JSON.stringify({ question, contexte: context }),
- *     });
- *     const donnees = await reponse.json();
- *     return {
- *       text: donnees.texte,
- *       sources: donnees.sources ?? [],
- *       sql: donnees.sql ?? [],
- *     };
- *   }
+ * Ce choix est délibéré. Un modèle de langue produirait des phrases plus
+ * fluides, mais rien ne garantirait qu'elles soient vraies ; sur une
+ * plateforme de certification, une affirmation fausse mais assurée coûte un
+ * examen. Une citation du cours est vérifiable d'un clic.
  *
  * ---------------------------------------------------------------------------
- * CE QUE VOUS AVEZ SOUS LA MAIN POUR ANCRER LES RÉPONSES
+ * POINT D'EXTENSION — brancher un modèle par-dessus
  * ---------------------------------------------------------------------------
  *
- * Répondre à partir du contenu de la plateforme plutôt que de la mémoire d'un
- * modèle évite l'invention — décisive sur une plateforme de certification, où
- * une réponse fausse mais assurée coûte un examen.
+ * `chercher()` reste utile même avec un modèle : il fournit le contexte à
+ * citer. La forme recommandée est la génération augmentée par recherche —
+ * passer les passages au modèle et lui interdire de sortir de ce cadre :
  *
- *   import { curricula, findSession } from "@/lib/curricula";
- *       → 57 sessions, 173 chapitres, leurs blocs de cours
- *   import { allQuestions } from "@/lib/quiz-banks";
- *       → 792 questions avec leurs explications
- *   import { certificationTracks } from "@/lib/certification-tracks";
- *   import { objectivesFor } from "@/lib/exam-objectives";
- *       → les 455 objectifs officiels des six examens
- *   import { modules } from "@/lib/modules-data";
- *       → les 18 modules et leurs leçons
- *   import { runQuery, schema } from "@/lib/sql-sandbox";
- *       → pour VÉRIFIER une requête avant de la proposer
+ *   const trouves = chercher(question, context.locale, context.track, 6);
+ *   const contexte = trouves.map((r) => `${r.passage.title}\n${r.passage.body}`).join("\n\n---\n\n");
+ *   const reponse = await fetch("https://…", {
+ *     method: "POST",
+ *     headers: {
+ *       "content-type": "application/json",
+ *       authorization: `Bearer ${process.env.ASSISTANT_API_KEY}`,
+ *     },
+ *     body: JSON.stringify({ question, contexte }),
+ *   });
  *
- * Le dernier point mérite qu'on s'y arrête : exécuter la requête suggérée
- * avant de la renvoyer, et ne la marquer `runnable` que si elle passe, évite
- * de proposer du SQL qui échouera sous les yeux de l'apprenant.
+ * La fonction s'exécute côté serveur : une clé lue dans `process.env`
+ * n'atteint jamais le navigateur. Elle peut lever, la route traduit l'erreur.
  *
- * ---------------------------------------------------------------------------
- * CONTRAT À RESPECTER
- * ---------------------------------------------------------------------------
- *
- *  - Répondre dans `context.locale`.
- *  - Citer ses sources : une réponse sans lien vérifiable n'a pas sa place ici.
- *  - Ne jamais renvoyer `unavailable: false` avec un texte inventé. En cas de
- *    doute, dire qu'on ne sait pas.
- *  - La fonction peut lever : la route traduit l'erreur proprement.
+ * Contrat à tenir dans tous les cas : répondre dans `context.locale`, citer
+ * ses sources, et dire qu'on ne sait pas plutôt que d'inventer.
  */
+
+/** En dessous, la meilleure correspondance ne vaut pas mieux que du hasard. */
+const SEUIL = 0.08;
+
+/** Longueur maximale d'une citation, avant coupe sur une fin de phrase. */
+const CITATION_MAX = 900;
+
+/** Coupe proprement : on préfère finir sur une phrase que sur un mot tronqué. */
+function citer(texte: string): string {
+  const propre = texte.replace(/\n{3,}/g, "\n\n").trim();
+  if (propre.length <= CITATION_MAX) return propre;
+
+  const coupe = propre.slice(0, CITATION_MAX);
+  const fin = Math.max(coupe.lastIndexOf(". "), coupe.lastIndexOf("\n"), coupe.lastIndexOf(" ; "));
+  return `${(fin > CITATION_MAX * 0.5 ? coupe.slice(0, fin + 1) : coupe).trim()}…`;
+}
+
+/**
+ * Une requête n'est proposée comme exécutable que si elle passe réellement
+ * dans le moteur du bac à sable. Proposer un bouton « exécuter » qui échoue
+ * sous les yeux de l'apprenant est pire que ne pas le proposer.
+ */
+function verifier(requete: string): AssistantSql | null {
+  const nettoyee = requete.trim().replace(/;\s*$/, "");
+
+  // Le cours illustre aussi des tables qui n'existent pas dans le schéma HR
+  // simulé (`comm`, `emp`, vues d'administration). Un extrait qui ne tourne
+  // pas n'est pas proposé du tout : un bouton « exécuter » qui échoue sous
+  // les yeux de l'apprenant est pire que pas de bouton.
+  if (!/^\s*(SELECT|WITH)\b/i.test(nettoyee)) return null;
+  if (!/\bFROM\b/i.test(nettoyee)) return null;
+  if (runQuery(nettoyee).error) return null;
+
+  return { query: nettoyee, runnable: true };
+}
+
 export async function answerQuestion(
   question: string,
   context: AssistantContext,
 ): Promise<AssistantAnswer> {
-  // Les deux paramètres sont volontairement inutilisés tant que rien n'est
-  // branché — les nommer documente la signature attendue.
-  void question;
-
   const en = context.locale === "en";
+  // Douze résultats, pas quatre : les quatre premiers font les sources, et les
+  // suivants servent uniquement à trouver un extrait SQL. La meilleure réponse
+  // est souvent une question corrigée ou un point de contrôle, qui n'embarque
+  // aucun code, alors qu'un passage de cours juste derrière en contient un.
+  const trouves = chercher(question, context.locale, context.track, 12);
+
+  if (trouves.length === 0 || trouves[0].score < SEUIL) {
+    return {
+      text: en
+        ? "I could not find a passage in the course that answers this. Try naming the SQL clause or the Oracle concept directly — for example “GROUP BY”, “outer join”, “NULL in NOT IN”, “ORA-00934”. The reference page also lists the glossary and the single-row functions."
+        : "Je n'ai pas trouvé dans le cours de passage qui réponde à cette question. Essayez de nommer directement la clause SQL ou la notion Oracle — par exemple « GROUP BY », « jointure externe », « NULL dans NOT IN », « ORA-00934 ». La page de référence contient aussi le glossaire et les fonctions mono-ligne.",
+      sources: [
+        {
+          label: en ? "Reference — glossary and functions" : "Référence — glossaire et fonctions",
+          href: "/reference",
+          kind: "reference",
+        },
+      ],
+      sql: [],
+    };
+  }
+
+  const meilleur = trouves[0].passage;
+
+  const sources: AssistantSource[] = trouves.slice(0, 4).map((r) => ({
+    label: r.passage.title,
+    href: r.passage.href,
+    kind: r.passage.kind,
+  }));
+
+  // Deux extraits au plus : au-delà, la réponse devient un copier-coller du
+  // cours et l'apprenant ferait mieux d'ouvrir la source.
+  const sql: AssistantSql[] = [];
+  const dejaVues = new Set<string>();
+  for (const { passage } of trouves) {
+    for (const requete of passage.sql.slice(0, 4)) {
+      const verifiee = verifier(requete);
+      if (!verifiee || dejaVues.has(verifiee.query)) continue;
+      dejaVues.add(verifiee.query);
+      if (sql.length === 0 && passage.sqlCaption) verifiee.caption = passage.sqlCaption;
+      sql.push(verifiee);
+      if (sql.length === 2) break;
+    }
+    if (sql.length === 2) break;
+  }
+
+  const entete = en
+    ? `From the course — ${meilleur.title}:`
+    : `D'après le cours — ${meilleur.title} :`;
 
   return {
-    unavailable: true,
-    text: en
-      ? "No answering logic is connected yet. The assistant interface, transcript and audit trail are in place; what remains is to implement `answerQuestion` in lib/assistant/answer.ts — the file explains how, and lists the platform content available to ground answers."
-      : "Aucune logique de réponse n'est encore branchée. L'interface de l'assistant, la transcription et la piste d'audit sont en place ; il reste à implémenter `answerQuestion` dans lib/assistant/answer.ts — le fichier explique comment, et liste les contenus de la plateforme sur lesquels ancrer les réponses.",
-    sources: [],
-    sql: [],
+    text: `${entete}\n\n${citer(meilleur.body)}`,
+    sources,
+    sql,
   };
 }
 
-/** Vrai si une logique de réponse est branchée — l'interface s'y adapte. */
+/**
+ * Vrai : l'assistant répond à partir du contenu de la plateforme, sans clé
+ * d'API ni service externe.
+ */
 export function isAssistantConfigured(): boolean {
-  // À faire passer à `true` en même temps que l'implémentation ci-dessus, ou
-  // à dériver d'une variable d'environnement :
-  //   return Boolean(process.env.ASSISTANT_API_KEY);
-  return false;
+  return true;
 }

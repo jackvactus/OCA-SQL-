@@ -19,6 +19,12 @@ import {
 import { schema, type SchemaTable } from "./schema";
 
 /**
+ * Formes qu'Oracle accepte sans parenthèses. Elles restent des fonctions dans
+ * le registre ; c'est seulement leur écriture nue qu'on autorise ici.
+ */
+const PSEUDO_COLONNES = new Set(["SYSDATE", "CURRENT_DATE", "SYSTIMESTAMP", "USER"]);
+
+/**
  * Évaluation du sous-ensemble SQL du bac à sable.
  *
  * L'ordre d'exécution reproduit celui d'Oracle, et c'est le point pédagogique
@@ -126,6 +132,15 @@ export function evaluer(expr: Expression, ctx: Contexte): Valeur {
       if (ctx.ligne.valeurs.has(cle)) return ctx.ligne.valeurs.get(cle)!;
       // La ligne interne prime ; la requête englobante ne sert qu'en secours.
       if (ctx.exterieur?.valeurs.has(cle)) return ctx.exterieur.valeurs.get(cle)!;
+
+      // Pseudo-colonnes d'Oracle : SYSDATE, SYSTIMESTAMP, USER s'écrivent sans
+      // parenthèses. Elles existent déjà comme fonctions sans argument ; sans
+      // ce renvoi, `SELECT SYSDATE FROM dual` — la forme qu'emploie le cours —
+      // échouait sur « identificateur non valide ».
+      if (!expr.table && PSEUDO_COLONNES.has(expr.name)) {
+        return FONCTIONS_MONO_LIGNE[expr.name]([]);
+      }
+
       throw new SqlRuntimeError(
         `ORA-00904 : identificateur non valide « ${expr.table ? `${expr.table}.` : ""}${expr.name} »`,
       );

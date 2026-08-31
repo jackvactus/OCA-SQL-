@@ -402,14 +402,18 @@ export default function CoursesPage() {
                                 ? "Continuer"
                                 : "Commencer"}
                           </span>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-8 gap-1 px-2 text-xs opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-1"
+                          {/* Un <span>, pas un <Button> : la carte entière est
+                              déjà une ancre. Un bouton ici serait reparenté par
+                              le navigateur, et la navigation suivante casserait
+                              sur « removeChild ». Il n'était de toute façon pas
+                              cliquable — aucun gestionnaire, aucune adresse. */}
+                          <span
+                            aria-hidden
+                            className="inline-flex h-8 items-center gap-1 px-2 text-xs font-medium text-primary opacity-0 transition-all duration-300 -translate-x-1 group-hover:translate-x-0 group-hover:opacity-100"
                           >
-                            Ouvrir
+                            {en ? "Open" : "Ouvrir"}
                             <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-                          </Button>
+                          </span>
                         </div>
                       </CardContent>
                     </Card>

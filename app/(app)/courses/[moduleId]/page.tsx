@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
@@ -244,6 +244,47 @@ export default function LessonDetailPage() {
   const { progress, loaded, completeLesson } = useProgress();
   const [activeLessonId, setActiveLessonId] = useState<string | null>(null);
 
+  /**
+   * La leçon ouverte vit dans l'URL : `/courses/m3?lesson=m3-l2`.
+   *
+   * Elle n'y était pas. Les flèches « précédent » et « suivant » pointaient
+   * toutes deux vers `/courses/${currentModule.id}` — la page elle-même — et
+   * ne changeaient la leçon que par un `onClick`. Conséquences : le bouton
+   * Retour du navigateur quittait le module au lieu de reculer d'une leçon,
+   * et copier le lien ou l'ouvrir dans un nouvel onglet ramenait toujours à
+   * la première leçon non terminée.
+   *
+   * Le paramètre est lu depuis `window.location` plutôt que par
+   * `useSearchParams` : il ne participe pas au rendu serveur, donc aucune
+   * divergence d'hydratation, et aucune frontière Suspense à poser.
+   */
+  const lireLeconDeLUrl = useCallback(() => {
+    if (typeof window === "undefined") return null;
+    return new URLSearchParams(window.location.search).get("lesson");
+  }, []);
+
+  useEffect(() => {
+    setActiveLessonId(lireLeconDeLUrl());
+
+    // Retour et Suivant du navigateur : sans cet écouteur, l'URL changerait
+    // sans que la leçon affichée bouge.
+    const surPopstate = () => setActiveLessonId(lireLeconDeLUrl());
+    window.addEventListener("popstate", surPopstate);
+    return () => window.removeEventListener("popstate", surPopstate);
+  }, [lireLeconDeLUrl]);
+
+  const choisirLecon = useCallback(
+    (lessonId: string) => {
+      setActiveLessonId(lessonId);
+      if (typeof window === "undefined") return;
+      const url = `${window.location.pathname}?lesson=${encodeURIComponent(lessonId)}`;
+      // `pushState` et non le routeur : la page est déjà montée, seule l'URL
+      // doit suivre — et chaque leçon devient une étape de l'historique.
+      window.history.pushState({ lessonId }, "", url);
+    },
+    [],
+  );
+
   // Find the module
   const currentModule = useMemo(
     () => modules.find((m) => m.id === moduleId),
@@ -403,7 +444,7 @@ export default function LessonDetailPage() {
                   return (
                     <button
                       key={lesson.id}
-                      onClick={() => setActiveLessonId(lesson.id)}
+                      onClick={() => choisirLecon(lesson.id)}
                       className={cn(
                         "group flex w-full items-start gap-3 rounded-lg px-3 py-2.5 text-left transition-all duration-200",
                         isActive
@@ -702,8 +743,14 @@ export default function LessonDetailPage() {
                     className="h-auto flex-1 justify-start py-4"
                   >
                     <Link
-                      href={`/courses/${currentModule.id}`}
-                      onClick={() => setActiveLessonId(prevLesson.id)}
+                      href={`/courses/${currentModule.id}?lesson=${prevLesson.id}`}
+                      onClick={(e) => {
+                        // L'adresse est juste — clic milieu et « copier le
+                        // lien » fonctionnent —, mais un clic ordinaire est
+                        // traité sur place plutôt que par une navigation.
+                        e.preventDefault();
+                        choisirLecon(prevLesson.id);
+                      }}
                       className="flex items-center gap-3"
                     >
                       <ArrowLeft className="h-4 w-4 shrink-0 text-primary" />
@@ -726,8 +773,11 @@ export default function LessonDetailPage() {
                     className="h-auto flex-1 justify-end py-4"
                   >
                     <Link
-                      href={`/courses/${currentModule.id}`}
-                      onClick={() => setActiveLessonId(nextLesson.id)}
+                      href={`/courses/${currentModule.id}?lesson=${nextLesson.id}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        choisirLecon(nextLesson.id);
+                      }}
                       className="flex items-center justify-end gap-3"
                     >
                       <span className="flex flex-col items-end text-right">
