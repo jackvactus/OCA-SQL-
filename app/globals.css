@@ -174,3 +174,54 @@ html {
   background: hsl(var(--primary) / 0.2);
   color: inherit;
 }
+
+/* ------------------------------------------------------------------ */
+/*  Assistant — le point lumineux                                      */
+/* ------------------------------------------------------------------ */
+
+/*
+ * Trois couches distinctes, plutôt qu'une seule ombre animée : le halo
+ * respire lentement, l'anneau se propage vers l'extérieur, le cœur reste
+ * net. C'est ce décalage qui donne l'impression de lumière ; une seule
+ * couche qui grossit et rétrécit donne un bouton qui clignote.
+ */
+@keyframes assistantHalo {
+  0%, 100% { transform: scale(1);    opacity: 0.45; }
+  50%      { transform: scale(1.18); opacity: 0.75; }
+}
+
+@keyframes assistantRipple {
+  0%   { transform: scale(0.85); opacity: 0.55; }
+  70%  { transform: scale(1.75); opacity: 0;    }
+  100% { transform: scale(1.75); opacity: 0;    }
+}
+
+@keyframes assistantCore {
+  0%, 100% { opacity: 0.9; }
+  50%      { opacity: 1;   }
+}
+
+/* Recherche en cours : l'anneau tourne au lieu de se propager. */
+@keyframes assistantSpin {
+  to { transform: rotate(360deg); }
+}
+
+.assistant-halo   { animation: assistantHalo 3.6s ease-in-out infinite; }
+.assistant-ripple { animation: assistantRipple 3.6s ease-out infinite; }
+.assistant-core   { animation: assistantCore 3.6s ease-in-out infinite; }
+.assistant-spin   { animation: assistantSpin 1.1s linear infinite; }
+
+/*
+ * Un point qui pulse en permanence dans un coin de l'écran est exactement
+ * ce que « réduire les animations » demande de supprimer. Le point reste
+ * visible et lisible, il cesse simplement de bouger.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .assistant-halo,
+  .assistant-ripple,
+  .assistant-core,
+  .assistant-spin {
+    animation: none;
+  }
+  .assistant-ripple { opacity: 0; }
+}

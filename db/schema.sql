@@ -64,3 +64,29 @@ create table if not exists exam_sessions (
 );
 create index if not exists exam_sessions_user_idx on exam_sessions(user_id, started_at desc);
 create index if not exists exam_sessions_open_idx on exam_sessions(user_id) where submitted_at is null;
+
+-- Transcription des échanges avec l'assistant.
+--
+-- Un assistant qui répond sur du contenu de certification doit laisser une
+-- trace relisible : ce qu'il a affirmé, depuis quelle page la question a été
+-- posée, et quelles requêtes il a proposées. Les lignes sont écrites côté
+-- serveur uniquement, donc infalsifiables depuis le navigateur.
+create table if not exists assistant_messages (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references users(id) on delete cascade,
+  question text not null,
+  answer_text text not null,
+  -- Renvois vers le contenu de la plateforme qui étaie la réponse.
+  sources jsonb not null default '[]'::jsonb,
+  -- Extraits SQL joints, avec leur légende et leur exécutabilité.
+  sql_snippets jsonb not null default '[]'::jsonb,
+  -- Vrai quand aucune logique de réponse n'était branchée : ces lignes ne
+  -- valent pas comme réponse et se distinguent à la relecture.
+  unavailable boolean not null default false,
+  path text,
+  track text,
+  locale text not null default 'fr',
+  created_at timestamptz not null default now()
+);
+create index if not exists assistant_messages_user_idx
+  on assistant_messages(user_id, created_at desc);

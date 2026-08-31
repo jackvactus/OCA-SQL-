@@ -16,6 +16,7 @@ import {
   ShieldCheck,
   ShieldX,
   UserPlus,
+  Sparkles,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,7 @@ const ACTION_ICONS: Record<ActivityAction, typeof History> = {
   bookmark_added: Bookmark,
   bookmark_removed: BookmarkX,
   sandbox_query_executed: Code2,
+  assistant_question: Sparkles,
   admin_role_changed: ShieldAlert,
   admin_user_activated: ShieldCheck,
   admin_user_deactivated: ShieldX,

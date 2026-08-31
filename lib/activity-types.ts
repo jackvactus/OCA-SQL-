@@ -10,6 +10,7 @@ export type ActivityAction =
   | "bookmark_added"
   | "bookmark_removed"
   | "sandbox_query_executed"
+  | "assistant_question"
   | "admin_role_changed"
   | "admin_user_activated"
   | "admin_user_deactivated";
@@ -27,6 +28,7 @@ export const ACTIVITY_ACTION_LABELS_EN: Record<ActivityAction, string> = {
   bookmark_added: "Bookmark added",
   bookmark_removed: "Bookmark removed",
   sandbox_query_executed: "SQL query run",
+  assistant_question: "Assistant asked",
   admin_role_changed: "Role changed by an administrator",
   admin_user_activated: "Account re-enabled by an administrator",
   admin_user_deactivated: "Account disabled by an administrator",
@@ -44,6 +46,7 @@ export const ACTIVITY_ACTION_LABELS: Record<ActivityAction, string> = {
   bookmark_added: "Signet ajouté",
   bookmark_removed: "Signet retiré",
   sandbox_query_executed: "Requête SQL exécutée",
+  assistant_question: "Question posée à l'assistant",
   admin_role_changed: "Rôle modifié par un administrateur",
   admin_user_activated: "Compte réactivé par un administrateur",
   admin_user_deactivated: "Compte désactivé par un administrateur",

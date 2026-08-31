@@ -146,30 +146,37 @@ export default function SandboxPage() {
 
   const lineCount = useMemo(() => query.split("\n").length, [query]);
 
-  const executerRequete = useCallback(() => {
-    const res = runQuery(query);
-    setResult(res);
-    historyIdRef.current += 1;
-    const entry: HistoryEntry = {
-      id: historyIdRef.current,
-      query: query.trim(),
-      success: !("error" in res),
-      rowCount: "rowCount" in res ? res.rowCount : undefined,
-      error: "error" in res ? res.error : undefined,
-      timestamp: Date.now(),
-    };
-    setHistory((h) => [entry, ...h].slice(0, 50));
+  // `sql` explicite pour exécuter une requête qui vient d'arriver — celle que
+  // l'assistant passe par l'URL — sans attendre le rendu suivant : `query`
+  // serait encore l'ancienne valeur au moment de l'appel.
+  const executerRequete = useCallback(
+    (sql?: string) => {
+      const source = sql ?? query;
+      const res = runQuery(source);
+      setResult(res);
+      historyIdRef.current += 1;
+      const entry: HistoryEntry = {
+        id: historyIdRef.current,
+        query: source.trim(),
+        success: !("error" in res),
+        rowCount: "rowCount" in res ? res.rowCount : undefined,
+        error: "error" in res ? res.error : undefined,
+        timestamp: Date.now(),
+      };
+      setHistory((h) => [entry, ...h].slice(0, 50));
 
-    if (query.trim()) {
-      fetch("/api/progress/sandbox-query", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: query.trim() }),
-      }).catch(() => {
-        // best-effort activity logging, ignore failures
-      });
-    }
-  }, [query]);
+      if (source.trim()) {
+        fetch("/api/progress/sandbox-query", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: source.trim() }),
+        }).catch(() => {
+          // best-effort activity logging, ignore failures
+        });
+      }
+    },
+    [query],
+  );
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
@@ -214,9 +221,22 @@ export default function SandboxPage() {
 
   const clearHistory = () => setHistory([]);
 
-  // Auto-run the default query on first mount so the page isn't empty
+  // Au montage : soit la requête transmise par l'assistant (/sandbox?q=…),
+  // soit l'exemple par défaut pour que la page ne s'ouvre pas vide.
+  //
+  // Le paramètre est lu ici plutôt que par `useSearchParams` : la valeur ne
+  // participe pas au rendu serveur, donc aucune divergence d'hydratation sur
+  // le contenu de l'éditeur. Il est ensuite retiré de l'URL, sinon un
+  // rafraîchissement écraserait ce que l'apprenant vient d'écrire.
   useEffect(() => {
-    executerRequete();
+    const transmise = new URLSearchParams(window.location.search).get("q");
+    if (transmise) {
+      setQuery(transmise);
+      executerRequete(transmise);
+      window.history.replaceState({}, "", window.location.pathname);
+    } else {
+      executerRequete();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -316,7 +336,7 @@ export default function SandboxPage() {
                   </Button>
                   <Button
                     size="sm"
-                    onClick={executerRequete}
+                    onClick={() => executerRequete()}
                     className="h-8 gap-1.5 bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-sm hover:from-sky-600 hover:to-blue-700"
                   >
                     <Play className="h-3.5 w-3.5 fill-current" />

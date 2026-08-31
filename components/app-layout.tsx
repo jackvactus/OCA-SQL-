@@ -25,6 +25,7 @@ import {
   ListOrdered,
   LogOut,
   ShieldCheck,
+  Sparkles,
   UserCircle2,
 } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -35,6 +36,7 @@ import { resetProgressStore } from "@/lib/progress-store";
 import type { UserRole } from "@/lib/auth/jwt";
 import { useLanguage } from "@/components/language-provider";
 import { LanguageToggle } from "@/components/language-toggle";
+import { Assistant } from "@/components/assistant/assistant";
 
 function useNavItems() {
   const { t } = useLanguage();
@@ -47,6 +49,7 @@ function useNavItems() {
     { href: "/exam", label: t.nav.exam, icon: GraduationCap },
     { href: "/flashcards", label: t.nav.flashcards, icon: Layers },
     { href: "/sandbox", label: t.nav.sandbox, icon: Code2 },
+    { href: "/assistant", label: t.nav.assistant, icon: Sparkles },
     { href: "/reference", label: t.nav.reference, icon: Library },
     { href: "/activity", label: t.nav.activity, icon: History },
   ];
@@ -236,6 +239,10 @@ export function AppLayout({
         {/* Page content */}
         <main className="flex-1 overflow-y-auto scrollbar-thin">{children}</main>
       </div>
+
+      {/* Assistant : monté une fois pour tout l'espace connecté, en position
+          fixe — il suit l'apprenant d'une page à l'autre sans se remonter. */}
+      <Assistant />
     </div>
   );
 }
