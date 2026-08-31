@@ -65,13 +65,17 @@ export function useProgress() {
     [handleUnauthorized],
   );
 
-  const recordExam = useCallback(
-    (score: number, total: number, time: number) => {
-      updateProgressState((prev) => applyRecordExam(prev, score, total, time));
-      postProgress("/api/progress/exam", { score, total, time }, handleUnauthorized);
-    },
-    [handleUnauthorized],
-  );
+  /**
+   * Applique localement le résultat d'un examen **déjà corrigé et enregistré
+   * par le serveur** (`POST /api/exam/submit`).
+   *
+   * Cette fonction n'écrit rien côté serveur, et c'est volontaire : le score
+   * d'un examen ne doit jamais venir du navigateur. Elle sert uniquement à
+   * rafraîchir l'affichage sans attendre un rechargement.
+   */
+  const applyExamResult = useCallback((score: number, total: number, time: number) => {
+    updateProgressState((prev) => applyRecordExam(prev, score, total, time));
+  }, []);
 
   const updateFlashcard = useCallback(
     (cardId: string, quality: number) => {
@@ -102,7 +106,7 @@ export function useProgress() {
     loaded,
     completeLesson,
     recordQuiz,
-    recordExam,
+    applyExamResult,
     updateFlashcard,
     toggleBookmark,
     addStudyTime,

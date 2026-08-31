@@ -1,0 +1,45 @@
+name: CI
+
+# Constat OPS-01 de docs/AUDIT-SYSTEME.md : le dépôt n'avait ni test ni
+# intégration continue. Chaque poussée exécute désormais les mêmes contrôles
+# que ceux menés à la main jusqu'ici.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verification:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Typage
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Tests
+        run: npm test
+
+      - name: Vulnérabilités connues
+        # Informatif : les hautes restantes viennent d'outils de développement
+        # et de Next 13, dont la correction exige une montée en version majeure.
+        run: npm audit --audit-level=critical
+        continue-on-error: false
+
+      - name: Build
+        run: npm run build
+        env:
+          # Le build ne doit pas dépendre d'une base joignable.
+          NEXT_TELEMETRY_DISABLED: "1"

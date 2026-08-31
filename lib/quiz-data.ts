@@ -2474,21 +2474,6 @@ const baseQuizQuestions: QuizQuestion[] = [
     difficulty: "hard",
   },
   {
-    id: "q155",
-    moduleId: "m9",
-    question: "Which task can be performed by using a single Data Manipulation Language (DML) statement?",
-    options: [
-      "adding a column constraint when inserting a row into a table",
-      "adding a column with a default value when inserting a row into a table",
-      "removing all data only from one single column on which a unique constraint is defined",
-      "removing all data only from one single column on which a primary key constraint is defined."
-    ],
-    correctIndexes: [1],
-    explanation: "UPDATE col=NULL sur colonne UNIQUE est du DML valide. Ajouter colonne/contrainte = DDL.",
-    topic: "DML",
-    difficulty: "hard",
-  },
-  {
     id: "q156",
     moduleId: "m5",
     question: "Which two statements are true regarding the COUNT function?",
@@ -2632,11 +2617,11 @@ const baseQuizQuestions: QuizQuestion[] = [
     options: [
       "CREATE TABLE Sales(SALESID NUMBER (4),STOREID NUMBER (4),ITEMID NUMBER (4),QTY NUMBER DEFAULT = 1,SLSDATE DATE DEFAULTSYSDATE,PAYMENT VARCHAR2(30) DEFAULT = \"CASH\");",
       "CREATE TABLE Sales(SALESID NUMBER (4),STOREID NUMBER (4),ITEMID NUMBER (4),QTY NUMBER DEFAULT = 1,SLSDATE DATE DEFAULT'SYSDATE',PAYMENT VARCHAR2(30) DEFAULT CASH);",
-      "CREATE TABLE Sales(SALESID NUMBER (4),STOREID NUMBER (4),ITEMID NUMBER (4),qty NUMBER DEFAULT = 1,SLSDATE DATE DEFAULTSYSDATE,PAYMENT VARCHAR2(30) DEFAULT = \"CASH\");",
+      "CREATE TABLE Sales(SALESID NUMBER (4),STOREID NUMBER (4),ITEMID NUMBER (4),QTY NUMBER DEFAULT 1,SLSDATE DATE DEFAULT SYSDATE,PAYMENT VARCHAR2(30) DEFAULT \"CASH\");",
       "Create Table sales(salesid NUMBER (4),Storeid NUMBER (4),Itemid NUMBER (4),QTY NUMBER DEFAULT 1,Slsdate DATE DEFAULT SYSDATE,payment VARCHAR2(30) DEFAULT 'CASH');"
     ],
     correctIndexes: [3],
-    explanation: "DEFAULT expr sans '=' ; littéraux caractère entre quotes simples.",
+    explanation: "DEFAULT prend une expression sans signe egal, et un litteral caractere s'ecrit entre quotes simples. Les doubles quotes designent un identifiant, pas une chaine : DEFAULT \"CASH\" cherche une colonne nommee CASH et echoue.",
     topic: "DEFAULT",
     difficulty: "medium",
   },
@@ -2746,7 +2731,7 @@ const baseQuizQuestions: QuizQuestion[] = [
       "100"
     ],
     correctIndexes: [2],
-    explanation: "Résultat 160.",
+    explanation: "ROUND(156, -1) arrondit à la dizaine la plus proche et donne 160. TRUNC(160, -1) tronque ensuite à la dizaine, ce qui laisse 160 inchangé. Le second argument négatif désigne les positions à gauche de la virgule : -1 pour les dizaines, -2 pour les centaines.",
     topic: "ROUND / TRUNC",
     difficulty: "hard",
   },
@@ -2763,22 +2748,6 @@ const baseQuizQuestions: QuizQuestion[] = [
     correctIndexes: [0],
     explanation: "DISTINCT s'applique à toute la liste SELECT ; une seule fois.",
     topic: "DISTINCT",
-    difficulty: "medium",
-  },
-  {
-    id: "q177",
-    moduleId: "m5",
-    question: "Which two statements are true regarding the GROUP BY clause in a SQL statement? (Choose two.)",
-    options: [
-      "You can use column alias in the GROUP BY clause.",
-      "Using the WHERE clause after the GROUP BY clause excludes the rows after creating groups.",
-      "The GROUP BY clause is mandatory if you are using an aggregate function in the SELECT clause.",
-      "Using the WHERE clause before the GROUP BY clause excludes the rows before creating groups.",
-      "If the SELECT clause has an aggregate function, then those individual columns without an aggregate function in the SELECT clause should be included in theGROUP BY cause."
-    ],
-    correctIndexes: [3, 4],
-    explanation: "WHERE avant ; colonnes non agrégées dans GROUP BY.",
-    topic: "GROUP BY",
     difficulty: "medium",
   },
   {

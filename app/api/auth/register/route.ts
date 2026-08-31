@@ -5,7 +5,24 @@ import { setSessionCookie } from "@/lib/auth/session";
 import { registerSchema } from "@/lib/validation/auth";
 import { logActivity } from "@/lib/activity";
 
+import { clientIp, rateLimit, tooManyRequests } from "@/lib/rate-limit";
+
 export async function POST(request: NextRequest) {
+  // Une inscription reste une écriture non authentifiée : sans plafond, une
+  // seule adresse peut remplir la table des utilisateurs.
+  const ip = clientIp(request);
+  const limite = rateLimit(`register:ip:${ip}`, {
+    limit: 5,
+    windowMs: 3_600_000,
+    blockMs: 3_600_000,
+  });
+  if (!limite.ok) {
+    return tooManyRequests(
+      limite.retryAfterSeconds,
+      "Trop de comptes créés depuis cette adresse. Réessayez plus tard.",
+    );
+  }
+
   const body = await request.json().catch(() => null);
   const parsed = registerSchema.safeParse(body);
   if (!parsed.success) {

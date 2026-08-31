@@ -2068,7 +2068,7 @@ export const workbookQuizQuestions: QuizQuestion[] = [
     "correctIndexes": [
       0
     ],
-    "explanation": "INSERT adds rows.",
+    "explanation": "INSERT is the only DML statement that adds rows to a table. UPDATE changes existing rows, ALTER is DDL and changes the table's structure rather than its contents, and GRANT is DCL and changes privileges.",
     "topic": "DML & Transactions",
     "difficulty": "easy"
   },
@@ -2238,7 +2238,7 @@ export const workbookQuizQuestions: QuizQuestion[] = [
     "correctIndexes": [
       0
     ],
-    "explanation": "INSERT adds rows.",
+    "explanation": "INSERT adds records; it is the only one of the four that creates rows. UPDATE modifies rows that already exist, ALTER is DDL acting on the table definition, and GRANT is DCL acting on privileges — neither touches the data.",
     "topic": "DML & Transactions",
     "difficulty": "easy"
   },

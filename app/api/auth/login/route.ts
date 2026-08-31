@@ -5,8 +5,22 @@ import { setSessionCookie } from "@/lib/auth/session";
 import type { UserRole } from "@/lib/auth/jwt";
 import { loginSchema } from "@/lib/validation/auth";
 import { logActivity } from "@/lib/activity";
+import { clientIp, rateLimit, tooManyRequests } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  // Deux fenêtres complémentaires : l'une freine une adresse qui balaie
+  // beaucoup de comptes, l'autre protège un compte visé depuis plusieurs
+  // adresses. Le compteur est incrémenté avant tout appel à bcrypt, pour que
+  // la limite tienne même si l'attaquant cherche à saturer le CPU.
+  const ip = clientIp(request);
+  const parIp = rateLimit(`login:ip:${ip}`, { limit: 20, windowMs: 600_000, blockMs: 900_000 });
+  if (!parIp.ok) {
+    return tooManyRequests(
+      parIp.retryAfterSeconds,
+      "Trop de tentatives de connexion. Réessayez plus tard.",
+    );
+  }
+
   const body = await request.json().catch(() => null);
   const parsed = loginSchema.safeParse(body);
   if (!parsed.success) {
@@ -18,6 +32,18 @@ export async function POST(request: NextRequest) {
 
   const { email, password, remember } = parsed.data;
   const normalizedEmail = email.toLowerCase();
+
+  const parCompte = rateLimit(`login:compte:${normalizedEmail}`, {
+    limit: 8,
+    windowMs: 600_000,
+    blockMs: 900_000,
+  });
+  if (!parCompte.ok) {
+    return tooManyRequests(
+      parCompte.retryAfterSeconds,
+      "Trop de tentatives sur ce compte. Réessayez plus tard.",
+    );
+  }
 
   const result = await query<{
     id: string;

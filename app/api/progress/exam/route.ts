@@ -1,29 +1,26 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getSessionUser } from "@/lib/auth/session";
-import { applyRecordExam, updateProgress } from "@/lib/progress";
-import { logActivity } from "@/lib/activity";
+import { NextResponse } from "next/server";
 
-export async function POST(request: NextRequest) {
-  const user = await getSessionUser();
-  if (!user) return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
-
-  const body = await request.json().catch(() => null);
-  const { score, total, time } = body ?? {};
-  if (
-    !Number.isInteger(score) ||
-    !Number.isInteger(total) ||
-    !Number.isFinite(time) ||
-    total <= 0 ||
-    score < 0 ||
-    score > total ||
-    time < 0 ||
-    time > 24 * 60 * 60
-  ) {
-    return NextResponse.json({ error: "Paramètres invalides" }, { status: 400 });
-  }
-
-  const next = await updateProgress(user.id, (prev) => applyRecordExam(prev, score, total, time));
-  await logActivity(user.id, "exam_completed", { score, total, time }, request);
-
-  return NextResponse.json(next);
+/**
+ * Route retirée.
+ *
+ * Elle acceptait un score transmis par le navigateur (`{ score, total, time }`)
+ * et l'enregistrait tel quel : n'importe qui pouvait déclarer un sans-faute
+ * d'un simple appel `fetch`. C'est le constat PED-04 de
+ * `docs/AUDIT-SYSTEME.md`.
+ *
+ * La correction se fait désormais côté serveur, dans `POST /api/exam/submit`,
+ * à partir des questions tirées et mémorisées par `POST /api/exam/start`.
+ *
+ * La route est conservée le temps qu'un onglet resté ouvert sur l'ancienne
+ * version cesse de l'appeler ; elle répond 410 plutôt que de disparaître, pour
+ * que la cause soit lisible dans les journaux.
+ */
+export async function POST() {
+  return NextResponse.json(
+    {
+      error:
+        "Cette route n'enregistre plus de score. La correction est faite par le serveur : utilisez /api/exam/submit.",
+    },
+    { status: 410 },
+  );
 }
