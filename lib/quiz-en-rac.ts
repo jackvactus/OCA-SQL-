@@ -8,9 +8,9 @@ export const racEnglish: Record<string, QuizQuestionTranslation> = {
   "rac-q1": {
     question: "Which risk does a RAC cluster NOT protect against?",
     options: [
-      "Loss of the site, since every node shares the same storage",
-      "Failure of one server in the cluster",
       "A planned instance shutdown for maintenance",
+      "Failure of one server in the cluster",
+      "Loss of the site, since every node shares the same storage",
       "Saturation of a single node",
     ],
     explanation: "RAC protects against node failure, not site disaster: the shared disk array remains a single point of failure. Data Guard covers that risk, and backups cover logical error.",
@@ -18,15 +18,15 @@ export const racEnglish: Record<string, QuizQuestionTranslation> = {
   },
   "rac-q2": {
     question: "Which Clusterware component decides to evict a node?",
-    options: ["CSSD", "CRSD", "EVMD", "OHASD"],
+    options: ["OHASD", "CRSD", "EVMD", "CSSD"],
     explanation: "CSSD (Cluster Synchronization Services) manages cluster membership, network and disk heartbeats, and decides on eviction. CRSD manages high-level resources, EVMD publishes events, OHASD starts the stack at boot.",
     topic: "Clusterware components",
   },
   "rac-q3": {
     question: "How many addresses must the SCAN name resolve to, and by what means?",
     options: [
-      "Three addresses, through round-robin DNS",
       "One address, declared in /etc/hosts",
+      "Three addresses, through round-robin DNS",
       "One address per cluster node",
       "Two addresses, through GNS only",
     ],
@@ -54,10 +54,10 @@ export const racEnglish: Record<string, QuizQuestionTranslation> = {
   "rac-q6": {
     question: "How must root.sh be run during a Grid Infrastructure installation?",
     options: [
-      "Sequentially, one node after another, starting with the first",
+      "After the RAC database has started",
       "Simultaneously on all nodes to save time",
       "Only on the node holding the SCAN",
-      "After the RAC database has started",
+      "Sequentially, one node after another, starting with the first",
     ],
     explanation: "root.sh configures the cluster stack and initialises the OCR and voting disks on the first node; the others then join. Running it in parallel corrupts the configuration.",
     topic: "Installation",
@@ -65,8 +65,8 @@ export const racEnglish: Record<string, QuizQuestionTranslation> = {
   "rac-q7": {
     question: "Which tool stops a database instance in a cluster?",
     options: [
-      "srvctl stop instance",
       "crsctl stop crs",
+      "srvctl stop instance",
       "crsctl stop cluster",
       "asmcmd shutdown",
     ],
@@ -76,9 +76,9 @@ export const racEnglish: Record<string, QuizQuestionTranslation> = {
   "rac-q8": {
     question: "Why must the number of voting disks be odd?",
     options: [
-      "Because a node must see more than half the voting disks to stay in the cluster",
-      "Because ASM can only manage an odd number of disks",
       "Because the OCR requires one per node",
+      "Because ASM can only manage an odd number of disks",
+      "Because a node must see more than half the voting disks to stay in the cluster",
       "Because the SCAN uses three",
     ],
     explanation: "Quorum requires a strict majority. With two voting disks, losing one brings the whole cluster down: you need 1, 3 or 5. With normal redundancy, ASM places three automatically.",
@@ -97,19 +97,19 @@ export const racEnglish: Record<string, QuizQuestionTranslation> = {
   },
   "rac-q10": {
     question: "How often is the OCR backed up automatically?",
-    options: ["Every 4 hours", "Every hour", "Once a day", "On every change"],
+    options: ["Every hour", "Every 4 hours", "Once a day", "On every change"],
     explanation: "Clusterware backs up the OCR every 4 hours and keeps a week of backups. ocrconfig -showbackup lists them. Voting disks, by contrast, are not backed up: they are re-created.",
     topic: "OCR backup",
   },
   "rac-q11": {
     question: "Which process starts the Clusterware stack when the server boots?",
-    options: ["OHASD", "CRSD", "CSSD", "GPNPD"],
+    options: ["CSSD", "CRSD", "OHASD", "GPNPD"],
     explanation: "OHASD (Oracle High Availability Services Daemon) starts at boot then launches GPNPD, GIPCD, MDNSD and CSSD. CSSD then reads the voting disks, ASM mounts the disk groups, and CRSD reads the OCR to start the resources.",
     topic: "Startup sequence",
   },
   "rac-q12": {
     question: "Which command shows the state of every cluster resource?",
-    options: ["crsctl stat res -t", "srvctl config database", "ocrcheck", "oclumon dumpnodeview"],
+    options: ["oclumon dumpnodeview", "srvctl config database", "ocrcheck", "crsctl stat res -t"],
     explanation: "crsctl stat res -t prints a readable table of all resources, local and cluster-wide, with their state per node. Adding -init shows the low-level resources managed by OHASD.",
     topic: "Cluster diagnostics",
   },
@@ -126,21 +126,21 @@ export const racEnglish: Record<string, QuizQuestionTranslation> = {
   },
   "rac-q14": {
     question: "Which privilege allows creating and dropping an ASM disk group?",
-    options: ["SYSASM", "SYSDBA", "SYSOPER", "SYSBACKUP"],
+    options: ["SYSOPER", "SYSDBA", "SYSASM", "SYSBACKUP"],
     explanation: "SYSASM is the full ASM administration privilege since 11g. SYSDBA on an ASM instance only grants file access from a database; SYSOPER allows start, stop and mount without changing the configuration.",
     topic: "ASM privileges",
   },
   "rac-q15": {
     question: "How many failure groups does HIGH redundancy require at minimum?",
-    options: ["Three", "Two", "One", "Five"],
+    options: ["Five", "Two", "One", "Three"],
     explanation: "HIGH keeps three copies of every extent and therefore requires three failure groups; NORMAL keeps two and requires two; EXTERNAL keeps one and delegates protection to the array.",
     topic: "ASM redundancy",
   },
   "rac-q16": {
     question: "What is a failure group for?",
     options: [
-      "Grouping the disks that fail together, so ASM never places two copies of the same extent there",
       "Grouping disks of the same size",
+      "Grouping the disks that fail together, so ASM never places two copies of the same extent there",
       "Isolating disks reserved for the FRA",
       "Defining the rebalance order",
     ],
@@ -161,10 +161,10 @@ export const racEnglish: Record<string, QuizQuestionTranslation> = {
   "rac-q18": {
     question: "Why drop a disk and add another in a single statement?",
     options: [
-      "To trigger only one rebalance instead of two",
+      "To preserve file aliases",
       "To avoid losing redundancy",
       "Because ASM refuses two successive operations",
-      "To preserve file aliases",
+      "To trigger only one rebalance instead of two",
     ],
     explanation: "Two separate statements cause two successive full rebalances. A single statement triggers only one, twice as fast overall — on a large array the difference is measured in hours.",
     topic: "Rebalance",
@@ -172,8 +172,8 @@ export const racEnglish: Record<string, QuizQuestionTranslation> = {
   "rac-q19": {
     question: "What does a negative USABLE_FILE_MB in V$ASM_DISKGROUP mean?",
     options: [
-      "The group is too full to rebuild itself after losing a failure group",
       "The disk group is corrupt",
+      "The group is too full to rebuild itself after losing a failure group",
       "A rebalance is in progress",
       "Redundancy has been disabled",
     ],
@@ -183,9 +183,9 @@ export const racEnglish: Record<string, QuizQuestionTranslation> = {
   "rac-q20": {
     question: "What does ACFS allow that ASM alone does not?",
     options: [
-      "Storing non-database files, mounted on every node",
-      "Striping extents across several disks",
       "Providing data redundancy",
+      "Striping extents across several disks",
+      "Storing non-database files, mounted on every node",
       "Hosting the voting disks",
     ],
     explanation: "ASM stores database files only. ACFS is a clustered file system mounted simultaneously on every node: Oracle binaries, Data Pump dumps, application logs. It offers snapshots and online resizing.",
@@ -200,8 +200,8 @@ export const racEnglish: Record<string, QuizQuestionTranslation> = {
   "rac-q22": {
     question: "What is an ASM template for?",
     options: [
-      "Defining redundancy and striping granularity per file type",
       "Creating aliases automatically",
+      "Defining redundancy and striping granularity per file type",
       "Setting the group's allocation unit size",
       "Declaring failure groups",
     ],
@@ -210,17 +210,17 @@ export const racEnglish: Record<string, QuizQuestionTranslation> = {
   },
   "rac-q23": {
     question: "Which process ships blocks between instances in Cache Fusion?",
-    options: ["LMS", "LMD", "LMON", "LCK0"],
+    options: ["LMON", "LMD", "LMS", "LCK0"],
     explanation: "LMS (Global Cache Service Process) is the heart of Cache Fusion: it sends blocks to the requesting instance over the interconnect. LMD handles global lock requests, LMON membership and reconfiguration.",
     topic: "Cache Fusion",
   },
   "rac-q24": {
     question: "Why query GV$ views rather than V$ in RAC?",
     options: [
-      "Because V$ shows only the local instance, whereas GV$ aggregates every instance",
+      "Because V$ only works with ASM",
       "Because V$ views are removed in RAC",
       "Because GV$ is faster",
-      "Because V$ only works with ASM",
+      "Because V$ shows only the local instance, whereas GV$ aggregates every instance",
     ],
     explanation: "Every V$ view has a GV$ counterpart that adds an INST_ID column and aggregates the whole cluster. Diagnosing on V$SESSION in RAC shows only one node — a permanent source of error.",
     topic: "GV$ views",
@@ -251,9 +251,9 @@ export const racEnglish: Record<string, QuizQuestionTranslation> = {
   "rac-q27": {
     question: "What is a service for in a RAC environment?",
     options: [
-      "Defining which instances an application runs on and where it fails over",
-      "Replacing the local listener",
       "Declaring ASM disk groups",
+      "Replacing the local listener",
+      "Defining which instances an application runs on and where it fails over",
       "Setting the degree of parallelism for queries",
     ],
     explanation: "A service is RAC's unit of work: preferred instances, available instances, balancing policy, resource measurement. Without services, every application connects everywhere and nothing can be isolated.",
@@ -262,10 +262,10 @@ export const racEnglish: Record<string, QuizQuestionTranslation> = {
   "rac-q28": {
     question: "What distinguishes a “preferred” instance from an “available” one?",
     options: [
-      "The service starts on preferred instances and only moves to available ones on failure",
+      "There is no functional difference",
       "Available instances are faster",
       "Preferred instances are limited to one per service",
-      "There is no functional difference",
+      "The service starts on preferred instances and only moves to available ones on failure",
     ],
     explanation: "A preferred instance hosts the service in normal operation; an available instance receives it only when a preferred one fails. That is what lets you reserve a node for a given workload.",
     topic: "Services",
@@ -285,8 +285,8 @@ export const racEnglish: Record<string, QuizQuestionTranslation> = {
   "rac-q30": {
     question: "What does a “gc cr block lost” event indicate?",
     options: [
-      "A hardware problem on the interconnect",
       "An inefficient execution plan",
+      "A hardware problem on the interconnect",
       "Insufficient SGA memory",
       "Contention on a hot block",
     ],
@@ -307,10 +307,10 @@ export const racEnglish: Record<string, QuizQuestionTranslation> = {
   "rac-q32": {
     question: "How should a sequence be configured to limit contention in RAC?",
     options: [
-      "CACHE 1000 NOORDER",
+      "NOCACHE NOORDER",
       "ORDER NOCACHE",
       "CACHE 20 ORDER",
-      "NOCACHE NOORDER",
+      "CACHE 1000 NOORDER",
     ],
     explanation: "A large cache reduces dictionary access, and NOORDER avoids serialising allocation between instances. ORDER, by contrast, forces global coordination on every value: the worst possible choice in a cluster.",
     topic: "Sequences in RAC",
@@ -318,8 +318,8 @@ export const racEnglish: Record<string, QuizQuestionTranslation> = {
   "rac-q33": {
     question: "During an RMAN recovery of a RAC database, what must you ensure?",
     options: [
-      "That the archived logs of ALL threads are reachable",
       "That each instance restores its own part of the database",
+      "That the archived logs of ALL threads are reachable",
       "That the recovery catalog is local to one node",
       "That every instance is open simultaneously",
     ],
@@ -328,7 +328,7 @@ export const racEnglish: Record<string, QuizQuestionTranslation> = {
   },
   "rac-q34": {
     question: "Which utility applies a patch in rolling mode on a cluster?",
-    options: ["opatchauto", "cluvfy", "srvctl", "asmca"],
+    options: ["srvctl", "cluvfy", "opatchauto", "asmca"],
     explanation: "opatchauto stops the node's stack, applies the patch then restarts, while the other nodes keep serving. Check beforehand that the patch is declared rolling by opatch query.",
     topic: "Rolling patches",
   },
@@ -352,8 +352,8 @@ export const racEnglish: Record<string, QuizQuestionTranslation> = {
   "rac-q37": {
     question: "Which tool collects the cluster's full diagnostics for support?",
     options: [
-      "diagcollection.sh",
       "tkprof",
+      "diagcollection.sh",
       "opatch lsinventory",
       "ocrconfig -showbackup",
     ],
@@ -363,9 +363,9 @@ export const racEnglish: Record<string, QuizQuestionTranslation> = {
   "rac-q38": {
     question: "Which command moves a service from one instance to another without an outage?",
     options: [
-      "srvctl relocate service",
-      "srvctl stop service then srvctl start service",
       "crsctl relocate resource",
+      "srvctl stop service then srvctl start service",
+      "srvctl relocate service",
       "alter system set service_names",
     ],
     explanation: "srvctl relocate service starts the service on the target instance before stopping it on the source, letting connections migrate gradually. A stop followed by a start cuts the service in between.",

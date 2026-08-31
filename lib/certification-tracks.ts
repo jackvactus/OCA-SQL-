@@ -65,8 +65,23 @@ export interface CertificationTrack {
   prerequisite?: { fr: string; en: string };
   status: TrackStatus;
   accent: string;
+  /**
+   * Fiche d'examen officielle. Forme canonique Oracle :
+   * `education.oracle.com/<intitule-en-minuscules-tirets>/pexam_<CODE>`.
+   */
   officialExamUrl: string;
-  officialLearningUrl: string;
+  /**
+   * Parcours Oracle University, quand un identifiant de catalogue est connu.
+   * Volontairement absent plutot que devine : un identifiant numerique
+   * fabrique a l'air exact et menerait l'apprenant sur une page inexistante.
+   */
+  officialLearningUrl?: string;
+  /**
+   * Manuel Oracle Database 19c couvrant le programme. Ces raccourcis de
+   * documentation sont les URL Oracle les plus stables qui soient, et souvent
+   * plus utiles a la revision qu'une fiche de catalogue.
+   */
+  officialDocsUrl: string;
   groups: TrackGroup[];
 }
 
@@ -101,6 +116,7 @@ const foundationTracks: CertificationTrack[] = [
     },
     officialExamUrl: "https://education.oracle.com/oracle-database-sql/pexam_1Z0-071",
     officialLearningUrl: "https://mylearn.oracle.com/ou/learning-path/oracle-database-sql/117252",
+    officialDocsUrl: "https://docs.oracle.com/en/database/oracle/oracle-database/19/sqlrf/",
     groups: [
       {
         label: { fr: "Fondamentaux du langage", en: "Language fundamentals" },
@@ -170,6 +186,7 @@ const foundationTracks: CertificationTrack[] = [
     },
     officialExamUrl: "https://education.oracle.com/oracle-database-administration-i/pexam_1Z0-082",
     officialLearningUrl: "https://mylearn.oracle.com/ou/course/oracle-database-19c-administration-workshop/102757",
+    officialDocsUrl: "https://docs.oracle.com/en/database/oracle/oracle-database/19/admin/",
     groups: [
       {
         label: {
@@ -242,6 +259,7 @@ const foundationTracks: CertificationTrack[] = [
     },
     officialExamUrl: "https://education.oracle.com/oracle-database-administration-ii/pexam_1Z0-083",
     officialLearningUrl: "https://mylearn.oracle.com/ou/course/oracle-database-19c-managing-multitenant-architecture/102756",
+    officialDocsUrl: "https://docs.oracle.com/en/database/oracle/oracle-database/19/multi/",
     groups: [
       {
         label: { fr: "Architecture multitenant", en: "Multitenant architecture" },

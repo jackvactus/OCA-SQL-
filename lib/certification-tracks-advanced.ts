@@ -44,7 +44,7 @@ export const advancedTracks: CertificationTrack[] = [
       en: "None formally. The exam assumes deep knowledge of the Oracle Database architecture and daily administration practice.",
     },
     officialExamUrl: "https://education.oracle.com/oracle-database-19c-performance-management-and-tuning/pexam_1Z0-084",
-    officialLearningUrl: "https://mylearn.oracle.com/ou/learning-path/oracle-database-19c-administration/88357",
+    officialDocsUrl: "https://docs.oracle.com/en/database/oracle/oracle-database/19/tgdba/",
     groups: [
       {
         label: { fr: "Diagnostic et instrumentation", en: "Diagnosis and instrumentation" },
@@ -109,7 +109,7 @@ export const advancedTracks: CertificationTrack[] = [
       en: "None formally. Oracle recommends 4–5 years of database administration, including 2–3 years of hands-on Data Guard.",
     },
     officialExamUrl: "https://education.oracle.com/oracle-database-19c-data-guard-administration/pexam_1Z0-076",
-    officialLearningUrl: "https://mylearn.oracle.com/ou/learning-path/oracle-database-19c-administration/88357",
+    officialDocsUrl: "https://docs.oracle.com/en/database/oracle/oracle-database/19/sbydb/",
     groups: [
       {
         label: { fr: "Concepts et mise en place", en: "Concepts and setup" },
@@ -177,7 +177,7 @@ export const advancedTracks: CertificationTrack[] = [
       en: "None formally. Oracle recommends 12–18 months of experience with RAC, ASM and Grid Infrastructure.",
     },
     officialExamUrl: "https://education.oracle.com/oracle-database-19c-rac-asm-and-grid-infrastructure-administration/pexam_1Z0-078",
-    officialLearningUrl: "https://mylearn.oracle.com/ou/learning-path/oracle-database-19c-administration/88357",
+    officialDocsUrl: "https://docs.oracle.com/en/database/oracle/oracle-database/19/racad/",
     groups: [
       {
         label: { fr: "Clusterware et Grid Infrastructure", en: "Clusterware and Grid Infrastructure" },

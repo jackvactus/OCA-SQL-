@@ -2,9 +2,9 @@
 
 Ce dossier contient les **audits du système** et les **documents sources pédagogiques**.
 
-Dernier audit en date : **[AUDIT-2026-08-31-B.md](./AUDIT-2026-08-31-B.md)** — analyse complète
-du système : faille critique corrigée, notation d'examen déplacée côté serveur, limitation de
-débit, 36 tests et intégration continue.
+Dernier audit en date : **[AUDIT-2026-08-31-C.md](./AUDIT-2026-08-31-C.md)** — banque anglaise
+1Z0-071 reconstruite, doublons reformulés et rattachements de module corrigés, liens Oracle
+assainis, 45 tests.
 
 ---
 
@@ -19,8 +19,9 @@ débit, 36 tests et intégration continue.
 | **[AUDIT-2026-08-30.md](./AUDIT-2026-08-30.md)** | Audit d'extension : 6 parcours, 45 sessions, 824 questions, 172 objectifs officiels. Trois erreurs de nomenclature corrigées. | Décideur + technique |
 | **[AUDIT-2026-08-31.md](./AUDIT-2026-08-31.md)** | Intégration des six programmes officiels : 133 domaines, 455 objectifs, 57 sessions, 885 questions, 85 TP, 10 schémas. | Décideur + technique |
 | **[AUDIT-2026-08-31-B.md](./AUDIT-2026-08-31-B.md)** | Analyse système : CVE critique du middleware, notation d'examen serveur, limitation de débit, tests et CI, 4 défauts de données corrigés. | Décideur + technique |
+| **[AUDIT-2026-08-31-C.md](./AUDIT-2026-08-31-C.md)** | Banque anglaise reconstruite (67 doublons reformulés, 137 rattachements de module faux), 5 doublons français retirés, biais de position corrigé, liens Oracle assainis. | Contenu + technique |
 
-**Ordre de lecture conseillé :** `AUDIT-2026-08-31-B.md` (état actuel) → `AUDIT-SYSTEME.md` §1 (synthèse d'origine) → `PLAN-ACTION-PREMIUM.md` (lot 0) → le reste selon le rôle.
+**Ordre de lecture conseillé :** `AUDIT-2026-08-31-C.md` (état actuel) → `AUDIT-SYSTEME.md` §1 (synthèse d'origine) → `PLAN-ACTION-PREMIUM.md` (lot 0) → le reste selon le rôle.
 
 
 ### Audits antérieurs (conservés)

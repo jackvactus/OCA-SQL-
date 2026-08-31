@@ -9,9 +9,9 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "tun-q52": {
     question: "What essential difference separates row chaining from row migration?",
     options: [
-      "Chaining is unavoidable, migration is prevented by an adequate PCTFREE",
-      "Migration is unavoidable, chaining is prevented by an adequate PCTFREE",
       "Both are fixed by simply rebuilding the index",
+      "Migration is unavoidable, chaining is prevented by an adequate PCTFREE",
+      "Chaining is unavoidable, migration is prevented by an adequate PCTFREE",
       "Chaining only affects partitioned tables",
     ],
     explanation: "A chained row is larger than a block: Oracle has no choice. A migrated row used to fit in its block then grew through an UPDATE; reserving room with PCTFREE prevents it. Confusing the two leads to reorganising without ever fixing the cause.",
@@ -19,7 +19,7 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   },
   "tun-q53": {
     question: "Beyond how many columns is a row always chained, whatever its size?",
-    options: ["255", "128", "512", "1000"],
+    options: ["1000", "128", "512", "255"],
     explanation: "Oracle stores columns in 255-column pieces in separate row chunks. A 300-column table therefore pays an extra read as soon as a query touches a column beyond the 255th — hence the value of putting the most-queried columns first.",
     topic: "Chaining",
   },
@@ -37,8 +37,8 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "tun-q55": {
     question: "What is the point of running SHRINK SPACE COMPACT before SHRINK SPACE?",
     options: [
-      "Compaction runs online; only the second phase takes a brief exclusive lock",
       "Compaction alone is enough to lower the high water mark",
+      "Compaction runs online; only the second phase takes a brief exclusive lock",
       "Compaction automatically rebuilds indexes",
       "Compaction avoids having to enable ROW MOVEMENT",
     ],
@@ -59,10 +59,10 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "tun-q57": {
     question: "What is the advantage of making an index invisible rather than dropping it?",
     options: [
-      "The optimizer ignores it, but it stays maintained and comes back with one command",
+      "It is automatically rebuilt every night",
       "It stops being maintained, which speeds up DML",
       "It becomes usable by SYS only",
-      "It is automatically rebuilt every night",
+      "The optimizer ignores it, but it stays maintained and comes back with one command",
     ],
     explanation: "An invisible index is still maintained by DML: the write cost stays, but the optimizer no longer uses it. If a query collapses, ALTER INDEX … VISIBLE restores it instantly — where rebuilding a 40 GB index would take hours.",
     topic: "Invisible index",
@@ -70,8 +70,8 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "tun-q58": {
     question: "What does resumable space allocation allow?",
     options: [
-      "Suspending an operation that runs out of space instead of failing it",
       "Automatically shrinking tablespaces",
+      "Suspending an operation that runs out of space instead of failing it",
       "Compressing segments on the fly",
       "Preventing any ORA-01555 error",
     ],
@@ -81,9 +81,9 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "tun-q59": {
     question: "Why is a bitmap index banned on a highly concurrent OLTP table?",
     options: [
-      "A single DML locks thousands of rows covered by the same bitmap entry",
-      "It does not support NULL values",
       "It cannot be rebuilt online",
+      "It does not support NULL values",
+      "A single DML locks thousands of rows covered by the same bitmap entry",
       "It takes more space than a B-tree",
     ],
     explanation: "A bitmap index entry covers a ROWID range: modifying it locks every row in that range. In a data warehouse, where writes are rare and bulk, that is harmless; in OLTP it is immediate serialisation.",
@@ -102,7 +102,7 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   },
   "tun-q61": {
     question: "Which SPA execution type actually measures execution times?",
-    options: ["TEST EXECUTE", "EXPLAIN PLAN", "COMPARE PERFORMANCE", "CONVERT SQLSET"],
+    options: ["EXPLAIN PLAN", "TEST EXECUTE", "COMPARE PERFORMANCE", "CONVERT SQLSET"],
     explanation: "TEST EXECUTE really runs each statement and records its statistics. EXPLAIN PLAN merely compares plans without executing: faster, but blind to timings. COMPARE PERFORMANCE compares two executions already performed.",
     topic: "SQL Performance Analyzer",
   },
@@ -121,9 +121,9 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "tun-q63": {
     question: "A Database Replay run produces hundreds of new errors. What is the most likely cause?",
     options: [
-      "The test database was not at the capture-start SCN",
-      "The capture files are corrupt",
       "There are not enough wrc clients",
+      "The capture files are corrupt",
+      "The test database was not at the capture-start SCN",
       "The capture was not processed with PROCESS_CAPTURE",
     ],
     explanation: "Replay assumes the test database is exactly in production's state when capture started. Otherwise UPDATEs cannot find their rows and constraints break. The reliable method: a guaranteed restore point before START_CAPTURE, then Flashback before every replay.",
@@ -131,7 +131,7 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   },
   "tun-q64": {
     question: "Which category of the SPA report deserves attention first?",
-    options: ["Regressed statements", "Improved statements", "Unchanged statements", "The total statement count"],
+    options: ["The total statement count", "Improved statements", "Unchanged statements", "Regressed statements"],
     explanation: "A change that improves ninety-nine queries and destroys one is still a failure if the hundredth is the month-end batch. Each regression comes with both plans side by side, which lets you decide: accept, pin a baseline, or drop the change.",
     topic: "SQL Performance Analyzer",
   },
@@ -149,9 +149,9 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "tun-q66": {
     question: "What does DB_BIG_TABLE_CACHE_PERCENT_TARGET do?",
     options: [
-      "Reserves part of the buffer cache to keep the most frequently scanned large tables in memory",
-      "Caps the maximum size of a cached table",
       "Enables buffer cache compression",
+      "Caps the maximum size of a cached table",
+      "Reserves part of the buffer cache to keep the most frequently scanned large tables in memory",
       "Reserves memory for the Flash Cache",
     ],
     explanation: "By default a large-table scan uses direct path and bypasses the cache — right for a one-off scan, wrong if the same table is scanned a hundred times an hour. The parameter reserves part of the cache for the hottest tables, tracked in V$BT_SCAN_OBJ_TEMPS.",
@@ -160,17 +160,17 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "tun-q67": {
     question: "What effect does enabling a 200 GB Flash Cache have on the SGA?",
     options: [
-      "About 2.5 GB of extra SGA is consumed by tracking headers",
+      "The buffer cache is disabled",
       "None: the Flash Cache lives entirely on flash storage",
       "The SGA is automatically halved",
-      "The buffer cache is disabled",
+      "About 2.5 GB of extra SGA is consumed by tracking headers",
     ],
     explanation: "Every block placed in flash needs a tracking header in the SGA: about 100 bytes in single instance, 200 in RAC. 200 GB in 8 KB blocks is 25 million blocks, so roughly 2.5 GB. Without growing the SGA you shrink the buffer cache to gain a second-level cache.",
     topic: "Flash Cache",
   },
   "tun-q68": {
     question: "What must ESTD_OVERALLOC_COUNT be in V$PGA_TARGET_ADVICE at the chosen target?",
-    options: ["Zero", "The number of active sessions", "At least 1", "It does not matter, the value is informational"],
+    options: ["The number of active sessions", "Zero", "At least 1", "It does not matter, the value is informational"],
     explanation: "A non-zero value means the instance will have to exceed PGA_AGGREGATE_TARGET to serve sessions, and so encroach on system memory — with a swapping risk. The chosen target must always sit where that counter falls back to zero.",
     topic: "PGA",
   },
@@ -183,24 +183,24 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "tun-q70": {
     question: "What is a temporary tablespace group for?",
     options: [
-      "Spreading a parallel query's work areas across several temp files",
+      "Enabling Flashback on temporary segments",
       "Encrypting temporary data",
       "Automatically shrinking TEMP",
-      "Enabling Flashback on temporary segments",
+      "Spreading a parallel query's work areas across several temp files",
     ],
     explanation: "A group gathers several temporary tablespaces seen as one. A single query's parallel sessions spread across the members, stopping one file becoming the bottleneck. A user or the whole database can be attached to it.",
     topic: "Temporary tablespaces",
   },
   "tun-q71": {
     question: "Which view immediately identifies the session filling the temporary tablespace?",
-    options: ["V$TEMPSEG_USAGE", "V$TEMPFILE", "DBA_TEMP_FILES", "V$SORT_SEGMENT"],
+    options: ["V$TEMPFILE", "V$TEMPSEG_USAGE", "DBA_TEMP_FILES", "V$SORT_SEGMENT"],
     explanation: "V$TEMPSEG_USAGE links each temporary segment to its session, with the SQL_ID and the blocks consumed. A join with V$SESSION names the culprit at once. The other views describe files, not consumers.",
     topic: "Temporary tablespaces",
   },
 
   "dg-q46": {
     question: "Which OPEN_MODE value proves Active Data Guard is genuinely active?",
-    options: ["READ ONLY WITH APPLY", "READ ONLY", "MOUNTED", "READ WRITE"],
+    options: ["MOUNTED", "READ ONLY", "READ ONLY WITH APPLY", "READ WRITE"],
     explanation: "Plain READ ONLY means redo apply is stopped: the database answers, but with data ageing by the second. Only READ ONLY WITH APPLY attests that the database serves queries while applying redo.",
     topic: "Active Data Guard",
   },
@@ -218,8 +218,8 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "dg-q48": {
     question: "Writing to a global temporary table fails on the standby. What do you check?",
     options: [
-      "TEMP_UNDO_ENABLED, which must be TRUE",
       "STANDBY_FILE_MANAGEMENT, which must be AUTO",
+      "TEMP_UNDO_ENABLED, which must be TRUE",
       "The protection mode, which must be Maximum Availability",
       "FORCE LOGGING on the primary",
     ],
@@ -241,9 +241,9 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "dg-q50": {
     question: "Where are standby AWR snapshots written?",
     options: [
-      "Into the primary, identified by the standby's DBID",
-      "Into the standby's SYSAUX tablespace",
       "Into a flat file in the ADR",
+      "Into the standby's SYSAUX tablespace",
+      "Into the primary, identified by the standby's DBID",
       "They are not retained",
     ],
     explanation: "A read-only database cannot write into its own dictionary. DBMS_WORKLOAD_REPOSITORY.REGISTER_REMOTE_DATABASE registers the standby as a remote node, and CREATE_REMOTE_SNAPSHOT writes the snapshots into the primary, identified by DBID.",
@@ -252,10 +252,10 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "dg-q51": {
     question: "On what basis should NET_TIMEOUT be set?",
     options: [
-      "Three to five times the maximum round-trip latency measured on the link",
+      "The time to apply one log file",
       "Always 30 seconds, the default",
       "The duration of a full switchover",
-      "The time to apply one log file",
+      "Three to five times the maximum round-trip latency measured on the link",
     ],
     explanation: "Too short, a brief glitch breaks the synchronous link and degrades the configuration several times a day. Too long, production stalls on every COMMIT during an outage. A latency measurement is the only rational starting point.",
     topic: "Automatic outage resolution",
@@ -274,9 +274,9 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "dg-q53": {
     question: "MRP0 stays permanently in the WAIT_FOR_LOG state. What do you conclude?",
     options: [
-      "Transport is not supplying redo fast enough: the problem is upstream",
-      "Redo apply lacks parallelism",
       "The standby's storage is saturated",
+      "Redo apply lacks parallelism",
+      "Transport is not supplying redo fast enough: the problem is upstream",
       "The password file is out of step",
     ],
     explanation: "WAIT_FOR_LOG means the apply process is waiting for redo to process: it is not the bottleneck. Tuning parallelism or standby storage would change nothing. The lead is the network, compression, or redo production itself.",
@@ -285,17 +285,17 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "dg-q54": {
     question: "Apply lag grows every morning on an Active Data Guard standby, while transport lag stays flat. What is the lead?",
     options: [
-      "Reporting queries compete with redo apply for CPU and I/O",
+      "The protection mode switches automatically",
       "The network saturates at peak hours",
       "The password file expires every night",
-      "The protection mode switches automatically",
+      "Reporting queries compete with redo apply for CPU and I/O",
     ],
     explanation: "Zero transport lag means redo is arriving normally: it is the apply that lags. In Active Data Guard the database has two competing jobs. A Resource Manager plan capping reporting sessions restores the priority redo apply must keep.",
     topic: "Diagnosing lags",
   },
   "dg-q55": {
     question: "Which descriptor parameter avoids waiting out the OS TCP timeout before trying the second address?",
-    options: ["TRANSPORT_CONNECT_TIMEOUT", "RETRY_DELAY", "CONNECT_TIMEOUT", "LOAD_BALANCE"],
+    options: ["RETRY_DELAY", "TRANSPORT_CONNECT_TIMEOUT", "CONNECT_TIMEOUT", "LOAD_BALANCE"],
     explanation: "Without it, a site unreachable at TCP level makes the client wait out the operating system timeout — often over two minutes — before even trying the second address. It is the most frequent cause of a failover that “took five minutes” when the database was ready in fifteen seconds.",
     topic: "Connect descriptor",
   },
@@ -324,10 +324,10 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "dg-q58": {
     question: "What does Transparent Application Continuity, introduced in 19c, add?",
     options: [
-      "Automatic detection of transaction boundaries, with no application change",
+      "Automatic redo compression",
       "Replay of transactions on a logical standby",
       "Removal of the need for a configured service",
-      "Automatic redo compression",
+      "Automatic detection of transaction boundaries, with no application change",
     ],
     explanation: "Classic Application Continuity assumes the application sets request boundaries. The transparent variant detects them, and session state, by itself, and is enabled with -failovertype AUTO. It is the only realistic path for legacy applications that can no longer be modified.",
     topic: "Application Continuity",
@@ -335,8 +335,8 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "dg-q59": {
     question: "Without Grid Infrastructure, how do you ensure a service starts only on the database holding the PRIMARY role?",
     options: [
-      "With an AFTER DB_ROLE_CHANGE ON DATABASE trigger testing V$DATABASE.DATABASE_ROLE",
       "By setting SERVICE_NAMES statically in the SPFILE",
+      "With an AFTER DB_ROLE_CHANGE ON DATABASE trigger testing V$DATABASE.DATABASE_ROLE",
       "By declaring the service only on the primary",
       "With a TNS alias pointing at a single site",
     ],
@@ -347,9 +347,9 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "rac-q39": {
     question: "Which problem does Flex ASM solve?",
     options: [
-      "Losing a node's ASM instance no longer brings down all its databases",
-      "It removes the need for disk groups",
       "It allows installing ASM without Grid Infrastructure",
+      "It removes the need for disk groups",
+      "Losing a node's ASM instance no longer brings down all its databases",
       "It replaces shared storage with local storage",
     ],
     explanation: "Under classic ASM each node depends on its local ASM instance: if that fails, every database on the node fails. Flex ASM lets a database connect to another node's ASM instance over the ASM network, breaking that coupling.",
@@ -364,8 +364,8 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "rac-q41": {
     question: "Which prerequisite most often blocks enabling Flex ASM?",
     options: [
-      "A disk group whose COMPATIBLE.ASM is still below 12.1",
       "Fewer than three nodes",
+      "A disk group whose COMPATIBLE.ASM is still below 12.1",
       "No shared temporary tablespace",
       "An administrator-managed cluster",
     ],
@@ -374,7 +374,7 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   },
   "rac-q42": {
     question: "Which component exposes an ASM disk group as an operating system block device?",
-    options: ["ADVM", "ACFS", "ASMCMD", "OCR"],
+    options: ["ASMCMD", "ACFS", "ADVM", "OCR"],
     explanation: "ASM Dynamic Volume Manager creates volumes visible under /dev/asm/<volume>-<n>. ACFS is the clustered file system placed on top of those volumes; asmcmd is the command-line administration tool.",
     topic: "ADVM",
   },
@@ -393,10 +393,10 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "rac-q44": {
     question: "What underpins the high availability of an NFS export from ACFS?",
     options: [
-      "A Clusterware-managed HAVIP that migrates if the exporting node fails",
+      "The SCAN's round-robin DNS",
       "Synchronous replication between two NFS servers",
       "An NFS mount on every client",
-      "The SCAN's round-robin DNS",
+      "A Clusterware-managed HAVIP that migrates if the exporting node fails",
     ],
     explanation: "srvctl add havip creates a dedicated virtual address, and srvctl add exportfs attaches the export to it. If the exporting node disappears, the VIP migrates to another node and NFS clients see only a brief stall.",
     topic: "NFS high availability",
@@ -425,24 +425,24 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   },
   "rac-q47": {
     question: "Which utility converts a single-instance database to RAC?",
-    options: ["rconfig", "cluvfy", "opatchauto", "oclumon"],
+    options: ["opatchauto", "cluvfy", "rconfig", "oclumon"],
     explanation: "rconfig is driven by an XML file: it moves files to ASM if needed, adds redo threads and undo tablespaces, then registers the database with Clusterware. You always start with a dry run, which writes nothing.",
     topic: "Conversion to RAC",
   },
   "rac-q48": {
     question: "How do you set a parameter for a single instance in a shared SPFILE?",
     options: [
-      "ALTER SYSTEM SET … SID = 'orcl2' SCOPE = SPFILE",
+      "By editing the file directly on ASM",
       "By creating a local pfile on that node",
       "ALTER SESSION SET … on that instance",
-      "By editing the file directly on ASM",
+      "ALTER SYSTEM SET … SID = 'orcl2' SCOPE = SPFILE",
     ],
     explanation: "The SID clause targets a named instance; SID='*' targets all of them. V$SPPARAMETER shows the SPFILE's real content, per-instance values included. Editing an SPFILE directly on ASM is impossible: it is a binary file managed by the database.",
     topic: "Cluster parameters",
   },
   "rac-q49": {
     question: "Which CLBGOAL setting suits a web application with a connection pool?",
-    options: ["SHORT", "LONG", "NONE", "THROUGHPUT"],
+    options: ["LONG", "SHORT", "NONE", "THROUGHPUT"],
     explanation: "SHORT relies on the Load Balancing Advisory and suits short or pooled connections. LONG balances by session count and suits thick clients keeping a session open all day. THROUGHPUT is an RLBGOAL value, not a CLBGOAL one.",
     topic: "Load balancing",
   },
@@ -460,10 +460,10 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "rac-q51": {
     question: "What is the colocation tag for?",
     options: [
-      "Routing sessions working on the same data to the same instance",
+      "Tagging ACFS files for replication",
       "Identifying one user's sessions in AWR",
       "Naming ASM disk groups",
-      "Tagging ACFS files for replication",
+      "Routing sessions working on the same data to the same instance",
     ],
     explanation: "By grouping one tenant's or one data scope's sessions on a single instance, blocks stay in one buffer cache and Cache Fusion transfers drop accordingly. ACFS tagging is a separate, unrelated mechanism.",
     topic: "Colocation",
@@ -471,8 +471,8 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "rac-q52": {
     question: "What happens if a service is created without the -failback option?",
     options: [
-      "Moved by a failure, it stays on the fallback node even after recovery",
       "It never fails over",
+      "Moved by a failure, it stays on the fallback node even after recovery",
       "It starts on every instance at once",
       "It cannot be relocated manually",
     ],
@@ -482,9 +482,9 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "rac-q53": {
     question: "What characterises an Oracle RAC One Node database?",
     options: [
-      "A single active instance at a time, but registered on several nodes",
-      "Several active instances on a single node",
       "A single-instance database without Clusterware",
+      "Several active instances on a single node",
+      "A single active instance at a time, but registered on several nodes",
       "A database replicated by Data Guard",
     ],
     explanation: "RAC One Node delivers high availability and downtime-free maintenance — through online relocation — without the complexity of active-active: no Cache Fusion, no shared hot blocks. In exchange it does not scale horizontally.",
@@ -504,8 +504,8 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "rac-q55": {
     question: "What does QoS Management use to arbitrate between applications?",
     options: [
-      "A response-time objective declared per work class",
       "A CPU quota set manually per instance",
+      "A response-time objective declared per work class",
       "The number of open sessions per service",
       "The SGA size of each node",
     ],
@@ -515,9 +515,9 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "rac-q56": {
     question: "Which prerequisite, if unmet, renders most QoS levers inert?",
     options: [
-      "A policy-managed cluster, with server pools",
-      "ARCHIVELOG mode",
       "At least four nodes",
+      "ARCHIVELOG mode",
+      "A policy-managed cluster, with server pools",
       "Flex ASM enabled",
     ],
     explanation: "Moving servers between pools, QoS's main lever, assumes declared pools. On an administrator-managed cluster, where each instance is nailed to a named node, QoS installs but can move nothing. The GIMR must also be active.",
@@ -526,10 +526,10 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "rac-q57": {
     question: "What does the INSTANCES clause of ALTER PLUGGABLE DATABASE … OPEN allow in RAC?",
     options: [
-      "Opening the PDB on a chosen subset of the CDB's instances",
+      "Setting the maximum sessions per instance",
       "Spreading the PDB's files across the instances",
       "Creating one undo tablespace per instance",
-      "Setting the maximum sessions per instance",
+      "Opening the PDB on a chosen subset of the CDB's instances",
     ],
     explanation: "A PDB can be opened on every instance, on some of them only, and in different modes per instance. It is a distribution tool: production on one side, read-only reporting on the other.",
     topic: "Multitenant in RAC",
@@ -548,9 +548,9 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "rac-q59": {
     question: "How do you patch a CDB without a lasting interruption to its PDBs' applications?",
     options: [
-      "Relocate the PDBs to an already-patched CDB, patch the emptied CDB, then bring them back",
-      "Stop every instance and apply the patch offline",
       "Convert the PDBs to single-instance databases for the duration",
+      "Stop every instance and apply the patch offline",
+      "Relocate the PDBs to an already-patched CDB, patch the emptied CDB, then bring them back",
       "Use Data Guard to replicate each PDB separately",
     ],
     explanation: "CREATE PLUGGABLE DATABASE … RELOCATE AVAILABILITY MAX moves a PDB between CDBs with about a second of downtime. You empty the CDB to be patched, upgrade it, then bring the PDBs back: application availability is preserved throughout.",
@@ -559,10 +559,10 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "rac-q60": {
     question: "What distinguishes a leaf node from a hub node in a Flex Cluster?",
     options: [
-      "The leaf node has no shared storage access and hosts no database instance",
+      "The leaf node has its own voting disks",
       "The leaf node has more memory",
       "The leaf node must host an ASM instance",
-      "The leaf node has its own voting disks",
+      "The leaf node has no shared storage access and hosts no database instance",
     ],
     explanation: "A leaf node depends on a hub to reach the OCR and the voting disks, and cannot carry a database instance. It serves application servers and jobs that do not need shared storage.",
     topic: "Flex Clusters",
@@ -570,8 +570,8 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "rac-q61": {
     question: "Why does losing a leaf node not trigger a cluster reconfiguration?",
     options: [
-      "It takes no part in quorum, reaching neither the OCR nor the voting disks",
       "It is automatically replaced by a standby node",
+      "It takes no part in quorum, reaching neither the OCR nor the voting disks",
       "Its state is continuously replicated to a hub",
       "Clusterware does not monitor it",
     ],
@@ -592,26 +592,26 @@ export const advancedEnglishB: Record<string, QuizQuestionTranslation> = {
   "rac-q63": {
     question: "What does crsctl eval allow?",
     options: [
-      "Simulating the effect of an operation without executing it",
+      "Estimating free space in disk groups",
       "Evaluating a query's performance",
       "Validating the cluster's network configuration",
-      "Estimating free space in disk groups",
+      "Simulating the effect of an operation without executing it",
     ],
     explanation: "crsctl eval answers “what would happen if…”: stopping a server, activating a policy, moving a resource. On a production cluster it is how you verify a maintenance operation will not trigger a cascade of unforeseen relocations.",
     topic: "What-if evaluation",
   },
   "rac-q64": {
     question: "Which PLACEMENT attribute restricts an application resource to the HOSTING_MEMBERS nodes only?",
-    options: ["restricted", "favored", "balanced", "exclusive"],
+    options: ["favored", "restricted", "balanced", "exclusive"],
     explanation: "restricted strictly limits the resource to the listed nodes. favored prefers them but accepts others, and balanced lets Clusterware pick the least-loaded node. The choice follows real constraints: licensing, hardware, network access.",
     topic: "Application resources",
   },
   "rac-q65": {
     question: "Why is an action script whose check only tests for the process insufficient?",
     options: [
-      "A hung but living application will never be restarted",
-      "Clusterware refuses scripts with no return code",
       "The check must be written in Perl",
+      "Clusterware refuses scripts with no return code",
+      "A hung but living application will never be restarted",
       "Process presence cannot be measured on Linux",
     ],
     explanation: "A zombie process answers pgrep while serving nothing: high availability becomes illusory. The check must query the service the way a user would — an HTTP request, a connection, a test transaction.",

@@ -2351,22 +2351,6 @@ const baseQuizQuestions: QuizQuestion[] = [
     difficulty: "medium",
   },
   {
-    id: "q147",
-    moduleId: "m4",
-    question: "Evaluate the following query: SQL> SELECT TRUNC (ROUND(156.00, -1),-1) FROM DUAL; What would be the outcome?",
-    options: [
-      "150",
-      "200",
-      "160",
-      "16",
-      "100"
-    ],
-    correctIndexes: [2],
-    explanation: "ROUND(156,-1)=160 ; TRUNC(160,-1)=160.",
-    topic: "ROUND / TRUNC",
-    difficulty: "hard",
-  },
-  {
     id: "q148",
     moduleId: "m8",
     question: "Which statement is true regarding the INTERSECT operator?",
@@ -2530,7 +2514,7 @@ const baseQuizQuestions: QuizQuestion[] = [
       "Performance would improve in query 2."
     ],
     correctIndexes: [1],
-    explanation: "IN et OR équivalents ; pas de différence de perf systématique.",
+    explanation: "IN est réécrit en une série de OR par l'optimiseur : les deux requêtes produisent le même plan et le même coût. Les valeurs NULL ne changent rien ici, puisque ni IN ni = ne les retournent — c'est IS NULL qui les teste.",
     topic: "IN vs OR",
     difficulty: "easy",
   },
@@ -2596,21 +2580,6 @@ const baseQuizQuestions: QuizQuestion[] = [
     difficulty: "medium",
   },
   {
-    id: "q164",
-    moduleId: "m8",
-    question: "View the Exhibit and examine the structure of the CUSTOMERS and CUST_HISTORY tables. The CUSTOMERS table contains the current location of all currently active customers. The CUST_HISTORY table stores historical details relating to any changes in the location of all current as well as previous customers who are no longer active with the company. You need to find those customers who have never changed their address. Which SET operator would you use to get the required output?",
-    options: [
-      "INTERSECT",
-      "UNION ALL",
-      "MINUS",
-      "UNION"
-    ],
-    correctIndexes: [2],
-    explanation: "MINUS isole les clients sans historique de changement d'adresse.",
-    topic: "MINUS",
-    difficulty: "medium",
-  },
-  {
     id: "q165",
     moduleId: "m10",
     question: "You must create a SALES table with these column specifications and data types: (Choose the best answer.) SALESID: Number STOREID: Number ITEMID: Number QTY: Number, should be set to 1 when no value is specified SLSDATE: Date, should be set to current date when no value is specified PAYMENT: Characters up to 30 characters, should be set to CASH when no value is specified Which statement would create the table?",
@@ -2657,22 +2626,6 @@ const baseQuizQuestions: QuizQuestion[] = [
     difficulty: "medium",
   },
   {
-    id: "q171",
-    moduleId: "m4",
-    question: "You must create a table for a banking application. (Choose the best answer.) One of the columns in the table has these requirements: 1: A column to store the duration of a short team loan 2: The data should be stored in a format supporting DATE arithmetic with DATE datatypes without using conversion functions. 3: The maximum loan period is 30 days. 4: Interest must be calculated based on the number of days for which the loan remains unpaid. Which data type would you use?",
-    options: [
-      "Date",
-      "Number",
-      "Timestamp",
-      "Interval day to second",
-      "Interval year to month"
-    ],
-    correctIndexes: [3],
-    explanation: "INTERVAL DAY TO SECOND pour une durée ≤ 30 jours avec arithmétique DATE.",
-    topic: "INTERVAL",
-    difficulty: "hard",
-  },
-  {
     id: "q172",
     moduleId: "m6",
     question: "Which two are the minimal requirements for a self-join? (Choose two.)",
@@ -2717,22 +2670,6 @@ const baseQuizQuestions: QuizQuestion[] = [
     correctIndexes: [0, 1, 3],
     explanation: "Structure+données supprimées ; COMMIT implicite ; vues invalidées.",
     topic: "DROP TABLE",
-    difficulty: "hard",
-  },
-  {
-    id: "q175",
-    moduleId: "m4",
-    question: "Evaluate the following query: SQL> SELECT TRUNC (ROUND (156.00, -1),-1) FROM DUAL; What would be the outcome?",
-    options: [
-      "150",
-      "200",
-      "160",
-      "16",
-      "100"
-    ],
-    correctIndexes: [2],
-    explanation: "ROUND(156, -1) arrondit à la dizaine la plus proche et donne 160. TRUNC(160, -1) tronque ensuite à la dizaine, ce qui laisse 160 inchangé. Le second argument négatif désigne les positions à gauche de la virgule : -1 pour les dizaines, -2 pour les centaines.",
-    topic: "ROUND / TRUNC",
     difficulty: "hard",
   },
   {
@@ -2827,21 +2764,6 @@ const baseQuizQuestions: QuizQuestion[] = [
     explanation: "COMMIT implicite ; index/contraintes droppés ; table peut aller au recycle bin.",
     topic: "DROP TABLE",
     difficulty: "hard",
-  },
-  {
-    id: "q183",
-    moduleId: "m2",
-    question: "Evaluate the following two queries: SQL> SELECT cust_last_name, cust_city FROM customers WHERE cust_credit_limit IN (1000, 2000, 3000); SQL> SELECT cust_last_name, cust_city FROM customers WHERE cust_credit_limit = 1000 or cust_credit_limit = 2000 or cust_credit_limit = 3000 Which statement is true regarding the above two queries?",
-    options: [
-      "Performance would improve in query 2 only if there are null values in the CUST_CREDIT_LIMIT column.",
-      "There would be no change in performance.",
-      "Performance would degrade in query 2.",
-      "Performance would improve in query 2."
-    ],
-    correctIndexes: [1],
-    explanation: "Pas de différence de performance attendue.",
-    topic: "IN vs OR",
-    difficulty: "easy",
   },
   {
     id: "q184",

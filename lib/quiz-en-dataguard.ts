@@ -8,9 +8,9 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q1": {
     question: "Which risk does Data Guard NOT protect against?",
     options: [
-      "A logical error, such as an unfortunate DROP TABLE",
-      "Loss of the production site",
       "Failure of the primary server",
+      "Loss of the production site",
+      "A logical error, such as an unfortunate DROP TABLE",
       "Physical corruption of a data file",
     ],
     explanation: "Data Guard faithfully replicates everything that commits, errors included: a DROP TABLE reaches the standby within seconds. Only backups, Flashback and restore points protect against a logical error.",
@@ -18,7 +18,7 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   },
   "dg-q2": {
     question: "Which process applies redo on a physical standby?",
-    options: ["MRP0", "LSP0", "RFS", "LNS"],
+    options: ["LNS", "LSP0", "RFS", "MRP0"],
     explanation: "MRP0 (Managed Recovery Process) applies redo on a physical standby — that is Redo Apply. LSP0 replays SQL statements on a logical standby, RFS receives redo on the standby side, LNS ships it on the primary side.",
     topic: "Processes",
   },
@@ -37,8 +37,8 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q4": {
     question: "In a multitenant environment, at which level does a Data Guard configuration apply?",
     options: [
-      "To the whole CDB",
       "To each PDB independently",
+      "To the whole CDB",
       "To CDB$ROOT only",
       "To the application container alone",
     ],
@@ -54,10 +54,10 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q6": {
     question: "Why is a static listener.ora entry mandatory on the standby side?",
     options: [
-      "Because PMON cannot register a stopped instance, which RMAN and the Broker must nevertheless reach",
+      "Because FORCE LOGGING requires it",
       "Because dynamic registration is disabled in 19c",
       "Because it speeds up redo transport",
-      "Because FORCE LOGGING requires it",
+      "Because PMON cannot register a stopped instance, which RMAN and the Broker must nevertheless reach",
     ],
     explanation: "Dynamic registration by PMON assumes a started instance. Yet the RMAN duplicate and the Broker must reach an instance in NOMOUNT, or even stopped, to start it. Only a static entry allows that — with the _DGMGRL suffix for the Broker.",
     topic: "Oracle Net",
@@ -65,8 +65,8 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q7": {
     question: "How many standby redo log groups should you create, and at what size?",
     options: [
-      "One more than the number of online redo log groups, at exactly the same size",
       "As many as the online groups, at double the size",
+      "One more than the number of online redo log groups, at exactly the same size",
       "A single group, whatever its size",
       "Twice the number of online groups, at half the size",
     ],
@@ -88,9 +88,9 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q9": {
     question: "Which RMAN command creates a physical standby directly from the running database?",
     options: [
-      "DUPLICATE TARGET DATABASE FOR STANDBY FROM ACTIVE DATABASE",
-      "BACKUP DATABASE PLUS ARCHIVELOG",
       "RESTORE STANDBY CONTROLFILE",
+      "BACKUP DATABASE PLUS ARCHIVELOG",
+      "DUPLICATE TARGET DATABASE FOR STANDBY FROM ACTIVE DATABASE",
       "RECOVER DATABASE UNTIL CANCEL",
     ],
     explanation: "DUPLICATE … FOR STANDBY FROM ACTIVE DATABASE copies the running database to the auxiliary instance, with no prior backup. The DORECOVER option applies the redo generated during the copy.",
@@ -109,16 +109,16 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   },
   "dg-q11": {
     question: "Which view confirms that no archived log is missing on the standby?",
-    options: ["V$ARCHIVE_GAP", "V$LOGFILE", "V$DATAFILE_HEADER", "V$RECOVERY_FILE_DEST"],
+    options: ["V$LOGFILE", "V$ARCHIVE_GAP", "V$DATAFILE_HEADER", "V$RECOVERY_FILE_DEST"],
     explanation: "V$ARCHIVE_GAP must stay empty. If it returns rows, the FAL_SERVER parameter failed to close the gap automatically and the missing archives must be shipped by hand.",
     topic: "Transport checks",
   },
   "dg-q12": {
     question: "Which parameter avoids having to create data files manually on the standby?",
     options: [
-      "STANDBY_FILE_MANAGEMENT = AUTO",
-      "DB_FILE_NAME_CONVERT",
       "LOG_ARCHIVE_CONFIG",
+      "DB_FILE_NAME_CONVERT",
+      "STANDBY_FILE_MANAGEMENT = AUTO",
       "FAL_CLIENT",
     ],
     explanation: "With STANDBY_FILE_MANAGEMENT = AUTO, a file added on the primary is created automatically on the standby. DB_FILE_NAME_CONVERT only translates paths; without the first parameter, redo apply stops.",
@@ -127,10 +127,10 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q13": {
     question: "Which view must you check BEFORE creating a logical standby?",
     options: [
-      "DBA_LOGSTDBY_UNSUPPORTED",
+      "V$MANAGED_STANDBY",
       "V$DATAGUARD_STATS",
       "DBA_LOGSTDBY_LOG",
-      "V$MANAGED_STANDBY",
+      "DBA_LOGSTDBY_UNSUPPORTED",
     ],
     explanation: "DBA_LOGSTDBY_UNSUPPORTED lists objects SQL Apply cannot replicate, because of unsupported data types. If critical tables appear there they will never be synchronised — and you only find out after switching over.",
     topic: "Logical standby",
@@ -149,9 +149,9 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q15": {
     question: "Which procedure resynchronises a single diverged table on a logical standby?",
     options: [
-      "DBMS_LOGSTDBY.INSTANTIATE_TABLE",
-      "DBMS_LOGSTDBY.SKIP",
       "DBMS_LOGSTDBY.APPLY_SET",
+      "DBMS_LOGSTDBY.SKIP",
+      "DBMS_LOGSTDBY.INSTANTIATE_TABLE",
       "DBMS_LOGSTDBY.SKIP_ERROR",
     ],
     explanation: "INSTANTIATE_TABLE re-copies a table from the primary and returns it to the SQL Apply stream, without rebuilding the whole standby. SKIP excludes an object, SKIP_ERROR ignores an error, APPLY_SET tunes parallelism.",
@@ -160,10 +160,10 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q16": {
     question: "In Maximum Protection mode, what happens if no standby can acknowledge?",
     options: [
-      "The primary shuts down",
+      "The mode automatically becomes Maximum Availability",
       "Transport automatically falls back to asynchronous",
       "Transactions are queued then committed",
-      "The mode automatically becomes Maximum Availability",
+      "The primary shuts down",
     ],
     explanation: "Maximum Protection guarantees zero loss literally: rather than commit an unreplicated transaction, the primary shuts down. That is why the mode requires at least two standbys in practice.",
     topic: "Protection modes",
@@ -171,8 +171,8 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q17": {
     question: "What does FASTSYNC mean?",
     options: [
-      "SYNC NOAFFIRM: the standby acknowledges as soon as redo is received in memory",
       "ASYNC with compression enabled",
+      "SYNC NOAFFIRM: the standby acknowledges as soon as redo is received in memory",
       "Synchronous transport plus an immediate disk write",
       "The default mode of Maximum Performance",
     ],
@@ -193,10 +193,10 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q19": {
     question: "Which problem does a Far Sync instance solve?",
     options: [
-      "Achieving zero data loss without imposing intercontinental latency on every COMMIT",
+      "Compressing RMAN backups",
       "Applying redo faster on the standby",
       "Replicating several PDBs separately",
-      "Compressing RMAN backups",
+      "Achieving zero data loss without imposing intercontinental latency on every COMMIT",
     ],
     explanation: "Far Sync is a lightweight instance — control file and standby redo logs, no data files — placed near production. It receives redo synchronously, then forwards it asynchronously to the remote standby.",
     topic: "Far Sync",
@@ -215,8 +215,8 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q21": {
     question: "What does Real-Time Cascade add from 12c onwards?",
     options: [
-      "The standby forwards redo as it arrives, without waiting for the log file to complete",
       "The primary ships redo to every standby simultaneously",
+      "The standby forwards redo as it arrives, without waiting for the log file to complete",
       "Redo apply becomes parallel",
       "Archived logs are compressed automatically",
     ],
@@ -226,9 +226,9 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q22": {
     question: "Which view shows the protection mode actually in force?",
     options: [
-      "V$DATABASE, columns PROTECTION_MODE and PROTECTION_LEVEL",
-      "V$MANAGED_STANDBY",
       "V$ARCHIVE_DEST_STATUS only",
+      "V$MANAGED_STANDBY",
+      "V$DATABASE, columns PROTECTION_MODE and PROTECTION_LEVEL",
       "V$LOGFILE",
     ],
     explanation: "PROTECTION_MODE shows the configured mode, PROTECTION_LEVEL the mode actually delivered at that instant. A gap between them — MAXIMUM AVAILABILITY configured, RESYNCHRONIZATION in progress — signals a degraded configuration.",
@@ -243,8 +243,8 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q24": {
     question: "Once the Broker is active, how do you change a transport destination?",
     options: [
-      "Through EDIT DATABASE … SET PROPERTY in DGMGRL",
       "Through ALTER SYSTEM SET log_archive_dest_2 in SQL",
+      "Through EDIT DATABASE … SET PROPERTY in DGMGRL",
       "By editing the Broker configuration file directly",
       "By restarting the instance with a modified pfile",
     ],
@@ -265,17 +265,17 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   },
   "dg-q26": {
     question: "Which suffix must GLOBAL_DBNAME carry in listener.ora for the Broker?",
-    options: ["_DGMGRL", "_STANDBY", "_BROKER", "_DG"],
+    options: ["_BROKER", "_STANDBY", "_DGMGRL", "_DG"],
     explanation: "The Broker expects a static entry whose GLOBAL_DBNAME is <db_unique_name>_DGMGRL. Without it, VALIDATE STATIC CONNECT IDENTIFIER fails and the Broker cannot restart the instance during a role transition.",
     topic: "Broker",
   },
   "dg-q27": {
     question: "What essential difference separates a switchover from a failover?",
     options: [
-      "A switchover is planned and lossless; a failover is forced and may lose data",
+      "A switchover requires an observer",
       "A switchover only works with a logical standby",
       "A failover is reversible without intervention",
-      "A switchover requires an observer",
+      "A switchover is planned and lossless; a failover is forced and may lose data",
     ],
     explanation: "A switchover cleanly exchanges roles: the former primary becomes the standby with no rebuild. A failover is forced and leaves the former primary diverged: it must be reinstated or rebuilt.",
     topic: "Role transitions",
@@ -294,9 +294,9 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q29": {
     question: "Where must the Fast-Start Failover observer run?",
     options: [
-      "On a third site, distinct from the primary and the standby",
-      "On the primary",
       "On the standby",
+      "On the primary",
+      "On a third site, distinct from the primary and the standby",
       "On either of the two databases, indifferently",
     ],
     explanation: "An observer hosted on the primary would vanish with it and could decide nothing; hosted on the standby, it could not distinguish a real failure from a network cut. The third site provides the arbitration.",
@@ -305,10 +305,10 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q30": {
     question: "Which minimum protection mode does Fast-Start Failover require?",
     options: [
-      "Maximum Availability (or Maximum Performance depending on the configuration)",
+      "Maximum Performance only",
       "Maximum Protection, mandatorily",
       "No particular mode",
-      "Maximum Performance only",
+      "Maximum Availability (or Maximum Performance depending on the configuration)",
     ],
     explanation: "Fast-Start Failover is supported in Maximum Availability — the reference, zero-loss configuration — and in Maximum Performance since 11.2, with a loss objective set by FastStartFailoverLagLimit.",
     topic: "Fast-Start Failover",
@@ -316,8 +316,8 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q31": {
     question: "Which procedure lets an application trigger a Fast-Start Failover immediately?",
     options: [
-      "DBMS_DG.INITIATE_FS_FAILOVER",
       "DBMS_SERVICE.STOP_SERVICE",
+      "DBMS_DG.INITIATE_FS_FAILOVER",
       "DBMS_LOGSTDBY.SKIP",
       "DBMS_DBCOMP.DBCOMP",
     ],
@@ -338,10 +338,10 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q33": {
     question: "What does Automatic Block Media Recovery allow?",
     options: [
-      "Repairing a corrupt block from the other database, with no intervention and no downtime",
+      "Compressing transferred blocks",
       "Rebuilding a whole data file",
       "Converting a physical standby into a logical one",
-      "Compressing transferred blocks",
+      "Repairing a corrupt block from the other database, with no intervention and no downtime",
     ],
     explanation: "With Active Data Guard, a corrupt block found on the primary is repaired automatically from the standby — and vice versa. The session involved waits a moment then carries on; the event is traced in the alert log.",
     topic: "Block repair",
@@ -349,8 +349,8 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q34": {
     question: "Which RMAN command resynchronises a badly lagging standby, with no file restore?",
     options: [
-      "RECOVER STANDBY DATABASE FROM SERVICE orcl_pr",
       "RESTORE DATABASE FROM TAG standby",
+      "RECOVER STANDBY DATABASE FROM SERVICE orcl_pr",
       "DUPLICATE DATABASE FOR STANDBY",
       "RECOVER DATABASE UNTIL CANCEL",
     ],
@@ -359,7 +359,7 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   },
   "dg-q35": {
     question: "Which package automates a rolling database upgrade?",
-    options: ["DBMS_ROLLING", "DBMS_LOGSTDBY", "DBMS_DG", "DBMS_REDEFINITION"],
+    options: ["DBMS_DG", "DBMS_LOGSTDBY", "DBMS_ROLLING", "DBMS_REDEFINITION"],
     explanation: "DBMS_ROLLING chains INIT_PLAN, BUILD_PLAN, START_PLAN, SWITCHOVER and FINISH_PLAN: it converts the standby into a transient logical standby, upgrades it, switches over, then puts everything back. It is the recommended method since 12c.",
     topic: "Rolling upgrade",
   },
@@ -388,8 +388,8 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q38": {
     question: "A high transport lag together with a low apply lag indicates:",
     options: [
-      "A network problem between the primary and the standby",
       "A standby that cannot apply fast enough",
+      "A network problem between the primary and the standby",
       "Stale statistics",
       "An out-of-step password file",
     ],
@@ -398,7 +398,7 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   },
   "dg-q39": {
     question: "Which view gives the transport lag and the apply lag?",
-    options: ["V$DATAGUARD_STATS", "V$DATAGUARD_STATUS", "V$MANAGED_STANDBY", "V$ARCHIVED_LOG"],
+    options: ["V$MANAGED_STANDBY", "V$DATAGUARD_STATUS", "V$DATAGUARD_STATS", "V$ARCHIVED_LOG"],
     explanation: "V$DATAGUARD_STATS exposes transport lag, apply lag and apply finish time. V$DATAGUARD_STATUS holds event messages, V$MANAGED_STANDBY the state of the transport and apply processes.",
     topic: "Monitoring",
   },
@@ -415,7 +415,7 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   },
   "dg-q41": {
     question: "Which error signals an out-of-step password file between the two databases?",
-    options: ["ORA-16191", "ORA-01017 only", "ORA-16000", "ORA-00600"],
+    options: ["ORA-00600", "ORA-01017 only", "ORA-16000", "ORA-16191"],
     explanation: "ORA-16191 (“Primary log shipping client not logged on standby”) appears in the primary's alert log when the password file differs. It is the most frequent operational failure after a password rotation.",
     topic: "Troubleshooting",
   },
@@ -433,9 +433,9 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q43": {
     question: "What does Application Continuity add over TAF connection failover?",
     options: [
-      "The driver replays the interrupted transaction on the new primary",
-      "Reconnection is faster",
       "No service configuration is needed",
+      "Reconnection is faster",
+      "The driver replays the interrupted transaction on the new primary",
       "It works without Data Guard",
     ],
     explanation: "TAF reconnects the session, but the application still receives an error on the in-flight transaction. Application Continuity replays it transparently; it requires a FAILOVER_TYPE=TRANSACTION service and a compatible driver.",
@@ -444,17 +444,17 @@ export const dataGuardEnglish: Record<string, QuizQuestionTranslation> = {
   "dg-q44": {
     question: "Which command increases redo apply parallelism?",
     options: [
-      "ALTER DATABASE RECOVER MANAGED STANDBY DATABASE PARALLEL 8 DISCONNECT",
+      "ALTER SYSTEM SET log_archive_max_processes = 8",
       "ALTER SYSTEM SET parallel_degree_policy = AUTO",
       "ALTER DATABASE ADD STANDBY LOGFILE",
-      "ALTER SYSTEM SET log_archive_max_processes = 8",
+      "ALTER DATABASE RECOVER MANAGED STANDBY DATABASE PARALLEL 8 DISCONNECT",
     ],
     explanation: "The PARALLEL clause of RECOVER MANAGED STANDBY DATABASE sets the number of apply processes. LOG_ARCHIVE_MAX_PROCESSES acts on archiving, not on apply at the standby.",
     topic: "Apply tuning",
   },
   "dg-q45": {
     question: "Which LOG_ARCHIVE_DEST_n attribute enables compression of the shipped redo?",
-    options: ["COMPRESSION=ENABLE", "SYNC AFFIRM", "VALID_FOR=(ONLINE_LOGFILES,PRIMARY_ROLE)", "REOPEN=60"],
+    options: ["SYNC AFFIRM", "COMPRESSION=ENABLE", "VALID_FOR=(ONLINE_LOGFILES,PRIMARY_ROLE)", "REOPEN=60"],
     explanation: "COMPRESSION=ENABLE cuts the volume shipped over a slow link; the attribute belongs to the Advanced Compression option. The other attributes control transport mode, role validity and retry delay respectively.",
     topic: "Redo transport",
   },

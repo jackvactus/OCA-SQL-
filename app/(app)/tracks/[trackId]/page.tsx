@@ -315,16 +315,61 @@ export default async function TrackDetailPage({ params }: { params: { trackId: s
           <CardDescription>{t.tracks.officialDesc}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
-          <a href={track.officialExamUrl} target="_blank" rel="noopener noreferrer">
+          {/*
+            Chaque lien s'ouvre dans un nouvel onglet et annonce sa destination
+            aux lecteurs d'écran : « nouvel onglet » n'est visible que d'eux, la
+            flèche l'indiquant visuellement.
+
+            Le lien « formation » n'apparaît que pour les parcours dont
+            l'identifiant de catalogue Oracle University est connu. Pour les
+            trois spécialisations, il est délibérément absent : un identifiant
+            numérique inventé aurait l'air exact et mènerait sur une page
+            inexistante.
+          */}
+          <a
+            href={track.officialExamUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${t.tracks.officialExam} ${track.examCode} — ${t.tracks.newTab}`}
+          >
             <Button variant="outline" size="sm" className="gap-1.5">
-              <ExternalLink className="h-3.5 w-3.5" />
+              <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
               {t.tracks.officialExam} — {track.examCode}
             </Button>
           </a>
-          <a href={track.officialLearningUrl} target="_blank" rel="noopener noreferrer">
+          {track.officialLearningUrl && (
+            <a
+              href={track.officialLearningUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${t.tracks.officialLearning} — ${t.tracks.newTab}`}
+            >
+              <Button variant="outline" size="sm" className="gap-1.5">
+                <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                {t.tracks.officialLearning}
+              </Button>
+            </a>
+          )}
+          <a
+            href={track.officialDocsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${t.tracks.officialDocs} — ${t.tracks.newTab}`}
+          >
             <Button variant="outline" size="sm" className="gap-1.5">
-              <ExternalLink className="h-3.5 w-3.5" />
-              {t.tracks.officialLearning}
+              <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+              {t.tracks.officialDocs}
+            </Button>
+          </a>
+          <a
+            href="https://education.oracle.com/oracle-certification-path/pFamily_32"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${t.tracks.officialPath} — ${t.tracks.newTab}`}
+          >
+            <Button variant="outline" size="sm" className="gap-1.5">
+              <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+              {t.tracks.officialPath}
             </Button>
           </a>
         </CardContent>

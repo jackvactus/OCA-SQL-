@@ -114,3 +114,91 @@ test("chaque parcours dispose d'une banque non vide dans les deux langues", () =
     }
   }
 });
+
+/**
+ * Les deux contrôles ci-dessous verrouillent les défauts que l'analyse du
+ * 31 août 2026 a trouvés dans la banque anglaise, et que rien n'empêchait de
+ * revenir : des doublons reformulés — même jeu d'options, énoncé réécrit — et
+ * des questions rattachées au mauvais module.
+ */
+
+test("aucune question ne partage à la fois ses options et sa réponse avec une autre", () => {
+  // Deux questions peuvent légitimement partager un jeu d'options tout en
+  // testant les deux moitiés d'une même distinction — « quelle clause filtre
+  // les lignes » et « quelle clause filtre les groupes » proposent les mêmes
+  // quatre clauses. Ce qui trahit un doublon reformulé, c'est que la réponse
+  // soit elle aussi la même.
+  for (const track of certificationTracks) {
+    for (const locale of LOCALES) {
+      const vus = new Map<string, string>();
+      const dups: string[] = [];
+      for (const q of getQuestionBank(track.id, locale)) {
+        const options = q.options.map((o) => o.trim().toLowerCase()).sort().join("¦");
+        const reponses = q.correctIndexes
+          .map((i) => q.options[i].trim().toLowerCase())
+          .sort()
+          .join("¦");
+        const cle = `${options}→${reponses}`;
+        const deja = vus.get(cle);
+        if (deja) dups.push(`${deja}=${q.id}`);
+        else vus.set(cle, q.id);
+      }
+      assert.deepEqual(
+        dups,
+        [],
+        `${track.examCode}-${locale} : mêmes options et même réponse, signe d'un doublon reformulé — ${dups.join(", ")}`,
+      );
+    }
+  }
+});
+
+test("chaque sujet de la banque anglaise OCA pointe vers le module attendu", () => {
+  // Table explicite : c'est le seul moyen de détecter un décalage de
+  // rattachement, qu'aucune vérification structurelle ne peut deviner.
+  const attendu: Record<string, string> = {
+    "Relational Database Concepts": "m1",
+    "Retrieving Data using the SQL SELECT Statement": "m2",
+    "Restricting and Sorting Data": "m3",
+    "Using Single-Row Functions to Customize Output": "m4",
+    "Using Conversion Functions and Conditional Expressions": "m4",
+    "Managing Data in Different Time Zones": "m4",
+    "Reporting Aggregated Data Using Group Functions": "m5",
+    "Displaying Data from Multiple Tables": "m6",
+    "Using Subqueries to Solve Queries": "m7",
+    "Using SET Operators": "m8",
+    "Managing Tables using DML statements": "m9",
+    "Use DDL to manage tables and their relationships": "m10",
+    "Managing Views": "m13",
+    "Managing Indexes Synonyms and Sequences": "m13",
+    "Managing Objects with Data Dictionary Views": "m13",
+    "Controlling User Access": "m16",
+  };
+  const ecarts: string[] = [];
+  for (const q of getQuestionBank("oca-sql", "en")) {
+    const cible = attendu[q.topic];
+    if (!cible) {
+      ecarts.push(`${q.id} : sujet inattendu « ${q.topic} »`);
+    } else if (q.moduleId !== cible) {
+      ecarts.push(`${q.id} : « ${q.topic} » rattaché à ${q.moduleId} au lieu de ${cible}`);
+    }
+  }
+  assert.deepEqual(ecarts, []);
+});
+
+test("la banque anglaise OCA comporte des questions multi-réponses", () => {
+  const banque = getQuestionBank("oca-sql", "en");
+  const multi = banque.filter((q) => q.correctIndexes.length > 1);
+  assert.ok(
+    multi.length / banque.length > 0.1,
+    `seulement ${multi.length} questions multi-réponses sur ${banque.length}`,
+  );
+});
+
+test("les explications de la banque anglaise OCA écartent les distracteurs", () => {
+  // Une explication qui se contente de reformuler la bonne réponse tient en
+  // une ligne. Justifier la clé *et* écarter les distracteurs en demande plus.
+  const courtes = getQuestionBank("oca-sql", "en")
+    .filter((q) => q.explanation.length < 120)
+    .map((q) => q.id);
+  assert.deepEqual(courtes, []);
+});

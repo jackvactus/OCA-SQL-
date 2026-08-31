@@ -8,9 +8,9 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q1": {
     question: "What is the first step of a rigorous tuning approach?",
     options: [
-      "Define a measurable, quantified goal before changing anything",
-      "Increase the SGA to rule out a memory lead",
       "Re-gather statistics on every schema",
+      "Increase the SGA to rule out a memory lead",
+      "Define a measurable, quantified goal before changing anything",
       "Enable a 10046 trace on the whole instance",
     ],
     explanation: "Without a quantified goal — “this batch must finish under 4 minutes” — you can neither prove a gain nor know when to stop. Every other option is an action: those come after the diagnosis, never before it.",
@@ -19,10 +19,10 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q2": {
     question: "What does the DB time time-model statistic measure?",
     options: [
-      "Total time user sessions spend in the database, CPU and waits included",
+      "Time elapsed since instance startup",
       "CPU time consumed by background processes",
       "Execution time of the slowest query",
-      "Time elapsed since instance startup",
+      "Total time user sessions spend in the database, CPU and waits included",
     ],
     explanation: "DB time sums CPU time and wait time across all active user sessions. It is the reference measure of load: reducing DB time is what tuning means. Background processes are excluded.",
     topic: "Time model",
@@ -36,8 +36,8 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q4": {
     question: "At which lifecycle phase is tuning cheapest?",
     options: [
-      "While designing the data model and the access paths",
       "During functional testing",
+      "While designing the data model and the access paths",
       "At the first production incident",
       "During an upgrade to a new release",
     ],
@@ -58,26 +58,26 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q6": {
     question: "What is the default AWR snapshot interval, and the default retention in 19c?",
     options: [
-      "60 minutes, retained for 8 days",
+      "15 minutes, retained for 14 days",
       "30 minutes, retained for 7 days",
       "60 minutes, retained for 30 days",
-      "15 minutes, retained for 14 days",
+      "60 minutes, retained for 8 days",
     ],
     explanation: "By default AWR takes a snapshot every 60 minutes and keeps them for 8 days. Both values change through DBMS_WORKLOAD_REPOSITORY.MODIFY_SNAPSHOT_SETTINGS.",
     topic: "AWR",
   },
   "tun-q7": {
     question: "How often does ASH sample active sessions?",
-    options: ["Once per second", "Once every 10 seconds", "On every commit", "Once per AWR snapshot"],
+    options: ["Once every 10 seconds", "Once per second", "On every commit", "Once per AWR snapshot"],
     explanation: "ASH samples the state of every active session once a second into a circular SGA buffer (V$ACTIVE_SESSION_HISTORY). One tenth of those samples is persisted to DBA_HIST_ACTIVE_SESS_HISTORY.",
     topic: "ASH",
   },
   "tun-q8": {
     question: "An incident lasted three minutes, two hours ago. Which tool can analyse it?",
     options: [
-      "ASH, which samples every second",
-      "AWR, whose interval is hourly",
       "ADDM, which analyses an interval between two snapshots",
+      "AWR, whose interval is hourly",
+      "ASH, which samples every second",
       "The Segment Advisor",
     ],
     explanation: "A three-minute spike dissolves inside a one-hour AWR snapshot, so ADDM — which builds on AWR — will not see it. ASH keeps a per-second trace and lets you target the exact interval.",
@@ -109,8 +109,8 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q11": {
     question: "Which package creates an AWR snapshot on demand?",
     options: [
-      "DBMS_WORKLOAD_REPOSITORY.CREATE_SNAPSHOT",
       "DBMS_STATS.GATHER_DATABASE_STATS",
+      "DBMS_WORKLOAD_REPOSITORY.CREATE_SNAPSHOT",
       "DBMS_ADVISOR.CREATE_TASK",
       "DBMS_MONITOR.SESSION_TRACE_ENABLE",
     ],
@@ -120,9 +120,9 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q12": {
     question: "Which option is required to use AWR, ASH and ADDM?",
     options: [
-      "The Enterprise Edition Diagnostics Pack option",
-      "The Tuning Pack option alone",
       "None: these tools are included in Standard Edition",
+      "The Tuning Pack option alone",
+      "The Enterprise Edition Diagnostics Pack option",
       "The Advanced Compression option",
     ],
     explanation: "AWR, ASH and ADDM belong to the Diagnostics Pack, licensed on top of Enterprise Edition. The CONTROL_MANAGEMENT_PACK_ACCESS parameter governs their use. Without that licence, Statspack is the free alternative.",
@@ -131,10 +131,10 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q13": {
     question: "What does the “db file sequential read” wait event indicate?",
     options: [
-      "A single-block read, typically an index access",
+      "A wait on the redo log",
       "A multi-block read, typically a full scan",
       "A DBWn write to the data files",
-      "A wait on the redo log",
+      "A single-block read, typically an index access",
     ],
     explanation: "Despite its name, “sequential read” means one block at a time — index access. It is “db file scattered read” that corresponds to the multi-block read of a full scan. The vocabulary is counter-intuitive and appears regularly on the exam.",
     topic: "Wait events",
@@ -158,17 +158,17 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   },
   "tun-q16": {
     question: "Which view gives a session's current wait, at the moment you query it?",
-    options: ["V$SESSION", "V$SESSION_EVENT", "V$SYSTEM_EVENT", "DBA_HIST_SNAPSHOT"],
+    options: ["V$SYSTEM_EVENT", "V$SESSION_EVENT", "V$SESSION", "DBA_HIST_SNAPSHOT"],
     explanation: "Since 10g, V$SESSION carries EVENT, WAIT_CLASS and STATE directly: that is the snapshot. V$SESSION_EVENT accumulates since connection, V$SYSTEM_EVENT since instance startup.",
     topic: "Diagnostic views",
   },
   "tun-q17": {
     question: "Which package sets an alert threshold on a metric?",
     options: [
-      "DBMS_SERVER_ALERT.SET_THRESHOLD",
+      "DBMS_MONITOR.CLIENT_ID_TRACE_ENABLE",
       "DBMS_ALERT.SIGNAL",
       "DBMS_STATS.SET_TABLE_PREFS",
-      "DBMS_MONITOR.CLIENT_ID_TRACE_ENABLE",
+      "DBMS_SERVER_ALERT.SET_THRESHOLD",
     ],
     explanation: "DBMS_SERVER_ALERT.SET_THRESHOLD attaches a warning and a critical threshold to a metric. Triggered alerts appear in DBA_OUTSTANDING_ALERTS then DBA_ALERT_HISTORY. DBMS_ALERT is an unrelated application-level mechanism.",
     topic: "Thresholds and alerts",
@@ -176,8 +176,8 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q18": {
     question: "A stateful alert leaves DBA_OUTSTANDING_ALERTS when:",
     options: [
-      "The condition that raised it stops being true",
       "An administrator clears it manually",
+      "The condition that raised it stops being true",
       "The instance restarts",
       "AWR retention expires",
     ],
@@ -198,10 +198,10 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q20": {
     question: "What essential difference separates EXPLAIN PLAN from DBMS_XPLAN.DISPLAY_CURSOR?",
     options: [
-      "EXPLAIN PLAN predicts a plan without executing; DISPLAY_CURSOR shows the plan actually used",
+      "Both always produce the same result",
       "EXPLAIN PLAN is more accurate because it accounts for bind variables",
       "DISPLAY_CURSOR only works on materialized views",
-      "Both always produce the same result",
+      "EXPLAIN PLAN predicts a plan without executing; DISPLAY_CURSOR shows the plan actually used",
     ],
     explanation: "EXPLAIN PLAN predicts what the optimizer would do, with no bind peeking and no execution. DISPLAY_CURSOR reads the plan of the cursor that actually ran, with estimated and actual rows when GATHER_PLAN_STATISTICS is used. For diagnosis, DISPLAY_CURSOR is authoritative.",
     topic: "Execution plans",
@@ -209,8 +209,8 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q21": {
     question: "In a plan obtained with the ALLSTATS LAST format, a wide gap between E-Rows and A-Rows indicates:",
     options: [
-      "A wrong cardinality estimate, often caused by unsuitable statistics",
       "A locking problem",
+      "A wrong cardinality estimate, often caused by unsuitable statistics",
       "Insufficient PGA space",
       "Adaptive plans being disabled",
     ],
@@ -231,9 +231,9 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q23": {
     question: "What is a SQL plan directive?",
     options: [
-      "A persistent note telling the optimizer to use an extra mechanism on a set of columns",
-      "A frozen plan imposed on a statement",
       "A SQL profile generated by SQL Tuning Advisor",
+      "A frozen plan imposed on a statement",
+      "A persistent note telling the optimizer to use an extra mechanism on a set of columns",
       "An integrity constraint on statistics",
     ],
     explanation: "A directive is born from a repeated misestimate: the optimizer records that a column group is badly estimated and triggers dynamic sampling or the creation of extended statistics. It applies to columns, not to a statement — unlike a profile or a baseline.",
@@ -253,8 +253,8 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q25": {
     question: "Which ESTIMATE_PERCENT value has been recommended since 11g?",
     options: [
-      "DBMS_STATS.AUTO_SAMPLE_SIZE",
       "100, for maximum accuracy",
+      "DBMS_STATS.AUTO_SAMPLE_SIZE",
       "10, as a compromise",
       "1, for speed",
     ],
@@ -264,9 +264,9 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q26": {
     question: "What is a column histogram for?",
     options: [
-      "Describing an uneven value distribution so estimates get sharper",
-      "Speeding up inserts",
       "Replacing an index",
+      "Speeding up inserts",
+      "Describing an uneven value distribution so estimates get sharper",
       "Compressing the column's data",
     ],
     explanation: "Without a histogram the optimizer assumes values are evenly spread. On a STATUS column where 99 % of rows read “closed”, that assumption produces an absurd estimate. The histogram describes the real distribution.",
@@ -281,10 +281,10 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q28": {
     question: "What do extended statistics enable?",
     options: [
-      "Describing correlation between several columns, or an expression",
+      "Extending AWR to standby databases",
       "Keeping statistics history longer",
       "Gathering system statistics",
-      "Extending AWR to standby databases",
+      "Describing correlation between several columns, or an expression",
     ],
     explanation: "The optimizer assumes predicates are independent: on CITY = 'Lyon' AND DEPARTMENT = 69 it multiplies two selectivities and grossly underestimates. A column group created by DBMS_STATS.CREATE_EXTENDED_STATS restores the real correlation.",
     topic: "Extended statistics",
@@ -298,9 +298,9 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q30": {
     question: "Which parameter controls the degree of dynamic sampling?",
     options: [
-      "OPTIMIZER_DYNAMIC_SAMPLING",
-      "OPTIMIZER_INDEX_COST_ADJ",
       "OPTIMIZER_MODE",
+      "OPTIMIZER_INDEX_COST_ADJ",
+      "OPTIMIZER_DYNAMIC_SAMPLING",
       "DB_FILE_MULTIBLOCK_READ_COUNT",
     ],
     explanation: "OPTIMIZER_DYNAMIC_SAMPLING ranges from 0 to 11. Value 11 lets the optimizer decide by itself when to sample at parse time — the behaviour adopted by adaptive sampling from 12c onwards.",
@@ -309,10 +309,10 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q31": {
     question: "Which automated maintenance task gathers stale statistics?",
     options: [
-      "auto optimizer stats collection",
+      "auto segment shrink",
       "auto space advisor",
       "sql tuning advisor",
-      "auto segment shrink",
+      "auto optimizer stats collection",
     ],
     explanation: "Three tasks run in the maintenance window: auto optimizer stats collection, auto space advisor and sql tuning advisor. The first re-gathers statistics for objects whose rows have changed by more than 10 %.",
     topic: "Automated tasks",
@@ -320,8 +320,8 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q32": {
     question: "What is the difference between a SQL profile and a SQL plan baseline?",
     options: [
-      "The profile corrects the optimizer's estimates; the baseline pins a set of accepted plans",
       "The profile pins a plan; the baseline corrects estimates",
+      "The profile corrects the optimizer's estimates; the baseline pins a set of accepted plans",
       "Both pin the same plan, only the name differs",
       "A baseline only applies to materialized views",
     ],
@@ -354,26 +354,26 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q35": {
     question: "What does DBMS_SPM.EVOLVE_SQL_PLAN_BASELINE do?",
     options: [
-      "Verifies that a new plan performs better before accepting it",
+      "Re-gathers statistics on the objects involved",
       "Drops every baseline in a schema",
       "Forces the use of the latest plan found",
-      "Re-gathers statistics on the objects involved",
+      "Verifies that a new plan performs better before accepting it",
     ],
     explanation: "When the optimizer finds a plan absent from the baseline, it records it as unaccepted. EVOLVE runs it and compares it to the accepted plan: it is promoted only if it does better. That is what stops a plan regression from winning silently.",
     topic: "SQL Plan Management",
   },
   "tun-q36": {
     question: "Which parameter enables Automatic Memory Management (AMM) across both SGA and PGA?",
-    options: ["MEMORY_TARGET", "SGA_TARGET", "PGA_AGGREGATE_TARGET", "DB_CACHE_SIZE"],
+    options: ["SGA_TARGET", "MEMORY_TARGET", "PGA_AGGREGATE_TARGET", "DB_CACHE_SIZE"],
     explanation: "MEMORY_TARGET drives AMM and arbitrates between SGA and PGA. SGA_TARGET alone enables ASMM, which only tunes SGA components. PGA_AGGREGATE_TARGET caps session work-area memory.",
     topic: "Memory management",
   },
   "tun-q37": {
     question: "Which view quantifies the gain expected from a larger buffer cache?",
     options: [
-      "V$DB_CACHE_ADVICE",
-      "V$SGA_DYNAMIC_COMPONENTS",
       "V$PGA_TARGET_ADVICE",
+      "V$SGA_DYNAMIC_COMPONENTS",
+      "V$DB_CACHE_ADVICE",
       "V$SHARED_POOL_ADVICE",
     ],
     explanation: "V$DB_CACHE_ADVICE simulates several cache sizes and reports, for each, how many physical reads would be avoided. It is a quantified decision table, to be preferred over the hit ratio.",
@@ -393,8 +393,8 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q39": {
     question: "What is the consequence of an undersized shared pool?",
     options: [
-      "Excessive hard parsing and ORA-04031 errors",
       "Extra physical reads on tables",
+      "Excessive hard parsing and ORA-04031 errors",
       "Disk sorts",
       "A slower DBWn",
     ],
@@ -404,9 +404,9 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q40": {
     question: "Which tool measures storage I/O capacity independently of the SQL workload?",
     options: [
-      "DBMS_RESOURCE_MANAGER.CALIBRATE_IO",
-      "DBMS_STATS.GATHER_SYSTEM_STATS",
       "DBMS_ADVISOR.QUICK_TUNE",
+      "DBMS_STATS.GATHER_SYSTEM_STATS",
+      "DBMS_RESOURCE_MANAGER.CALIBRATE_IO",
       "DBMS_MONITOR.DATABASE_TRACE_ENABLE",
     ],
     explanation: "CALIBRATE_IO puts the storage under random and sequential read load and returns maximum IOPS, throughput and latency. Results feed V$IO_CALIBRATION_STATUS and serve as an objective baseline.",
@@ -415,10 +415,10 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q41": {
     question: "High “buffer busy waits” on a segment indicates:",
     options: [
-      "Several sessions contending for the same in-memory block",
+      "A saturated shared pool",
       "A failing disk",
       "Stale statistics",
-      "A saturated shared pool",
+      "Several sessions contending for the same in-memory block",
     ],
     explanation: "These are hot blocks: a segment header block, the trailing block of an ascending-key index, a single counter row. The remedies are structural — reverse-key index, cached sequence, ASSM, more freelists — not hardware.",
     topic: "Concurrency",
@@ -437,9 +437,9 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   "tun-q43": {
     question: "In which case is Statspack still relevant in 19c?",
     options: [
-      "When the Diagnostics Pack is not licensed",
-      "When the database runs in NOARCHIVELOG mode",
       "When the database exceeds 10 TB",
+      "When the database runs in NOARCHIVELOG mode",
+      "When the Diagnostics Pack is not licensed",
       "When the database is a standby",
     ],
     explanation: "Statspack is free and shipped with the database: it remains the only legal historical instrumentation when AWR — hence the Diagnostics Pack — has not been purchased. It installs through spcreate.sql under the PERFSTAT user.",
@@ -447,15 +447,15 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   },
   "tun-q44": {
     question: "Which 10046 trace level includes both bind variable values and wait events?",
-    options: ["Level 12", "Level 4", "Level 8", "Level 1"],
+    options: ["Level 1", "Level 4", "Level 8", "Level 12"],
     explanation: "Level 1: basic trace. Level 4: adds bind variables. Level 8: adds wait events. Level 12: both, that is 4 + 8. It is the level used for a complete diagnosis.",
     topic: "SQL Trace",
   },
   "tun-q45": {
     question: "Above which threshold is a statement automatically tracked by Real-Time SQL Monitoring?",
     options: [
-      "5 seconds of CPU or I/O, or a parallel execution",
       "1 second of elapsed time",
+      "5 seconds of CPU or I/O, or a parallel execution",
       "30 seconds of elapsed time",
       "As soon as it reads more than 1,000 blocks",
     ],
@@ -475,13 +475,13 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   },
   "tun-q47": {
     question: "Which utility formats a raw trace file produced by SQL Trace?",
-    options: ["tkprof", "adrci", "orapwd", "expdp"],
+    options: ["expdp", "adrci", "orapwd", "tkprof"],
     explanation: "tkprof turns the raw trace into a readable report, with parse/execute/fetch counters, elapsed time and waits. adrci navigates the diagnostic repository, without formatting SQL traces.",
     topic: "SQL Trace",
   },
   "tun-q48": {
     question: "Which parameter enables the In-Memory column store?",
-    options: ["INMEMORY_SIZE", "MEMORY_TARGET", "DB_CACHE_SIZE", "RESULT_CACHE_MAX_SIZE"],
+    options: ["MEMORY_TARGET", "INMEMORY_SIZE", "DB_CACHE_SIZE", "RESULT_CACHE_MAX_SIZE"],
     explanation: "INMEMORY_SIZE reserves a dedicated area of the SGA, distinct from the buffer cache. The parameter cannot be reduced dynamically and requires a restart when first enabled. The Database In-Memory option is licensed separately.",
     topic: "In-Memory",
   },
@@ -499,7 +499,7 @@ export const tuningEnglish: Record<string, QuizQuestionTranslation> = {
   },
   "tun-q50": {
     question: "Which RESULT_CACHE_MODE value caches only queries carrying the RESULT_CACHE hint?",
-    options: ["MANUAL", "FORCE", "AUTO", "NONE"],
+    options: ["AUTO", "FORCE", "MANUAL", "NONE"],
     explanation: "MANUAL is the default: only queries annotated /*+ RESULT_CACHE */ are cached. FORCE tries to cache everything and almost always causes contention on the “Result Cache: RC Latch” latch.",
     topic: "Result Cache",
   },
