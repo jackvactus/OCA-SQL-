@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { AlertTriangle, Check, Lightbulb, X } from "lucide-react";
 import type { CourseBlock } from "@/lib/course-oca-sql";
 import { tr } from "@/lib/course-oca-sql";
@@ -204,6 +205,27 @@ export function CourseBlockView({ block, locale }: { block: CourseBlock; locale:
           </div>
           <p className="text-xs leading-relaxed text-muted-foreground">{tr(block.note, locale)}</p>
         </div>
+      );
+
+    case "figure":
+      return (
+        <figure className="space-y-2">
+          <div className="overflow-hidden rounded-xl border border-border/70 bg-[#04121c]">
+            <Image
+              src={block.src}
+              alt={tr(block.alt, locale)}
+              width={block.width}
+              height={block.height}
+              sizes="(max-width: 768px) 100vw, 44rem"
+              className="h-auto w-full"
+            />
+          </div>
+          {block.caption && (
+            <figcaption className="text-xs leading-relaxed text-muted-foreground">
+              {tr(block.caption, locale)}
+            </figcaption>
+          )}
+        </figure>
       );
 
     default:

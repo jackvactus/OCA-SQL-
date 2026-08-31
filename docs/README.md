@@ -2,8 +2,8 @@
 
 Ce dossier contient les **audits du système** et les **documents sources pédagogiques**.
 
-Dernier audit en date : **[AUDIT-2026-08-30.md](./AUDIT-2026-08-30.md)** — extension aux six
-certifications Oracle et intégration des sujets d'examen officiels.
+Dernier audit en date : **[AUDIT-2026-08-31.md](./AUDIT-2026-08-31.md)** — intégration des
+six programmes officiels Oracle, douze sessions ajoutées et dix schémas dans les cours.
 
 ---
 
@@ -16,8 +16,9 @@ certifications Oracle et intégration des sujets d'examen officiels.
 | **[REFERENTIEL-QUALITE-PREMIUM.md](./REFERENTIEL-QUALITE-PREMIUM.md)** | Normes applicables (OWASP ASVS 2, WCAG 2.2 AA, RGPD, Core Web Vitals), seuils chiffrés, *Definition of Done*. | Équipe + recette |
 | **[PLAN-ACTION-PREMIUM.md](./PLAN-ACTION-PREMIUM.md)** | Feuille de route en 6 lots (62 j), correctifs prêts à appliquer, jalons opposables. | Pilotage |
 | **[AUDIT-2026-08-30.md](./AUDIT-2026-08-30.md)** | Audit d'extension : 6 parcours, 45 sessions, 824 questions, 172 objectifs officiels. Trois erreurs de nomenclature corrigées. | Décideur + technique |
+| **[AUDIT-2026-08-31.md](./AUDIT-2026-08-31.md)** | Intégration des six programmes officiels : 133 domaines, 455 objectifs, 57 sessions, 885 questions, 85 TP, 10 schémas. | Décideur + technique |
 
-**Ordre de lecture conseillé :** `AUDIT-2026-08-30.md` (état actuel) → `AUDIT-SYSTEME.md` §1 (synthèse d'origine) → `PLAN-ACTION-PREMIUM.md` (lot 0) → le reste selon le rôle.
+**Ordre de lecture conseillé :** `AUDIT-2026-08-31.md` (état actuel) → `AUDIT-SYSTEME.md` §1 (synthèse d'origine) → `PLAN-ACTION-PREMIUM.md` (lot 0) → le reste selon le rôle.
 
 
 ### Audits antérieurs (conservés)
@@ -39,11 +40,11 @@ certifications Oracle et intégration des sujets d'examen officiels.
 | 1Z0-071 | Oracle Database SQL Certified Associate | 6 | 306 / 224 |
 | 1Z0-082 | Administration I — ODBA 2019 Certified Professional | 6 | 88 / 88 |
 | 1Z0-083 | Administration II — ODBA 2019 Certified Professional | 9 | 72 / 72 |
-| 1Z0-084 | Performance Management and Tuning | 10 | 51 / 51 |
-| 1Z0-076 | Data Guard Administration | 8 | 45 / 45 |
-| 1Z0-078 | Clusterware, ASM and RAC | 6 | 38 / 38 |
+| 1Z0-084 | Performance Management and Tuning | 13 | 71 / 71 |
+| 1Z0-076 | Data Guard Administration | 11 | 59 / 59 |
+| 1Z0-078 | RAC, ASM and Grid Infrastructure | 12 | 65 / 65 |
 
-**45 sessions · 132 chapitres · 62 travaux pratiques (27 h) · 824 questions · 173 domaines d'examen · 172 objectifs officiels détaillés.**
+**57 sessions · 173 chapitres · 520 blocs · 10 schémas · 85 travaux pratiques (37,8 h) · 885 questions · 133 domaines d'examen officiels · 455 objectifs détaillés.**
 
 ---
 

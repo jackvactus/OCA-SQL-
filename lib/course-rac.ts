@@ -595,6 +595,20 @@ SELECT instance_name, db_name, status FROM v$asm_client;`,
         title: { fr: "Cache Fusion", en: "Cache Fusion" },
         blocks: [
           {
+            kind: "figure",
+            src: "/art/oracle-rac-cluster.svg",
+            alt: {
+              fr: "Deux instances RAC, l'interconnexion Cache Fusion et le stockage ASM partage sous un nom SCAN unique",
+              en: "Two RAC instances, the Cache Fusion interconnect and shared ASM storage under a single SCAN name",
+            },
+            caption: {
+              fr: "Une base, plusieurs instances. Les blocs transitent par l'interconnexion, jamais par le disque : c'est tout le principe de Cache Fusion.",
+              en: "One database, several instances. Blocks travel over the interconnect, never via disk: that is the whole principle of Cache Fusion.",
+            },
+            width: 800,
+            height: 600,
+          },
+          {
             kind: "text",
             body: {
               fr: "Chaque instance a son propre buffer cache. Cache Fusion résout le problème que cela pose : quand l'instance 2 a besoin d'un bloc que l'instance 1 a modifié en mémoire, le bloc transite **par l'interconnexion**, pas par le disque. Un bloc maître (GRD) sait à tout instant quelle instance détient quelle version.",

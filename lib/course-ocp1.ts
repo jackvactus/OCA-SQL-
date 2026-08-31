@@ -31,6 +31,20 @@ export const ocp1Sessions: CourseSession[] = [
         title: { fr: "Instance et base de données", en: "Instance and database" },
         blocks: [
           {
+            kind: "figure",
+            src: "/art/oracle-instance.svg",
+            alt: {
+              fr: "Architecture d'une instance Oracle : SGA, processus d'arriere-plan et fichiers de la base",
+              en: "Oracle instance architecture: SGA, background processes and database files",
+            },
+            caption: {
+              fr: "L'instance, ce sont la SGA et les processus. La base, ce sont les fichiers. Les deux sont distincts, et l'examen insiste sur cette separation.",
+              en: "The instance is the SGA and the processes. The database is the files. They are distinct, and the exam insists on that separation.",
+            },
+            width: 900,
+            height: 600,
+          },
+          {
             kind: "text",
             body: {
               fr: "Une base Oracle est un ensemble de fichiers sur disque. Une instance est un ensemble de structures mémoire et de processus qui permettent d'y accéder. Les deux sont distincts : une instance peut démarrer sans base montée, et une base peut être ouverte par plusieurs instances en configuration RAC.",
@@ -450,6 +464,20 @@ adrci> ips pack incident 12345 in /tmp   -- paquet de diagnostic pour le support
         number: "3.1",
         title: { fr: "Comptes et authentification", en: "Accounts and authentication" },
         blocks: [
+          {
+            kind: "figure",
+            src: "/art/oracle-security-privileges.svg",
+            alt: {
+              fr: "Utilisateurs, roles et privileges Oracle, et la facon dont les privileges se propagent",
+              en: "Oracle users, roles and privileges, and how privileges propagate",
+            },
+            caption: {
+              fr: "Un privilege systeme autorise une action, un privilege objet un acces. Un role n'est qu'un conteneur : il ne fait rien de plus que ce qu'il contient.",
+              en: "A system privilege authorises an action, an object privilege an access. A role is only a container: it does nothing beyond what it holds.",
+            },
+            width: 900,
+            height: 600,
+          },
           {
             kind: "code",
             code: `CREATE USER marie IDENTIFIED BY "MotDePasse#2026"

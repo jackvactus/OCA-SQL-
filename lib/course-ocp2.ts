@@ -440,6 +440,20 @@ CREATE TABLESPACE ventes_chiffre
         title: { fr: "Vocabulaire et prérequis", en: "Terminology and prerequisites" },
         blocks: [
           {
+            kind: "figure",
+            src: "/art/oracle-backup-rman.svg",
+            alt: {
+              fr: "Cycle de sauvegarde et de restauration RMAN, du jeu de sauvegarde a la recuperation",
+              en: "RMAN backup and recovery cycle, from backup set to recovery",
+            },
+            caption: {
+              fr: "Sauvegarder, c'est simple. Restaurer sous pression, c'est un enchainement qu'il faut avoir repete : c'est ce cycle que la session detaille.",
+              en: "Backing up is simple. Restoring under pressure is a sequence you must have rehearsed: that cycle is what this session details.",
+            },
+            width: 900,
+            height: 600,
+          },
+          {
             kind: "table",
             headers: [
               { fr: "Terme", en: "Term" },

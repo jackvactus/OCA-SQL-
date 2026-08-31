@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" width="800" height="420" role="img" aria-label="Comparaison entre une ligne chainee repartie sur deux blocs et une ligne migree deplacee avec un pointeur">
+  <defs>
+    <linearGradient id="rcBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b0510"/><stop offset="100%" stop-color="#2b0a1e"/>
+    </linearGradient>
+    <marker id="rcArrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <path d="M0 0 L10 4 L0 8 Z" fill="#fda4af"/>
+    </marker>
+  </defs>
+
+  <rect width="800" height="420" fill="url(#rcBg)"/>
+
+  <text x="40" y="42" fill="#fda4af" font-family="system-ui,Segoe UI,sans-serif" font-size="12" font-weight="700" letter-spacing="2">CHAÎNAGE — la ligne ne tient pas dans un bloc</text>
+  <text x="420" y="42" fill="#fdba74" font-family="system-ui,Segoe UI,sans-serif" font-size="12" font-weight="700" letter-spacing="2">MIGRATION — la ligne a grossi après coup</text>
+  <line x1="400" y1="24" x2="400" y2="400" stroke="#fb7185" stroke-opacity="0.2" stroke-width="1.5" stroke-dasharray="6 6"/>
+
+  <!-- CHAINAGE -->
+  <g font-family="system-ui,Segoe UI,sans-serif">
+    <rect x="40" y="70" width="150" height="120" rx="10" fill="#1c0a16" stroke="#fb7185" stroke-opacity="0.55" stroke-width="1.5"/>
+    <text x="115" y="92" text-anchor="middle" fill="#94a3b8" font-size="11">Bloc 42</text>
+    <rect x="54" y="104" width="122" height="34" rx="5" fill="#9f1239"/>
+    <text x="115" y="126" text-anchor="middle" fill="#ffe4e6" font-size="12" font-weight="700">ligne — 1/2</text>
+    <text x="115" y="162" text-anchor="middle" fill="#64748b" font-size="10.5">bloc plein</text>
+
+    <path d="M190 130 H236" stroke="#fda4af" stroke-width="2.5" marker-end="url(#rcArrow)"/>
+
+    <rect x="244" y="70" width="150" height="120" rx="10" fill="#1c0a16" stroke="#fb7185" stroke-opacity="0.55" stroke-width="1.5"/>
+    <text x="319" y="92" text-anchor="middle" fill="#94a3b8" font-size="11">Bloc 43</text>
+    <rect x="258" y="104" width="122" height="34" rx="5" fill="#9f1239" opacity="0.8"/>
+    <text x="319" y="126" text-anchor="middle" fill="#ffe4e6" font-size="12" font-weight="700">ligne — 2/2</text>
+    <text x="319" y="162" text-anchor="middle" fill="#64748b" font-size="10.5">suite de la ligne</text>
+
+    <text x="40" y="232" fill="#cbd5e1" font-size="12.5">Cause : ligne &gt; taille du bloc, ou &gt; 255 colonnes.</text>
+    <text x="40" y="254" fill="#cbd5e1" font-size="12.5">Inévitable : Oracle n'a pas d'autre choix.</text>
+    <text x="40" y="276" fill="#4ade80" font-size="12.5">Remède : bloc plus grand, LOB hors ligne,</text>
+    <text x="40" y="296" fill="#4ade80" font-size="12.5">colonnes fréquentes placées en tête.</text>
+  </g>
+
+  <!-- MIGRATION -->
+  <g font-family="system-ui,Segoe UI,sans-serif">
+    <rect x="420" y="70" width="150" height="120" rx="10" fill="#1c0a16" stroke="#fdba74" stroke-opacity="0.55" stroke-width="1.5"/>
+    <text x="495" y="92" text-anchor="middle" fill="#94a3b8" font-size="11">Bloc 88 — origine</text>
+    <rect x="434" y="104" width="122" height="34" rx="5" fill="none" stroke="#fdba74" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <text x="495" y="126" text-anchor="middle" fill="#fed7aa" font-size="12" font-weight="700">pointeur seul</text>
+    <text x="495" y="162" text-anchor="middle" fill="#64748b" font-size="10.5">la ligne n'est plus là</text>
+
+    <path d="M570 130 H616" stroke="#fdba74" stroke-width="2.5" marker-end="url(#rcArrow)"/>
+
+    <rect x="624" y="70" width="150" height="120" rx="10" fill="#1c0a16" stroke="#fdba74" stroke-opacity="0.55" stroke-width="1.5"/>
+    <text x="699" y="92" text-anchor="middle" fill="#94a3b8" font-size="11">Bloc 91 — destination</text>
+    <rect x="638" y="104" width="122" height="34" rx="5" fill="#7c2d12"/>
+    <text x="699" y="126" text-anchor="middle" fill="#ffedd5" font-size="12" font-weight="700">ligne entière</text>
+    <text x="699" y="162" text-anchor="middle" fill="#64748b" font-size="10.5">déplacée par l'UPDATE</text>
+
+    <text x="420" y="232" fill="#cbd5e1" font-size="12.5">Cause : UPDATE qui fait grossir la ligne</text>
+    <text x="420" y="252" fill="#cbd5e1" font-size="12.5">au-delà de l'espace libre du bloc.</text>
+    <text x="420" y="276" fill="#4ade80" font-size="12.5">Remède : PCTFREE 20–30, puis</text>
+    <text x="420" y="296" fill="#4ade80" font-size="12.5">ALTER TABLE … MOVE ONLINE.</text>
+  </g>
+
+  <!-- Bandeau de conclusion -->
+  <rect x="40" y="326" width="720" height="62" rx="12" fill="#150612" stroke="#fb7185" stroke-opacity="0.35"/>
+  <text x="400" y="352" text-anchor="middle" fill="#ffffff" font-family="system-ui,Segoe UI,sans-serif" font-size="13.5" font-weight="700">Dans les deux cas : une lecture de bloc supplémentaire par ligne concernée</text>
+  <text x="400" y="374" text-anchor="middle" fill="#94a3b8" font-family="system-ui,Segoe UI,sans-serif" font-size="12">La statistique « table fetch continued row » les compte ensemble — c'est ANALYZE … LIST CHAINED ROWS qui les sépare</text>
+</svg>

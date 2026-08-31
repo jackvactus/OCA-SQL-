@@ -1,3 +1,14 @@
+import {
+  SRC_ADMIN,
+  SRC_SQL,
+  SRC_MULTITENANT,
+  SRC_BACKUP,
+  SRC_DEPLOY,
+  SRC_19C,
+} from "./exam-sources";
+import { ocaObjectives } from "./exam-objectives-oca";
+import { advancedObjectives } from "./exam-objectives-advanced";
+
 /**
  * Objectifs d'examen officiels Oracle University.
  *
@@ -25,17 +36,6 @@ export interface DomainObjectives {
   source: string;
   objectives: ExamObjective[];
 }
-
-/* Cours Oracle University cités par les fiches d'examen. */
-export const SRC_ADMIN = "Oracle Database: Administration Workshop";
-export const SRC_SQL = "Oracle Database: Introduction to SQL";
-export const SRC_MULTITENANT = "Oracle Database: Managing Multitenant Architecture";
-export const SRC_BACKUP = "Oracle Database: Backup and Recovery Workshop";
-export const SRC_DEPLOY = "Oracle Database: Deploy, Patch and Upgrade Workshop";
-export const SRC_19C = "Oracle Database 19c: New Features for Administrators";
-export const SRC_TUNING = "Oracle Database 19c: Performance Management and Tuning";
-export const SRC_DG = "Oracle Database 19c: Data Guard Administration";
-export const SRC_RAC = "Oracle Database 19c: Clusterware Administration / RAC Administration";
 
 export const examObjectives: Record<string, DomainObjectives> = {
   /* ====================================================================
@@ -517,7 +517,28 @@ export const examObjectives: Record<string, DomainObjectives> = {
   },
 };
 
+/**
+ * Referentiel complet, les six examens reunis. Les objectifs des examens de
+ * specialisation vivent dans des fichiers separes pour garder chaque fichier
+ * lisible ; la table ci-dessous est la seule porte d'entree.
+ */
+export const allExamObjectives: Record<string, DomainObjectives> = {
+  ...ocaObjectives,
+  ...examObjectives,
+  ...advancedObjectives,
+};
+
 /** Objectifs officiels d'un domaine, ou `undefined` s'ils ne sont pas publiés. */
 export function objectivesFor(examCode: string, domainTitle: string): DomainObjectives | undefined {
-  return examObjectives[`${examCode}|${domainTitle}`];
+  return allExamObjectives[`${examCode}|${domainTitle}`];
 }
+
+/** Nombre d'objectifs officiels publies pour un examen donne. */
+export function objectivesForExam(examCode: string): number {
+  return Object.entries(allExamObjectives)
+    .filter(([key]) => key.startsWith(`${examCode}|`))
+    .reduce((sum, [, value]) => sum + value.objectives.length, 0);
+}
+
+/* Les libellés de cours restent accessibles depuis ce module, par commodité. */
+export * from "./exam-sources";

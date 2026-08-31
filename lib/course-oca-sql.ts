@@ -28,7 +28,19 @@ export type CourseBlock =
   | { kind: "table"; title?: Bilingual; headers: Bilingual[]; rows: Bilingual[][] }
   | { kind: "tip"; title?: Bilingual; body: Bilingual }
   | { kind: "warning"; title?: Bilingual; body: Bilingual }
-  | { kind: "compare"; title?: Bilingual; wrong: string; right: string; note: Bilingual };
+  | { kind: "compare"; title?: Bilingual; wrong: string; right: string; note: Bilingual }
+  /**
+   * Schema explicatif. `src` designe un SVG de `public/art/`, `alt` decrit
+   * l'image pour les lecteurs d'ecran, `caption` commente ce qu'il faut y voir.
+   */
+  | {
+      kind: "figure";
+      src: string;
+      alt: Bilingual;
+      caption?: Bilingual;
+      width: number;
+      height: number;
+    };
 
 export interface CourseTopic {
   id: string;
@@ -127,6 +139,20 @@ export const courseSessions: CourseSession[] = [
         number: "1.1",
         title: { fr: "Introduction au langage SQL", en: "Introduction to the SQL language" },
         blocks: [
+          {
+            kind: "figure",
+            src: "/art/oracle-erd.svg",
+            alt: {
+              fr: "Modele relationnel : entites, attributs et cles etrangeres, tels que les clauses d'un SELECT les parcourent",
+              en: "Relational model: entities, attributes and foreign keys, as the clauses of a SELECT traverse them",
+            },
+            caption: {
+              fr: "Chaque clause du SELECT correspond a une partie du diagramme : FROM designe les entites, JOIN les liens, WHERE filtre les occurrences.",
+              en: "Every SELECT clause maps to a part of the diagram: FROM names the entities, JOIN the links, WHERE filters the occurrences.",
+            },
+            width: 900,
+            height: 600,
+          },
           {
             kind: "text",
             body: {

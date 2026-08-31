@@ -149,6 +149,20 @@ FETCH FIRST 10 ROWS ONLY;
         title: { fr: "Automatic Workload Repository", en: "Automatic Workload Repository" },
         blocks: [
           {
+            kind: "figure",
+            src: "/art/oracle-tuning-awr.svg",
+            alt: {
+              fr: "Repartition du DB time par classe d'attente, et enchainement AWR, ASH, ADDM et conseillers",
+              en: "DB time distribution by wait class, and the AWR, ASH, ADDM and advisor chain",
+            },
+            caption: {
+              fr: "AWR echantillonne a l'heure, ASH a la seconde, ADDM classe par part de DB time, les conseillers chiffrent le gain. Quatre outils, une seule chaine.",
+              en: "AWR samples hourly, ASH per second, ADDM ranks by share of DB time, the advisors quantify the gain. Four tools, one chain.",
+            },
+            width: 800,
+            height: 600,
+          },
+          {
             kind: "text",
             body: {
               fr: "AWR photographie l'activité à intervalle régulier — une heure par défaut — et conserve l'historique dans SYSAUX, huit jours par défaut. Un rapport AWR compare deux instantanés : il donne des moyennes sur l'intervalle, jamais l'instant précis d'un incident.",

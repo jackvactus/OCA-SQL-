@@ -3,17 +3,22 @@ import { courseSessions as ocaSessions, courseMeta as ocaMeta } from "./course-o
 import { ocp1Sessions } from "./course-ocp1";
 import { ocp2Sessions } from "./course-ocp2";
 import { tuningSessions } from "./course-tuning";
+import { tuningSessionsB } from "./course-tuning-b";
 import { dataGuardSessions } from "./course-dataguard";
+import { dataGuardSessionsB } from "./course-dataguard-b";
 import { racSessions } from "./course-rac";
+import { racSessionsB } from "./course-rac-b";
 import type { TrackId } from "./certification-tracks";
 import { sessionExtras } from "./course-extras";
 import { sessionLabs } from "./course-labs";
 import { advancedSessionExtras } from "./course-extras-advanced";
+import { advancedSessionExtrasB } from "./course-extras-advanced-b";
 import { advancedSessionLabs } from "./course-labs-advanced";
+import { advancedSessionLabsB } from "./course-labs-advanced-b";
 
 /** Extras et TP de tous les cursus, fondamentaux et specialisations confondus. */
-const allExtras = { ...sessionExtras, ...advancedSessionExtras };
-const allLabs = { ...sessionLabs, ...advancedSessionLabs };
+const allExtras = { ...sessionExtras, ...advancedSessionExtras, ...advancedSessionExtrasB };
+const allLabs = { ...sessionLabs, ...advancedSessionLabs, ...advancedSessionLabsB };
 
 /** Rattache à chaque session ses points à retenir et ses questions de contrôle. */
 function withExtras(sessions: CourseSession[]): CourseSession[] {
@@ -96,7 +101,7 @@ export const curricula: Curriculum[] = [
       en: "Methodology, time model, AWR, ASH, ADDM, execution plans, statistics, advisors, memory, Statspack and In-Memory — the whole of 1Z0-084.",
     },
     accent: "rose",
-    sessions: withExtras(tuningSessions),
+    sessions: withExtras([...tuningSessions, ...tuningSessionsB]),
   },
   {
     id: "ocp-dataguard",
@@ -111,7 +116,7 @@ export const curricula: Curriculum[] = [
       en: "Architecture, standby creation, protection modes, Active Data Guard, Far Sync, the Broker, role transitions, Flashback and application continuity — the whole of 1Z0-076.",
     },
     accent: "violet",
-    sessions: withExtras(dataGuardSessions),
+    sessions: withExtras([...dataGuardSessions, ...dataGuardSessionsB]),
   },
   {
     id: "ocp-rac",
@@ -126,7 +131,7 @@ export const curricula: Curriculum[] = [
       en: "Grid Infrastructure, CRSCTL and SRVCTL, OCR and voting disks, ASM, ACFS, Cache Fusion, services, SCAN, rolling patches and troubleshooting — the whole of 1Z0-078.",
     },
     accent: "teal",
-    sessions: withExtras(racSessions),
+    sessions: withExtras([...racSessions, ...racSessionsB]),
   },
 ];
 

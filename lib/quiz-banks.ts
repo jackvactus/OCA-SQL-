@@ -10,6 +10,11 @@ import { ocp2QuestionsB } from "./quiz-data-ocp2-b";
 import { tuningQuestions } from "./quiz-data-tuning";
 import { dataGuardQuestions } from "./quiz-data-dataguard";
 import { racQuestions } from "./quiz-data-rac";
+import {
+  tuningQuestionsB,
+  dataGuardQuestionsB,
+  racQuestionsB,
+} from "./quiz-data-advanced-b";
 import { modules } from "./modules-data";
 import { curricula } from "./curricula";
 import { ocp1English } from "./quiz-en-ocp1";
@@ -17,10 +22,17 @@ import { ocp2English } from "./quiz-en-ocp2";
 import { tuningEnglish } from "./quiz-en-tuning";
 import { dataGuardEnglish } from "./quiz-en-dataguard";
 import { racEnglish } from "./quiz-en-rac";
+import { advancedEnglishB } from "./quiz-en-advanced-b";
 import { localizeBank, translationCoverage } from "./quiz-i18n";
 
 const ocp1All = [...ocp1Questions, ...ocp1QuestionsB];
 const ocp2All = [...ocp2Questions, ...ocp2QuestionsB];
+const tuningAll = [...tuningQuestions, ...tuningQuestionsB];
+const dataGuardAll = [...dataGuardQuestions, ...dataGuardQuestionsB];
+const racAll = [...racQuestions, ...racQuestionsB];
+const tuningEnAll = { ...tuningEnglish, ...advancedEnglishB };
+const dataGuardEnAll = { ...dataGuardEnglish, ...advancedEnglishB };
+const racEnAll = { ...racEnglish, ...advancedEnglishB };
 
 /**
  * Registre des banques de questions, par parcours de certification.
@@ -36,11 +48,11 @@ export function getQuestionBank(track: TrackId, locale: Locale): QuizQuestion[] 
     case "ocp-dba-ii":
       return localizeBank(ocp2All, locale, ocp2English);
     case "ocp-tuning":
-      return localizeBank(tuningQuestions, locale, tuningEnglish);
+      return localizeBank(tuningAll, locale, tuningEnAll);
     case "ocp-dataguard":
-      return localizeBank(dataGuardQuestions, locale, dataGuardEnglish);
+      return localizeBank(dataGuardAll, locale, dataGuardEnAll);
     case "ocp-rac":
-      return localizeBank(racQuestions, locale, racEnglish);
+      return localizeBank(racAll, locale, racEnAll);
     default:
       return locale === "en" ? workbookQuizQuestions : quizQuestions;
   }
@@ -52,9 +64,9 @@ export const allQuestions: QuizQuestion[] = [
   ...workbookQuizQuestions,
   ...ocp1All,
   ...ocp2All,
-  ...tuningQuestions,
-  ...dataGuardQuestions,
-  ...racQuestions,
+  ...tuningAll,
+  ...dataGuardAll,
+  ...racAll,
 ];
 
 /** Identifiants valides, pour la validation côté serveur. */
@@ -113,7 +125,7 @@ export const tracksWithBank: TrackId[] = [
 export const ocpTranslationStatus = {
   "ocp-dba-i": translationCoverage(ocp1All, ocp1English),
   "ocp-dba-ii": translationCoverage(ocp2All, ocp2English),
-  "ocp-tuning": translationCoverage(tuningQuestions, tuningEnglish),
-  "ocp-dataguard": translationCoverage(dataGuardQuestions, dataGuardEnglish),
-  "ocp-rac": translationCoverage(racQuestions, racEnglish),
+  "ocp-tuning": translationCoverage(tuningAll, tuningEnAll),
+  "ocp-dataguard": translationCoverage(dataGuardAll, dataGuardEnAll),
+  "ocp-rac": translationCoverage(racAll, racEnAll),
 };

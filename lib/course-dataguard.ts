@@ -24,6 +24,20 @@ export const dataGuardSessions: CourseSession[] = [
         title: { fr: "Le principe : transporter et appliquer le redo", en: "The principle: ship and apply redo" },
         blocks: [
           {
+            kind: "figure",
+            src: "/art/oracle-dataguard.svg",
+            alt: {
+              fr: "Architecture Data Guard : base principale, instance Far Sync et base de secours physique, avec les trois modes de protection",
+              en: "Data Guard architecture: primary, Far Sync instance and physical standby, with the three protection modes",
+            },
+            caption: {
+              fr: "Le redo part de la principale et arrive au secours. Tout le reste -- modes, Broker, bascules -- n'est que la maniere de configurer cet echange.",
+              en: "Redo leaves the primary and reaches the standby. Everything else -- modes, the Broker, transitions -- is just how you configure that exchange.",
+            },
+            width: 800,
+            height: 600,
+          },
+          {
             kind: "text",
             body: {
               fr: "Data Guard maintient une ou plusieurs copies synchronisées d'une base de production. Le mécanisme tient en une phrase : la base principale transmet son redo à la base de secours, qui l'applique en continu. Tout le reste — modes de protection, Broker, bascules — n'est que la manière de configurer et de piloter cet échange.",
