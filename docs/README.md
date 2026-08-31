@@ -2,9 +2,10 @@
 
 Ce dossier contient les **audits du système** et les **documents sources pédagogiques**.
 
-Dernier audit en date : **[AUDIT-2026-09-02.md](./AUDIT-2026-09-02.md)** — le bouton de reprise
-suit enfin le parcours suivi, le moteur du bac à sable couvre les seize domaines de l'examen
-(50 tests), assistant livré avec sa transcription auditée, 108 tests.
+Dernier audit en date : **[AUDIT-2026-09-03.md](./AUDIT-2026-09-03.md)** — audit complet : le
+panneau de l'assistant neutralisait les boutons de toute l'application, deux boutons imbriqués
+dans des ancres avaient échappé au contrôle, l'assistant répond désormais sans clé d'API,
+`DUAL` manquait au bac à sable, commande vocale livrée, 161 tests.
 
 ---
 
@@ -22,8 +23,9 @@ suit enfin le parcours suivi, le moteur du bac à sable couvre les seize domaine
 | **[AUDIT-2026-08-31-C.md](./AUDIT-2026-08-31-C.md)** | Banque anglaise reconstruite (67 doublons reformulés, 137 rattachements de module faux), 5 doublons français retirés, biais de position corrigé, liens Oracle assainis. | Contenu + technique |
 | **[AUDIT-2026-09-01.md](./AUDIT-2026-09-01.md)** | Erreur `removeChild` : 30 boutons imbriqués dans des ancres. 8 avertissements ESLint qui empêchaient le changement de langue. Ressources Oracle et FreeSQL centralisées. | Technique |
 | **[AUDIT-2026-09-02.md](./AUDIT-2026-09-02.md)** | Parcours courant : le bouton de reprise ramenait tout le monde au SQL. Moteur SQL du bac à sable réécrit — il refusait quatre des seize domaines officiels. Assistant : interface, point lumineux, transcription auditée, point d'extension documenté. | Décideur + technique |
+| **[AUDIT-2026-09-03.md](./AUDIT-2026-09-03.md)** | Audit complet et correctifs : calque de l'assistant qui interceptait les clics, deux boutons dans des ancres, moteur de réponse ancré sur le contenu (sans clé), `DUAL` ajouté au bac à sable, leçon portée par l'URL, commande vocale SQL. 13 recommandations classées. | Décideur + technique |
 
-**Ordre de lecture conseillé :** `AUDIT-2026-09-02.md` (état actuel) → `AUDIT-SYSTEME.md` §1 (synthèse d'origine) → `PLAN-ACTION-PREMIUM.md` (lot 0) → le reste selon le rôle.
+**Ordre de lecture conseillé :** `AUDIT-2026-09-03.md` (état actuel) → `AUDIT-SYSTEME.md` §1 (synthèse d'origine) → `PLAN-ACTION-PREMIUM.md` (lot 0) → le reste selon le rôle.
 
 
 ### Audits antérieurs (conservés)
