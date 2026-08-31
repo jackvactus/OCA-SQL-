@@ -169,18 +169,18 @@ export default async function AdminUserDetailPage({
             {t.common.previous}
           </Button>
         ) : (
-          <Link href={`/admin/users/${user.id}?offset=${Math.max(offset - ACTIVITY_PAGE_SIZE, 0)}`}>
-            <Button variant="outline">{t.common.previous}</Button>
-          </Link>
+          <Button asChild variant="outline">
+            <Link href={`/admin/users/${user.id}?offset=${Math.max(offset - ACTIVITY_PAGE_SIZE, 0)}`}>{t.common.previous}</Link>
+          </Button>
         )}
         {!hasMore ? (
           <Button variant="outline" disabled>
             {t.common.next}
           </Button>
         ) : (
-          <Link href={`/admin/users/${user.id}?offset=${offset + ACTIVITY_PAGE_SIZE}`}>
-            <Button variant="outline">{t.common.next}</Button>
-          </Link>
+          <Button asChild variant="outline">
+            <Link href={`/admin/users/${user.id}?offset=${offset + ACTIVITY_PAGE_SIZE}`}>{t.common.next}</Link>
+          </Button>
         )}
       </div>
     </div>

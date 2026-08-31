@@ -142,12 +142,12 @@ export default async function TracksPage() {
                 </p>
 
                 <div className="mt-auto pt-1">
-                  <Link href={`/tracks/${track.id}`} className="block">
-                    <Button className="w-full gap-2" variant={available ? "default" : "outline"}>
+                  <Button asChild className="w-full gap-2" variant={available ? "default" : "outline"}>
+                    <Link href={`/tracks/${track.id}`} className="block">
                       {t.tracks.chooseCta}
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                    </Button>
-                  </Link>
+                    </Link>
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -176,12 +176,12 @@ export default async function TracksPage() {
                 Oracle University
               </Button>
             </a>
-            <Link href="/courses">
-              <Button size="sm" variant="ghost" className="gap-1.5">
+            <Button asChild size="sm" variant="ghost" className="gap-1.5">
+              <Link href="/courses">
                 <BookOpen className="h-3.5 w-3.5" />
                 {t.tracks.startLearning}
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </CardContent>
       </Card>

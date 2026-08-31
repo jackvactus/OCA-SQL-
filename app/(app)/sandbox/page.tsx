@@ -39,6 +39,8 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/language-provider";
+import { ExternalResourceCards } from "@/components/external-resource-links";
+import { PRACTICE_RESOURCES } from "@/lib/external-resources";
 
 /* ------------------------------------------------------------------ */
 /*  HR Schema (simulated Oracle HR sample schema)                     */
@@ -897,7 +899,7 @@ type HistoryEntry = {
 };
 
 export default function SandboxPage() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const [query, setQuery] = useState<string>(
     "SELECT * FROM employees ORDER BY salary DESC FETCH FIRST 5 ROWS ONLY;"
   );
@@ -1455,6 +1457,27 @@ export default function SandboxPage() {
             </Card>
           </div>
         </div>
+
+        {/*
+          Ce bac à sable simule un sous-ensemble d'Oracle SQL sur des données
+          d'exemple : il ne remplace pas un vrai moteur. Le lien ci-dessous mène
+          à une console en ligne, pour ce que la simulation ne couvre pas.
+        */}
+        <section aria-labelledby="ressources-bac-a-sable" className="border-t border-border/60 pt-6">
+          <h2 id="ressources-bac-a-sable" className="mb-1 text-sm font-semibold">
+            {locale === "en" ? "Run real SQL" : "Exécuter du vrai SQL"}
+          </h2>
+          <p className="mb-3 text-xs text-muted-foreground">
+            {locale === "en"
+              ? "This sandbox simulates a subset of Oracle SQL on sample data. For anything it does not cover, use a real engine."
+              : "Ce bac à sable simule un sous-ensemble d'Oracle SQL sur des données d'exemple. Pour ce qu'il ne couvre pas, passez par un vrai moteur."}
+          </p>
+          <ExternalResourceCards
+            locale={locale}
+            newTabLabel={locale === "en" ? "opens a new tab" : "ouvre un nouvel onglet"}
+            resources={PRACTICE_RESOURCES}
+          />
+        </section>
       </div>
     </div>
   );

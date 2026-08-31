@@ -53,12 +53,12 @@ export default function AppError({
             <RotateCcw className="h-4 w-4" />
             {en ? "Retry" : "Réessayer"}
           </Button>
-          <a href="/dashboard">
-            <Button variant="outline" className="gap-2">
+          <Button asChild variant="outline" className="gap-2">
+            <a href="/dashboard">
               <Home className="h-4 w-4" />
               {en ? "Dashboard" : "Tableau de bord"}
-            </Button>
-          </a>
+            </a>
+          </Button>
         </div>
       </div>
     </div>

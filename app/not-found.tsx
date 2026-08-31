@@ -21,12 +21,12 @@ export default function NotFound() {
             ? "This address does not match any page on the platform."
             : "Cette adresse ne correspond à aucune page de la plateforme."}
         </p>
-        <Link href="/dashboard" className="mt-5 inline-block">
-          <Button className="gap-2">
+        <Button asChild className="gap-2">
+          <Link href="/dashboard" className="mt-5 inline-block">
             <Home className="h-4 w-4" />
             {en ? "Dashboard" : "Tableau de bord"}
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       </div>
     </div>
   );

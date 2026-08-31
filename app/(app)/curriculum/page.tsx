@@ -7,6 +7,13 @@ import { CourseBlockView } from "@/components/course-blocks";
 import { CurriculumProgress, SessionDoneBadge } from "@/components/session-review";
 import { getSessionUser } from "@/lib/auth/session";
 import { getLocale } from "@/lib/i18n/get-locale";
+import { ExternalResourceCards } from "@/components/external-resource-links";
+import {
+  ORACLE_CERTIFICATION,
+  PRACTICE_RESOURCES,
+  TRACK_RESOURCES,
+} from "@/lib/external-resources";
+
 import { dictionary } from "@/lib/i18n/dictionary";
 import { courseMeta, examTraps, executionOrder, keyPoints, tr } from "@/lib/course-oca-sql";
 import { curricula, curriculumStats } from "@/lib/curricula";
@@ -282,18 +289,34 @@ export default async function CurriculumPage() {
       </section>
 
       <div className="flex flex-wrap gap-2">
-        <Link href="/tracks">
-          <Button variant="outline" className="gap-2">
+        <Button asChild variant="outline" className="gap-2">
+          <Link href="/tracks">
             {t.tracks.backToTracks}
-          </Button>
-        </Link>
-        <Link href="/quiz">
-          <Button className="gap-2">
+          </Link>
+        </Button>
+        <Button asChild className="gap-2">
+          <Link href="/quiz">
             <BookOpen className="h-4 w-4" />
             {t.tracks.startQuiz}
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       </div>
+
+      <section aria-labelledby="ressources-curriculum" className="border-t border-border/60 pt-6">
+        <h2 id="ressources-curriculum" className="mb-1 text-sm font-semibold">
+          {locale === "en" ? "Official resources" : "Ressources officielles"}
+        </h2>
+        <p className="mb-3 text-xs text-muted-foreground">
+          {locale === "en"
+            ? "Where to register for an exam, follow the certification path, and practise SQL."
+            : "Où s'inscrire à une épreuve, suivre le parcours de certification, et pratiquer le SQL."}
+        </p>
+        <ExternalResourceCards
+          locale={locale}
+          newTabLabel={t.tracks.newTab}
+          resources={[...TRACK_RESOURCES, ...PRACTICE_RESOURCES]}
+        />
+      </section>
 
       <p className="text-xs text-muted-foreground">{t.curriculum.source}</p>
     </div>

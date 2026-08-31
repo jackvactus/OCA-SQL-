@@ -128,7 +128,7 @@ export default function FlashcardsPage() {
       }
     }
     return { total, dueToday, learned };
-  }, [progress.flashcardProgress]);
+  }, [allFlashcards, progress.flashcardProgress]);
 
   // Cards due within the selected category, sorted: due first, then new.
   const dueCards = useMemo(() => {
@@ -154,7 +154,7 @@ export default function FlashcardsPage() {
       return da - db;
     });
     return [...due, ...fresh];
-  }, [selectedCategory, progress.flashcardProgress]);
+  }, [allFlashcards, selectedCategory, progress.flashcardProgress]);
 
   const startSession = useCallback(() => {
     setQueue(dueCards.map((card) => card.id));
@@ -216,7 +216,7 @@ export default function FlashcardsPage() {
   const currentCard = useMemo(() => {
     if (!sessionStarted || currentIndex >= queue.length) return null;
     return allFlashcards.find((card) => card.id === queue[currentIndex]) ?? null;
-  }, [sessionStarted, currentIndex, queue]);
+  }, [allFlashcards, sessionStarted, currentIndex, queue]);
 
   const currentRecord = currentCard
     ? progress.flashcardProgress[currentCard.id]

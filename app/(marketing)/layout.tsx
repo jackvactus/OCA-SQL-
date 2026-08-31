@@ -33,12 +33,12 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <LanguageToggle />
-            <Link href="/login" className="hidden sm:block">
-              <Button variant="ghost">{t.marketing.login}</Button>
-            </Link>
-            <Link href="/register">
-              <Button>{t.marketing.register}</Button>
-            </Link>
+            <Button asChild variant="ghost" className="hidden sm:inline-flex">
+              <Link href="/login">{t.marketing.login}</Link>
+            </Button>
+            <Button asChild>
+              <Link href="/register">{t.marketing.register}</Link>
+            </Button>
           </div>
         </div>
       </header>

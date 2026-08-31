@@ -29,6 +29,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getLocalizedModules } from "@/lib/content-i18n";
+import { ExternalResourceCards } from "@/components/external-resource-links";
+import {
+  ORACLE_CERTIFICATION,
+  PRACTICE_RESOURCES,
+  TRACK_RESOURCES,
+} from "@/lib/external-resources";
+
 import { useProgress } from "@/hooks/use-progress";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/language-provider";
@@ -36,7 +43,9 @@ import { useLanguage } from "@/components/language-provider";
 export default function CoursesPage() {
   const { locale } = useLanguage();
   const en = locale === "en";
-  const modules = getLocalizedModules(locale);
+  // Memoise sur la locale : sans cela, `modules` est un nouveau tableau a
+  // chaque rendu, et les memos qui en dependent se recalculent sans cesse.
+  const modules = useMemo(() => getLocalizedModules(locale), [locale]);
   const { progress, loaded } = useProgress();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
@@ -49,7 +58,7 @@ export default function CoursesPage() {
       map.get(m.category)!.push(m);
     }
     return Array.from(map.entries());
-  }, []);
+  }, [modules]);
 
   // Overall stats for the header
   const totals = useMemo(() => {
@@ -62,7 +71,7 @@ export default function CoursesPage() {
     const totalHours = modules.reduce((s, m) => s + m.estimatedHours, 0);
     const percent = totalLessons > 0 ? Math.round((completed / totalLessons) * 100) : 0;
     return { totalLessons, completed, totalHours, percent };
-  }, [progress.completedLessons]);
+  }, [modules, progress.completedLessons]);
 
   const filteredGroups = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
@@ -122,12 +131,12 @@ export default function CoursesPage() {
                 : "Parcourez les modules de préparation à la certification Oracle Database SQL 1Z0-071. Suivez votre progression, complétez les leçons et maîtrisez chaque sujet à votre rythme."}
             </p>
             {nextModule && (
-              <Link href={`/courses/${nextModule.id}`} className="inline-flex pt-2">
-                <Button size="sm" className="gap-2">
+              <Button asChild size="sm" className="gap-2">
+                <Link href={`/courses/${nextModule.id}`} className="inline-flex pt-2">
                   {en ? "Resume: " : "Reprendre : "}{nextModule.title}
                   <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             )}
           </div>
 
@@ -383,6 +392,27 @@ export default function CoursesPage() {
           </section>
         );
       })}
+
+      {/*
+        Ressources externes en pied de page : la certification que ces modules
+        préparent, et une console SQL en ligne pour rejouer les exemples quand
+        aucune base Oracle n'est à portée.
+      */}
+      <section aria-labelledby="ressources-externes" className="border-t border-border/60 pt-6">
+        <h2 id="ressources-externes" className="mb-1 text-sm font-semibold">
+          {en ? "Go further" : "Pour aller plus loin"}
+        </h2>
+        <p className="mb-3 text-xs text-muted-foreground">
+          {en
+            ? "Official certification information, and a place to run the examples."
+            : "L'information officielle sur la certification, et de quoi exécuter les exemples."}
+        </p>
+        <ExternalResourceCards
+          locale={locale}
+          newTabLabel={en ? "opens a new tab" : "ouvre un nouvel onglet"}
+          resources={[ORACLE_CERTIFICATION, ...PRACTICE_RESOURCES]}
+        />
+      </section>
     </div>
   );
 }

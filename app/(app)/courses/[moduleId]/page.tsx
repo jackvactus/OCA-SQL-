@@ -236,7 +236,9 @@ function ContentSection({ section }: { section: LessonSection }) {
 export default function LessonDetailPage() {
   const { locale } = useLanguage();
   const en = locale === "en";
-  const modules = getLocalizedModules(locale);
+  // Memoise sur la locale : sans cela, `modules` est un nouveau tableau a
+  // chaque rendu, et les memos qui en dependent se recalculent sans cesse.
+  const modules = useMemo(() => getLocalizedModules(locale), [locale]);
   const params = useParams();
   const moduleId = params?.moduleId as string;
   const { progress, loaded, completeLesson } = useProgress();
@@ -245,7 +247,7 @@ export default function LessonDetailPage() {
   // Find the module
   const currentModule = useMemo(
     () => modules.find((m) => m.id === moduleId),
-    [moduleId],
+    [modules, moduleId],
   );
 
   // Determine the active lesson: explicit state > first incomplete > first

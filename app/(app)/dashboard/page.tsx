@@ -59,7 +59,9 @@ interface RecentActivityEntry {
 
 export default function DashboardPage() {
   const { t, locale } = useLanguage();
-  const modules = getLocalizedModules(locale);
+  // Memoise sur la locale : sans cela, `modules` est un nouveau tableau a
+  // chaque rendu, et les memos qui en dependent se recalculent sans cesse.
+  const modules = useMemo(() => getLocalizedModules(locale), [locale]);
   const { progress, loaded } = useProgress();
   const [recentActivity, setRecentActivity] = useState<RecentActivityEntry[]>([]);
 
@@ -103,7 +105,7 @@ export default function DashboardPage() {
       bestExam,
       level: Math.floor(progress.xp / 500) + 1,
     };
-  }, [progress]);
+  }, [modules, progress]);
 
   const chartData = useMemo(() => {
     const days = [];
@@ -138,7 +140,7 @@ export default function DashboardPage() {
       (m) => !m.lessons.every((l) => progress.completedLessons.includes(l.id)),
     );
     return incompleteModule || modules[0];
-  }, [progress.completedLessons]);
+  }, [modules, progress.completedLessons]);
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-4 lg:p-8">
@@ -159,18 +161,18 @@ export default function DashboardPage() {
           <h1 className="text-2xl font-bold lg:text-3xl">{t.dashboard.welcomeTitle}</h1>
           <p className="mt-1 text-muted-foreground">{t.dashboard.welcomeSubtitle}</p>
           <div className="mt-4 flex flex-wrap gap-3">
-            <Link href="/courses">
-              <Button className="gap-2">
+            <Button asChild className="gap-2">
+              <Link href="/courses">
                 {t.dashboard.continueLearning}
                 <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-            <Link href="/exam">
-              <Button variant="outline" className="gap-2">
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="gap-2">
+              <Link href="/exam">
                 <GraduationCap className="h-4 w-4" />
                 {t.dashboard.examSimulator}
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
           </div>
           <div className="flex items-center justify-center lg:justify-end">
@@ -417,12 +419,12 @@ export default function DashboardPage() {
             <History className="h-4 w-4 text-primary" />
             {t.dashboard.recentActivity}
           </CardTitle>
-          <Link href="/activity">
-            <Button variant="ghost" size="sm" className="gap-1 text-xs">
+          <Button asChild variant="ghost" size="sm" className="gap-1 text-xs">
+            <Link href="/activity">
               {t.dashboard.seeAll}
               <ArrowRight className="h-3 w-3" />
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </CardHeader>
         <CardContent>
           {recentActivity.length === 0 ? (

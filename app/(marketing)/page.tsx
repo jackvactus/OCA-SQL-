@@ -180,21 +180,20 @@ export default function LandingPage() {
             </p>
 
             <div className="mt-8 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row">
-              <Link href="/register" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full gap-2 shadow-sm sm:w-auto">
+              <Button asChild size="lg" className="w-full gap-2 shadow-sm sm:w-auto">
+                <Link href="/register" className="w-full sm:w-auto">
                   {t.marketing.heroCtaPrimary}
                   <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-              <Link href="/login" className="w-full sm:w-auto">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="w-full border-border bg-background/80 backdrop-blur hover:bg-background sm:w-auto"
-                >
-                  {t.marketing.heroCtaSecondary}
-                </Button>
-              </Link>
+                </Link>
+              </Button>
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="w-full border-border bg-background/80 backdrop-blur hover:bg-background sm:w-auto"
+              >
+                <Link href="/login">{t.marketing.heroCtaSecondary}</Link>
+              </Button>
             </div>
           </div>
 
@@ -712,12 +711,12 @@ export default function LandingPage() {
             <h2 className="mt-3 text-2xl font-bold text-white lg:text-3xl">{t.marketing.ctaTitle}</h2>
             <p className="mx-auto mt-2 max-w-xl text-white/60">{t.marketing.ctaDesc}</p>
             <div className="mt-6 flex justify-center gap-3">
-              <Link href="/register">
-                <Button size="lg" className="gap-2">
+              <Button asChild size="lg" className="gap-2">
+                <Link href="/register">
                   {t.marketing.ctaButton}
                   <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </div>
         </div>

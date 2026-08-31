@@ -34,6 +34,11 @@ import { getLocalizedModules } from "@/lib/content-i18n";
 import { quizQuestions } from "@/lib/quiz-data";
 import { workbookQuizQuestions } from "@/lib/quiz-data-en-workbook";
 import { cn } from "@/lib/utils";
+import {
+  ExternalResourceCards,
+  ExternalResourceLinks,
+} from "@/components/external-resource-links";
+import { PRACTICE_RESOURCES, TRACK_RESOURCES } from "@/lib/external-resources";
 
 export function generateStaticParams() {
   return certificationTracks.map((track) => ({ trackId: track.id }));
@@ -121,37 +126,37 @@ export default async function TrackDetailPage({ params }: { params: { trackId: s
           {available && (
             <div className="flex flex-wrap gap-2">
               {curriculum && curriculum.sessions.length > 0 && (
-                <Link href={`/curriculum/${curriculum.sessions[0].id}`}>
-                  <Button size="sm" className="gap-1.5">
+                <Button asChild size="sm" className="gap-1.5">
+                  <Link href={`/curriculum/${curriculum.sessions[0].id}`}>
                     <BookOpen className="h-3.5 w-3.5" />
                     {t.curriculum.startSession} 1
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               )}
-              <Link href="/curriculum">
-                <Button size="sm" variant="outline" className="gap-1.5">
+              <Button asChild size="sm" variant="outline" className="gap-1.5">
+                <Link href="/curriculum">
                   <BookOpen className="h-3.5 w-3.5" />
                   {t.curriculum.badge}
-                </Button>
-              </Link>
-              <Link href="/courses">
-                <Button size="sm" variant="outline" className="gap-1.5">
+                </Link>
+              </Button>
+              <Button asChild size="sm" variant="outline" className="gap-1.5">
+                <Link href="/courses">
                   <BookOpen className="h-3.5 w-3.5" />
                   {t.tracks.startLearning}
-                </Button>
-              </Link>
-              <Link href="/quiz">
-                <Button size="sm" variant="outline" className="gap-1.5">
+                </Link>
+              </Button>
+              <Button asChild size="sm" variant="outline" className="gap-1.5">
+                <Link href="/quiz">
                   <Brain className="h-3.5 w-3.5" />
                   {t.tracks.startQuiz}
-                </Button>
-              </Link>
-              <Link href="/exam">
-                <Button size="sm" variant="outline" className="gap-1.5">
+                </Link>
+              </Button>
+              <Button asChild size="sm" variant="outline" className="gap-1.5">
+                <Link href="/exam">
                   <GraduationCap className="h-3.5 w-3.5" />
                   {t.tracks.startExam}
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           )}
         </CardContent>
@@ -314,64 +319,62 @@ export default async function TrackDetailPage({ params }: { params: { trackId: s
           <CardTitle className="text-base">{t.tracks.officialTitle}</CardTitle>
           <CardDescription>{t.tracks.officialDesc}</CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-wrap gap-2">
+        <CardContent className="space-y-4">
           {/*
-            Chaque lien s'ouvre dans un nouvel onglet et annonce sa destination
-            aux lecteurs d'écran : « nouvel onglet » n'est visible que d'eux, la
-            flèche l'indiquant visuellement.
-
-            Le lien « formation » n'apparaît que pour les parcours dont
-            l'identifiant de catalogue Oracle University est connu. Pour les
-            trois spécialisations, il est délibérément absent : un identifiant
-            numérique inventé aurait l'air exact et mènerait sur une page
-            inexistante.
+            Les liens propres au parcours d'abord, puis les ressources
+            générales. Le lien « formation » n'apparaît que pour les parcours
+            dont l'identifiant de catalogue Oracle University est connu : pour
+            les trois spécialisations il est délibérément absent, un identifiant
+            inventé ayant l'air exact tout en menant nulle part.
           */}
-          <a
-            href={track.officialExamUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${t.tracks.officialExam} ${track.examCode} — ${t.tracks.newTab}`}
-          >
-            <Button variant="outline" size="sm" className="gap-1.5">
-              <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-              {t.tracks.officialExam} — {track.examCode}
-            </Button>
-          </a>
-          {track.officialLearningUrl && (
-            <a
-              href={track.officialLearningUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${t.tracks.officialLearning} — ${t.tracks.newTab}`}
-            >
-              <Button variant="outline" size="sm" className="gap-1.5">
-                <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-                {t.tracks.officialLearning}
-              </Button>
-            </a>
-          )}
-          <a
-            href={track.officialDocsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${t.tracks.officialDocs} — ${t.tracks.newTab}`}
-          >
-            <Button variant="outline" size="sm" className="gap-1.5">
-              <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-              {t.tracks.officialDocs}
-            </Button>
-          </a>
-          <a
-            href="https://education.oracle.com/oracle-certification-path/pFamily_32"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${t.tracks.officialPath} — ${t.tracks.newTab}`}
-          >
-            <Button variant="outline" size="sm" className="gap-1.5">
-              <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-              {t.tracks.officialPath}
-            </Button>
-          </a>
+          <ExternalResourceLinks
+            locale={locale}
+            newTabLabel={t.tracks.newTab}
+            resources={[
+              {
+                id: "exam",
+                url: track.officialExamUrl,
+                label: {
+                  fr: `${t.tracks.officialExam} — ${track.examCode}`,
+                  en: `${t.tracks.officialExam} — ${track.examCode}`,
+                },
+                description: {
+                  fr: `Fiche officielle de l'épreuve ${track.examCode} : format, durée, seuil de réussite et sujets.`,
+                  en: `Official ${track.examCode} exam sheet: format, duration, passing score and topics.`,
+                },
+                kind: "oracle",
+              },
+              ...(track.officialLearningUrl
+                ? [
+                    {
+                      id: "learning",
+                      url: track.officialLearningUrl,
+                      label: { fr: t.tracks.officialLearning, en: t.tracks.officialLearning },
+                      description: {
+                        fr: "Cours Oracle University correspondant au programme de l'épreuve.",
+                        en: "The Oracle University course matching the exam syllabus.",
+                      },
+                      kind: "oracle" as const,
+                    },
+                  ]
+                : []),
+              {
+                id: "docs",
+                url: track.officialDocsUrl,
+                label: { fr: t.tracks.officialDocs, en: t.tracks.officialDocs },
+                description: {
+                  fr: "Le manuel Oracle Database 19c qui couvre le programme, à consulter pendant la révision.",
+                  en: "The Oracle Database 19c manual covering the syllabus, to consult while revising.",
+                },
+                kind: "oracle",
+              },
+            ]}
+          />
+          <ExternalResourceCards
+            locale={locale}
+            newTabLabel={t.tracks.newTab}
+            resources={[...TRACK_RESOURCES, ...PRACTICE_RESOURCES]}
+          />
         </CardContent>
       </Card>
     </div>

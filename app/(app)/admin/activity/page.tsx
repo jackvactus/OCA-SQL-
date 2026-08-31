@@ -80,18 +80,18 @@ export default async function AdminActivityPage({
             {t.common.previous}
           </Button>
         ) : (
-          <Link href={`/admin/activity?offset=${Math.max(offset - PAGE_SIZE, 0)}`}>
-            <Button variant="outline">{t.common.previous}</Button>
-          </Link>
+          <Button asChild variant="outline">
+            <Link href={`/admin/activity?offset=${Math.max(offset - PAGE_SIZE, 0)}`}>{t.common.previous}</Link>
+          </Button>
         )}
         {!hasMore ? (
           <Button variant="outline" disabled>
             {t.common.next}
           </Button>
         ) : (
-          <Link href={`/admin/activity?offset=${offset + PAGE_SIZE}`}>
-            <Button variant="outline">{t.common.next}</Button>
-          </Link>
+          <Button asChild variant="outline">
+            <Link href={`/admin/activity?offset=${offset + PAGE_SIZE}`}>{t.common.next}</Link>
+          </Button>
         )}
       </div>
     </div>

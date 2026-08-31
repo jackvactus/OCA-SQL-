@@ -118,8 +118,8 @@ export default async function CurriculumSessionPage({
           {/* Navigation entre sessions */}
           <nav className="mt-12 flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
             {previous ? (
-              <Link href={`/curriculum/${previous.id}`} className="min-w-0">
-                <Button variant="outline" className="h-auto max-w-full justify-start gap-2 py-2.5 text-left">
+              <Button asChild variant="outline" className="h-auto max-w-full justify-start gap-2 py-2.5 text-left">
+                <Link href={`/curriculum/${previous.id}`} className="min-w-0">
                   <ArrowLeft className="h-4 w-4 shrink-0" />
                   <span className="min-w-0">
                     <span className="block text-[11px] text-muted-foreground">
@@ -129,22 +129,22 @@ export default async function CurriculumSessionPage({
                       {previous.number}. {tr(previous.title, locale)}
                     </span>
                   </span>
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             ) : (
               <span />
             )}
 
-            <Link href="/quiz">
-              <Button variant="ghost" size="sm" className="gap-1.5">
+            <Button asChild variant="ghost" size="sm" className="gap-1.5">
+              <Link href="/quiz">
                 <Brain className="h-4 w-4" />
                 {t.curriculum.practise}
-              </Button>
-            </Link>
+              </Link>
+            </Button>
 
             {next ? (
-              <Link href={`/curriculum/${next.id}`} className="min-w-0">
-                <Button className="h-auto max-w-full justify-end gap-2 py-2.5 text-right">
+              <Button asChild className="h-auto max-w-full justify-end gap-2 py-2.5 text-right">
+                <Link href={`/curriculum/${next.id}`} className="min-w-0">
                   <span className="min-w-0">
                     <span className="block text-[11px] opacity-80">{t.curriculum.nextSession}</span>
                     <span className="block truncate text-sm font-medium">
@@ -152,8 +152,8 @@ export default async function CurriculumSessionPage({
                     </span>
                   </span>
                   <ArrowRight className="h-4 w-4 shrink-0" />
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             ) : (
               <span />
             )}
