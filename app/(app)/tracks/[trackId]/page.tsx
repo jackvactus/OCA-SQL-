@@ -39,6 +39,7 @@ import {
   ExternalResourceLinks,
 } from "@/components/external-resource-links";
 import { PRACTICE_RESOURCES, TRACK_RESOURCES } from "@/lib/external-resources";
+import { RememberTrack } from "@/components/remember-track";
 
 export function generateStaticParams() {
   return certificationTracks.map((track) => ({ trackId: track.id }));
@@ -69,6 +70,9 @@ export default async function TrackDetailPage({ params }: { params: { trackId: s
 
   return (
     <div className="mx-auto max-w-5xl space-y-8 p-4 lg:p-8">
+      {/* Consulter un parcours en fait le parcours courant. */}
+      <RememberTrack trackId={track.id} />
+
       <div>
         <Link
           href="/tracks"

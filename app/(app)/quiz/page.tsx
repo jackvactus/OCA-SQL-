@@ -43,6 +43,7 @@ import { drawQuestions } from "@/lib/quiz-shuffle";
 import { useProgress } from "@/hooks/use-progress";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/language-provider";
+import { useCurrentTrack } from "@/components/track-provider";
 
 type Difficulty = "all" | "easy" | "medium" | "hard";
 type Phase = "setup" | "question" | "feedback" | "results";
@@ -76,7 +77,9 @@ export default function QuizPage() {
   const { locale, t } = useLanguage();
   const modules = getLocalizedModules(locale);
 
-  const [selectedTrack, setSelectedTrack] = useState<TrackId>("oca-sql");
+  // Le sélecteur s'ouvre sur le parcours suivi, pas sur SQL par défaut.
+  const { trackId: parcoursCourant } = useCurrentTrack();
+  const [selectedTrack, setSelectedTrack] = useState<TrackId>(parcoursCourant);
   const questionBank = getQuestionBank(selectedTrack, locale);
 
   // Le filtre « module » liste les modules du site pour OCA SQL, et les

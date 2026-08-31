@@ -20,6 +20,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/components/language-provider";
+import { useCurrentTrack } from "@/components/track-provider";
 import {
   GraduationCap,
   Clock,
@@ -82,7 +83,9 @@ export type BankSizes = Record<string, { fr: number; en: number }>;
 export function ExamClient({ bankSizes }: { bankSizes: BankSizes }) {
   const { applyExamResult } = useProgress();
   const { locale, t } = useLanguage();
-  const [selectedTrack, setSelectedTrack] = useState<TrackId>("oca-sql");
+  // Le sélecteur s'ouvre sur le parcours suivi, pas sur SQL par défaut.
+  const { trackId: parcoursCourant } = useCurrentTrack();
+  const [selectedTrack, setSelectedTrack] = useState<TrackId>(parcoursCourant);
   const bankSize = bankSizes[selectedTrack]?.[locale === "en" ? "en" : "fr"] ?? 0;
   const activeTrack = certificationTracks.find((track) => track.id === selectedTrack);
 

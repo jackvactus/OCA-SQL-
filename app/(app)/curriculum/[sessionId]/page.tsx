@@ -11,6 +11,7 @@ import { getLocale } from "@/lib/i18n/get-locale";
 import { dictionary } from "@/lib/i18n/dictionary";
 import { tr } from "@/lib/course-oca-sql";
 import { allSessionIds, findSession } from "@/lib/curricula";
+import { RememberTrack } from "@/components/remember-track";
 
 export function generateStaticParams() {
   return allSessionIds.map((sessionId) => ({ sessionId }));
@@ -36,6 +37,9 @@ export default async function CurriculumSessionPage({
 
   return (
     <div className="mx-auto max-w-6xl p-4 lg:p-8">
+      {/* Ouvrir une session en fait le parcours courant. */}
+      <RememberTrack trackId={curriculum.id} />
+
       <Link
         href="/curriculum"
         className="mb-5 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"

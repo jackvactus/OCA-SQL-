@@ -34,6 +34,8 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { getLocalizedModules } from "@/lib/content-i18n";
+import { useCurrentTrack } from "@/components/track-provider";
+import { resolveNextStep, trackProgress } from "@/lib/current-track";
 import { quizQuestions } from "@/lib/quiz-data";
 import { useProgress } from "@/hooks/use-progress";
 import { activityLabel, type ActivityAction } from "@/lib/activity-types";
@@ -59,6 +61,7 @@ interface RecentActivityEntry {
 
 export default function DashboardPage() {
   const { t, locale } = useLanguage();
+  const { trackId, track } = useCurrentTrack();
   // Memoise sur la locale : sans cela, `modules` est un nouveau tableau a
   // chaque rendu, et les memos qui en dependent se recalculent sans cesse.
   const modules = useMemo(() => getLocalizedModules(locale), [locale]);
@@ -135,12 +138,16 @@ export default function DashboardPage() {
 
   const PIE_COLORS = ["hsl(var(--primary))", "hsl(var(--muted))"];
 
-  const recommendedModule = useMemo(() => {
-    const incompleteModule = modules.find(
-      (m) => !m.lessons.every((l) => progress.completedLessons.includes(l.id)),
-    );
-    return incompleteModule || modules[0];
-  }, [modules, progress.completedLessons]);
+  // La reprise se calcule DANS le parcours courant : un apprenant sur Data
+  // Guard ne doit pas être renvoyé vers les modules SQL.
+  const nextStep = useMemo(
+    () => resolveNextStep(trackId, progress, locale, modules),
+    [trackId, progress, locale, modules],
+  );
+  const avancement = useMemo(
+    () => trackProgress(trackId, progress, modules),
+    [trackId, progress, modules],
+  );
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 p-4 lg:p-8">
@@ -160,9 +167,18 @@ export default function DashboardPage() {
           </div>
           <h1 className="text-2xl font-bold lg:text-3xl">{t.dashboard.welcomeTitle}</h1>
           <p className="mt-1 text-muted-foreground">{t.dashboard.welcomeSubtitle}</p>
+          {/* Dire OU l'on reprend, plutôt qu'un « continuer » aveugle. */}
+          <p className="mt-2 text-sm">
+            <span className="font-mono text-xs text-muted-foreground">{track.examCode}</span>{" "}
+            <span className="text-muted-foreground">·</span>{" "}
+            <span className="font-medium">{nextStep.label}</span>{" "}
+            <span className="text-muted-foreground">
+              ({avancement.done}/{avancement.total})
+            </span>
+          </p>
           <div className="mt-4 flex flex-wrap gap-3">
             <Button asChild className="gap-2">
-              <Link href="/courses">
+              <Link href={nextStep.href}>
                 {t.dashboard.continueLearning}
                 <ArrowRight className="h-4 w-4" />
               </Link>

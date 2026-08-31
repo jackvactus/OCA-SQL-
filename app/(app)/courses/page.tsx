@@ -29,6 +29,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { getLocalizedModules } from "@/lib/content-i18n";
+import { useCurrentTrack } from "@/components/track-provider";
+import { resolveNextStep } from "@/lib/current-track";
 import { ExternalResourceCards } from "@/components/external-resource-links";
 import {
   ORACLE_CERTIFICATION,
@@ -43,6 +45,7 @@ import { useLanguage } from "@/components/language-provider";
 export default function CoursesPage() {
   const { locale } = useLanguage();
   const en = locale === "en";
+  const { trackId, track } = useCurrentTrack();
   // Memoise sur la locale : sans cela, `modules` est un nouveau tableau a
   // chaque rendu, et les memos qui en dependent se recalculent sans cesse.
   const modules = useMemo(() => getLocalizedModules(locale), [locale]);
@@ -104,6 +107,12 @@ export default function CoursesPage() {
     module.lessons.some((lesson) => !progress.completedLessons.includes(lesson.id)),
   );
 
+  // Ces 18 modules appartiennent au parcours SQL. Quand l'apprenant suit un
+  // autre parcours, le dire et lui offrir sa propre reprise vaut mieux que de
+  // le laisser croire qu'il est au bon endroit.
+  const horsParcours = trackId !== "oca-sql";
+  const repriseParcours = resolveNextStep(trackId, progress, locale, modules);
+
   return (
     <div className="mx-auto max-w-7xl space-y-8 p-4 lg:p-8">
       {/* Header */}
@@ -137,6 +146,25 @@ export default function CoursesPage() {
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
+            )}
+            {horsParcours && (
+              <div
+                role="note"
+                className="mt-3 flex flex-col gap-2 rounded-xl border border-primary/30 bg-primary/[0.06] p-3 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <p className="text-sm">
+                  {en
+                    ? "These modules belong to the SQL track. You are currently following "
+                    : "Ces modules appartiennent au parcours SQL. Vous suivez actuellement "}
+                  <span className="font-semibold">{track.examCode}</span>.
+                </p>
+                <Button asChild size="sm" variant="outline" className="shrink-0 gap-1.5">
+                  <Link href={repriseParcours.href}>
+                    {en ? "Back to my track" : "Revenir à mon parcours"}
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </Button>
+              </div>
             )}
           </div>
 
